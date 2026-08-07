@@ -17,11 +17,6 @@ It is a working system, not a design document: it builds a corpus, trains a real
 transformer on it, deliberately crashes, resumes, replays history, forks an alternative
 timeline, audits itself, and writes out the evidence for all of it.
 
-> Coursework context: this is Session 6 of the ERA V5 course. It inherits a data-mixture plan
-> from the previous session ("S5"). You do not need any of that background to read this
-> README — everything it relies on is explained below or in
-> [`docs/s5-inheritance.md`](docs/s5-inheritance.md).
-
 ---
 
 ## Quickstart
@@ -191,7 +186,7 @@ registry.py      shards split by (lane, train/test split, difficulty band); buil
    +--> packing.py    6 strategies for fitting documents into fixed windows
    +--> masks.py      loss / attention / position masks, verified against each other
    |
-plan.py          the inherited data mixture, in real units (3 trillion tokens)
+plan.py          the target data mixture, in real units (3 trillion tokens)
 mixture.py       compiled into a per-step schedule, then hashed: stage blending,
    |             protected floors, reuse ceilings, difficulty gates
    v
@@ -392,7 +387,7 @@ Real results from the last full run, all traceable to files in `submission_artif
 run_demo.py               the single entry point
 ledger/                   the implementation
 tests/                    40 tests covering the invariants
-docs/s5-inheritance.md    the inherited plan, and where each part is enforced in code
+docs/s5-inheritance.md    the data-mixture plan, and where each part is enforced in code
 docs/band-gating.md       how difficulty gating works, and why it happens at build time
 submission_artifacts/     the generated output bundle (committed)
 artifacts/                bulk token data (not committed; rebuilt in ~2 seconds)
