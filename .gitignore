@@ -1,0 +1,11 @@
+.venv/
+__pycache__/
+*.pyc
+*.egg-info/
+.DS_Store
+.pytest_cache/
+
+# Generated shards, tokenizer and checkpoints: ~52MB of binary that `run_demo.py`
+# rebuilds deterministically from source in about two seconds. The manifests and hashes
+# that make them auditable live in logs/05_shards.json, which IS committed.
+artifacts/
