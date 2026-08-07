@@ -383,6 +383,50 @@ def test_epoch_ceiling_is_never_breached(registry):
             "{} used {} epochs against a ceiling of {}".format(lane, epochs, EPOCH_CEILING)
 
 
+def test_epoch_ceiling_actually_binds_when_the_budget_demands_it(registry):
+    """The ceiling test above is vacuous at the demo budget -- nothing gets near 4 epochs,
+    so it would pass even if the clamp were deleted.
+
+    This runs at a budget large enough that the corpus genuinely cannot supply it, which is
+    the only condition under which the clamp does any work. It asserts three things: that
+    the clamp fires, that it names the lane it clamped, and that the result sits exactly at
+    the ceiling rather than just under or just over it.
+    """
+    tokens = 2_000_000
+    sched = compile_schedule(registry, RunShape(total_tokens=tokens),
+                             Scale(factor=3.0e12 / tokens))
+    epochs = sched.report["lane_epochs_demo"]
+
+    clamped_lanes = {c.split(":")[0] for st in sched.steps for c in st.clamped_lanes
+                     if c.endswith(":epoch_ceiling")}
+    assert clamped_lanes, "no lane was ever clamped, so the ceiling did no work"
+
+    # Lanes land just *under* the ceiling rather than exactly on it, because allocation is
+    # in whole sequences and a lane cannot take a fractional one. One sequence is worth well
+    # under 0.01 epochs here, so this tolerance still means "pressed against the ceiling".
+    at_ceiling = [ln for ln, e in epochs.items() if e >= EPOCH_CEILING - 0.01]
+    assert at_ceiling, "no lane reached the ceiling: {}".format(epochs)
+    assert set(at_ceiling) <= clamped_lanes, \
+        "lane hit the ceiling without being clamped: {} vs {}".format(at_ceiling,
+                                                                     clamped_lanes)
+    for lane, e in epochs.items():
+        assert e <= EPOCH_CEILING + 1e-6, "{} breached at {}".format(lane, e)
+
+
+def test_epoch_ceiling_can_be_disabled(registry):
+    """With the ceiling off, the same budget must overshoot it.
+
+    Without this, the previous test cannot distinguish 'the clamp held the line' from 'the
+    supply happened to run out at exactly 4.0 on its own'.
+    """
+    tokens = 2_000_000
+    scale = Scale(factor=3.0e12 / tokens)
+    unclamped = compile_schedule(registry, RunShape(total_tokens=tokens), scale,
+                                 enforce_epoch_ceiling=False)
+    assert max(unclamped.report["lane_epochs_demo"].values()) > EPOCH_CEILING, \
+        "disabling the ceiling changed nothing, so the clamp is not what bounds the run"
+
+
 def test_schedule_is_deterministic(registry):
     shape = RunShape(total_tokens=120_000)
     scale = Scale(factor=3.0e12 / 120_000)

@@ -1,329 +1,415 @@
 # The Data Ledger
 
-ERA V5 Session 6. The accounting system that sits between raw documents and the training
-loop — recording both what goes into the model and what comes back out.
-
 **Repository:** https://github.com/vedapragna-cs/era-v5-s6-data-ledger
 
-```bash
-python -m venv .venv && .venv/bin/pip install -r requirements.txt
-.venv/bin/python run_demo.py
-.venv/bin/python -m pytest tests/ -q      # 38 tests, ~4s
-```
+When you train a language model, something has to decide which text to feed it next, in what
+order, and in what proportions. That component is usually called a *data loader*, and it is
+usually write-only: it makes thousands of decisions per run and keeps a record of almost
+none of them.
 
-One command. ~64 seconds. No API key, no network, no downloaded dataset. It runs the full
-path — documents → tokenized shards → manifests → mixture schedule → packing → batches →
-training → consumption ledger → learning ledger → checkpoint → crash → resume → replay →
-audit — and writes the complete submission bundle.
+This project builds the thing that should sit there instead — a **data ledger**. It does
+everything a loader does, and it also keeps a complete, verifiable record of what it sent to
+the model and what came back. Six months after a training run finishes, you can ask it *what
+exactly did step 431 train on?* and get an exact answer, reconstructed from the record rather
+than by guessing or re-running.
 
-**Last run: 14/14 requirements passed, 39 log checks PASS, 0 FAIL.**
+It is a working system, not a design document: it builds a corpus, trains a real (small)
+transformer on it, deliberately crashes, resumes, replays history, forks an alternative
+timeline, audits itself, and writes out the evidence for all of it.
 
-```
-python run_demo.py --fast           # ~24s, smaller token budget
-python run_demo.py --with-api       # additionally annotate OPUS accepts with Claude
-python run_demo.py --keep-weights   # keep checkpoint .pt blobs
-```
-
-## The submission bundle
-
-```
-submission_artifacts/
-  run.log                   every event, its verdict, and the artifact that proves it
-  evidence.json             machine-readable: each requirement, its predicate, its result
-  evidence.md               the REQUIREMENT / RESULT / EVIDENCE table
-  performance.json          throughput, packing utilisation, loss-bearing tokens/s
-  run_summary.json          hashes, phase timings, model config
-  execution_log.json        the run.log events, structured
-  manifests/
-    tokenizer.json          the frozen tokenizer, verified against every shard
-    shard_index.json        registry hash, immutability proof, reload verification
-    shards/*.json           one manifest per shard (122 of them)
-  ledgers/
-    consumption_ledger.json what went out, per step, with cursors either side
-    learning_ledger.json    what came back, attributed to shard/doc/lane/band/role
-    mixture_compliance.json planned versus actual shares, floors, epoch ceiling
-    opus.json               every candidate decision, with reason codes
-    opus_trail.jsonl        the same, one decision per line, rejections included
-    crash_resume.json       the next-batch-exact proof
-    replay.json             batch ids, token spans and hashes, original versus replay
-    fork.json, audit.json, masks.json, packing.json, firewall.json, plan.json, corpus.json
-    v6_shard_advisory.json  what to place differently next run
-  checkpoints/
-    checkpoint_index.json   ledger offsets, cursors, binding hashes, corruption drill
-    step-NNNNNN/            meta.json + rng.json per checkpoint
-```
-
-`EVIDENCE.md` at the repo root is a long-form companion to `evidence.md`, generated from the
-same artifacts so the two cannot disagree.
+> Coursework context: this is Session 6 of the ERA V5 course. It inherits a data-mixture plan
+> from the previous session ("S5"). You do not need any of that background to read this
+> README — everything it relies on is explained below or in
+> [`docs/s5-inheritance.md`](docs/s5-inheritance.md).
 
 ---
 
-## The idea
+## Quickstart
 
-A data loader answers *what should I feed the model next*. A data **ledger** answers that
-and three more questions the loader never has to:
+```bash
+python -m venv .venv
+.venv/bin/pip install -r requirements.txt
 
-- *What did the model see at step 431?* — months later, without re-running the sampler.
-- *What did it learn from it?* — per token, attributed back to the document that produced it.
-- *Would I do it again?* — which shards earned their place, and which spent budget.
-
-The second and third are the ones that don't exist in most training stacks. Training
-normally keeps the scalar mean loss and throws away the per-token tensor it was computed
-from. Keeping that tensor, and attributing it back through the packing plan to the document,
-shard, lane and role that produced each token, is the artifact the session calls the one
-nobody publishes. It is `submission_artifacts/ledgers/learning_ledger.json`.
-
-## Architecture
-
-Data flows down. Every arrow is a place something can be refused.
-
-```
-corpus.py        7 lanes of synthetic documents + planted pathologies
-   |             (PII, restricted licence, exact dup, near dup, contamination canary)
-   v
-documents.py     Document / Segment / Provenance / Quality
-   |             validate(): no restricted licences, no un-scrubbed PII, no untrainable docs
-   v
-tokenization.py  BPE fitted on the TRAIN SPLIT ONLY, then frozen and hashed
-   |             a tokenizer that has seen held-out text has already leaked it
-   v
-firewall.py      admit -> exact dedup -> near dedup (MinHash) -> n-gram contamination scan
-   |
-   v
-shards.py        immutable content-addressed shards; the id embeds the content hash
-registry.py      cut per (lane, split, difficulty band); built twice and compared
-   |
-   +--> packing.py    6 policies; each lane uses the one its structure requires
-   +--> masks.py      loss mask / attention mask / position ids, verified against each other
-   |
-   v
-plan.py          the S5 curriculum in real units: 2,910B main + 90B anneal
-mixture.py       compiled once into per-step lane allocations, then hashed
-   |             seam blending, protected floors, 4-epoch ceiling, band gates
-   v
-stream.py        DataStream: cursors per (lane, stage, window); re-derives trainability
-   |             from each manifest independently of any build-time decision
-   v
-model.py         TinyLM: pre-norm decoder, explicit (B,L,L) bool attention mask
-trainer.py       AdamW + cosine LR; writes BOTH ledgers
-   |
-   +--> ConsumptionLedger   what went out: shards, documents, lane tokens, cursors
-   +--> LearningLedger      what came back: per-token loss by shard/doc/lane/band/role
-   |
-   v
-opus.py          golden-proxy gradient selector: accept ~25%, protected-flow override
-checkpoint.py    atomic save of weights + optimizer + cursors + RNG + ledger offsets
-replay.py        crash / resume / replay-from-ledger / fork / audit
-advisory.py      the v6 shard re-placement recommendation
-perf.py          throughput, packing utilisation, loss-bearing tokens/s
-events.py        run.log -- structured events whose verdicts are computed, not passed in
-evidence.py      evidence.json / evidence.md -- one predicate per requirement, run
-                 against the artifacts on disk
-report.py        EVIDENCE.md, the long-form companion
+.venv/bin/python run_demo.py              # the full demonstration, ~64 seconds
+.venv/bin/python -m pytest tests/ -q      # 40 tests, ~4 seconds
 ```
 
-`determinism.py` sits under all of it: canonical JSON, content hashing, and counter-based
-seed derivation. Nothing calls `random.seed()` and hopes.
+One command, start to finish. **No API key, no network access, no dataset download** — the
+corpus is generated from a seed, so the whole thing runs offline on a laptop.
+
+**Last run: 14/14 requirements passed, 39 checks PASS, 0 FAIL.**
+
+Variants, none of them required:
+
+```bash
+python run_demo.py --fast           # ~24s, smaller token budget
+python run_demo.py --with-api       # also ask Claude to rate selected samples (needs a key)
+python run_demo.py --keep-weights   # keep the checkpoint weight files instead of deleting them
+```
+
+---
+
+## The problem it solves
+
+A training run makes an enormous number of small decisions, and afterwards nobody can
+reconstruct them. Four questions come up repeatedly and are normally unanswerable:
+
+| Question | Why it's normally unanswerable |
+|---|---|
+| *What did the model see at step 431?* | The loader shuffled with a random seed and kept no record. |
+| *What did it learn from that?* | Training keeps one average loss number per step and discards the detail behind it. |
+| *Did any test data leak into training?* | Nothing checked at the moment data was actually consumed. |
+| *Did the crash on Tuesday corrupt anything?* | The restart "worked", so nobody looked closer. |
+
+The ledger answers all four, and the second one is the interesting case. Training computes a
+loss value for *every single token*, averages them into one number, and throws the rest away.
+This system keeps that detail and traces each token's loss back to the document, file, data
+category, and text role it came from. That is what makes it possible to say things like
+*"the model is learning to describe tool calls but not to make them"* — which you cannot see
+in an average.
+
+---
+
+## Vocabulary
+
+The code uses a handful of terms consistently. They are worth five minutes because
+everything below depends on them.
+
+| Term | What it means here |
+|---|---|
+| **Document** | One piece of source text — a web page, a source file, a conversation. |
+| **Token** | Text chopped into model-sized pieces. "Hello world" might be 3 tokens. |
+| **Tokenizer** | The thing that does that chopping. Must never change mid-project. |
+| **Shard** | A bundle of documents converted to tokens and frozen into an immutable file. The unit the trainer reads. |
+| **Manifest** | A shard's passport: what's inside, which tokenizer made it, whether it passed safety checks. No valid manifest, no training. |
+| **Lane** | A data category with its own budget. Here: `general_web`, `code`, `indic` (Indian languages), `stem`, `reasoning`, `agentic` (tool-use traces), `long_context`. |
+| **Mixture** | How much of each lane the model sees. E.g. 34% web, 24% code, 17% Indic. |
+| **Curriculum stage** | Training runs in phases that shift the mixture — easy and general early, harder and more specialised later. |
+| **Seam** | The transition between two stages. Mixtures blend gradually rather than switching abruptly. |
+| **Difficulty band** | A per-document difficulty label, B0 (easiest) to B5 (hardest). Early stages only draw from easy bands. |
+| **Packing** | Fitting variable-length documents into fixed-size training windows. Like packing luggage; the strategy matters. |
+| **Loss mask** | Which token positions the model is graded on. A question is context; only the answer is graded. |
+| **Attention mask** | Which tokens each token is allowed to look at. Stops two unrelated documents packed together from bleeding into each other. |
+| **Epoch ceiling** | The cap on how many times the same data may be reused — 4×, [per research](https://arxiv.org/abs/2305.16264) showing returns collapse beyond that. |
+| **Protected floor** | A guaranteed minimum share for a lane that would otherwise be squeezed to zero. |
+| **OPUS** | A sample-selection method: cheaply estimate whether a sample will teach the model anything useful, and skip it if not. Accepts ~25%. |
+| **Perplexity** | Loss expressed as "how many options was the model effectively choosing between". Lower is better. |
+| **Consumption ledger** | The record of what was sent *to* the model. |
+| **Learning ledger** | The record of what came *back* — per-token loss, traced to its source. |
+
+---
+
+## What the demonstration actually does
+
+`run_demo.py` runs this end to end and logs a verdict at each step:
+
+1. **Generates a corpus** — 1,634 synthetic documents across 7 lanes, with deliberate
+   problems planted in it: a document with unredacted personal data, one under a licence
+   that forbids training, an exact duplicate pair, and a "canary" that secretly copies text
+   from the test set.
+2. **Trains and freezes a tokenizer** — fitted on the *training split only*, then hashed. A
+   tokenizer fitted on held-out text has already seen it, which is a subtle form of cheating.
+3. **Runs the safety firewall** — refuses the unsafe documents, removes duplicates, and scans
+   for overlap with evaluation data. It catches all four planted problems.
+4. **Builds 122 immutable shards** with manifests, then **builds every one a second time** and
+   compares hashes, to prove the process is genuinely reproducible.
+5. **Compiles the training schedule** — 102 steps with a shifting lane mixture, stage
+   transitions, protected floors and reuse ceilings, all computed up front and hashed.
+6. **Trains a small transformer** (1.05M parameters), writing both ledgers as it goes. Loss
+   falls 6.94 → 2.35.
+7. **Runs OPUS selection** at intervals, recording every accept, reject, deferral and
+   protected-lane override *with the reason*.
+8. **Saves checkpoints**, then deliberately corrupts copies of them to prove the corruption
+   is detected rather than silently loaded.
+9. **Simulates a crash**, resumes from a checkpoint, and proves the very next batch is
+   *exactly* the batch the uninterrupted run would have produced.
+10. **Replays history** — reconstructs batches from earlier in the run and verifies they
+    match the originals down to the token.
+11. **Forks** from a checkpoint into two alternative futures with different data mixtures,
+    and compares them.
+12. **Audits** the whole run, then writes the evidence bundle.
+
+---
+
+## What it produces
+
+```
+submission_artifacts/
+  run.log                   every event, its PASS/FAIL verdict, and the file that proves it
+  evidence.json             machine-readable: each requirement, its test, its result
+  evidence.md               the same as a human-readable table
+  performance.json          throughput and packing efficiency
+  run_summary.json          hashes, timings, model configuration
+  execution_log.json        run.log again, structured
+
+  manifests/
+    tokenizer.json          the frozen tokenizer, checked against every shard
+    shard_index.json        registry hash, reproducibility proof, reload verification
+    shards/*.json           one manifest per shard (122 files)
+
+  ledgers/
+    consumption_ledger.json what was sent to the model, step by step
+    learning_ledger.json    what came back, traced to shard / document / lane / role
+    mixture_compliance.json planned vs. actual data proportions
+    opus.json               every selection decision with its reason
+    opus_trail.jsonl        the same, one decision per line, rejections included
+    crash_resume.json       the proof that resume produced the exact expected batch
+    replay.json             original vs. replayed batch ids, spans and hashes
+    fork.json, audit.json, masks.json, packing.json, firewall.json, plan.json, corpus.json
+    v6_shard_advisory.json  recommendations for what to do differently next time
+
+  checkpoints/
+    checkpoint_index.json   ledger positions, cursors, binding hashes, corruption drill
+    step-NNNNNN/            per-checkpoint metadata
+```
+
+Everything here is generated by the run. Nothing is written by hand — `evidence.md` is
+produced by evaluating a test against each artifact on disk, so it cannot drift out of sync
+with the run it describes. [`EVIDENCE.md`](EVIDENCE.md) at the repository root is a longer
+narrative version built from the same files.
+
+---
+
+## How the code is organised
+
+Data flows top to bottom. Every arrow is a point where something can be rejected.
+
+```
+corpus.py        7 lanes of synthetic documents + deliberately planted problems
+   |
+documents.py     the Document type; refuses restricted licences and unredacted personal data
+   |
+tokenization.py  BPE tokenizer fitted on the TRAINING SPLIT ONLY, then frozen and hashed
+   |
+firewall.py      admit -> remove exact duplicates -> remove near-duplicates -> scan for
+   |             overlap with evaluation data
+   v
+shards.py        immutable shards whose filename contains a hash of their own contents
+registry.py      shards split by (lane, train/test split, difficulty band); built twice
+   |             and compared to prove reproducibility
+   |
+   +--> packing.py    6 strategies for fitting documents into fixed windows
+   +--> masks.py      loss / attention / position masks, verified against each other
+   |
+plan.py          the inherited data mixture, in real units (3 trillion tokens)
+mixture.py       compiled into a per-step schedule, then hashed: stage blending,
+   |             protected floors, reuse ceilings, difficulty gates
+   v
+stream.py        the loader; tracks its exact position, and independently re-checks every
+   |             shard's manifest rather than trusting build-time decisions
+   v
+model.py         a small transformer
+trainer.py       the training loop; writes BOTH ledgers
+   |
+   +--> ConsumptionLedger   what went out
+   +--> LearningLedger      what came back, per token
+   |
+   v
+opus.py          sample selection, with reasons recorded for every decision
+checkpoint.py    crash-safe saving of weights, optimizer, loader position and ledger offsets
+replay.py        crash / resume / replay / fork / audit
+advisory.py      recommendations for the next run
+perf.py          throughput and packing efficiency
+events.py        run.log — structured events whose verdicts are computed, never asserted
+evidence.py      evidence.json and evidence.md — one test per requirement
+report.py        the long-form EVIDENCE.md
+```
+
+Underneath all of it, `determinism.py` provides canonical JSON, content hashing, and
+seed derivation. Nothing anywhere calls `random.seed()` and hopes for the best.
 
 ---
 
 ## Design decisions
 
-### 1. Seeds are derived from content, never carried
+Fourteen choices worth explaining. Each starts with the problem it addresses.
 
-`derive_seed(*key)` hashes a canonical encoding of its arguments. Every shuffle, every pack
-plan, every sampling decision derives its own generator from `(run_id, purpose, lane,
-shard_id, epoch)`. Python's `random.seed(42)` is only stable inside one live interpreter;
-a counter-based scheme is stable across processes, machines, and the eighteen months
-between a run and the question about it.
+### Reproducibility
 
-The practical consequence is that replay does not need to store the RNG state of the
-sampler. It stores the cursor, and the cursor plus the key regenerates the stream.
+**1. Random seeds are derived from content, never stored.**
+*Problem:* `random.seed(42)` gives the same sequence only within one running Python process.
+Restart on a different machine and it can differ — so a replay can silently diverge.
+*Solution:* every random decision derives its own generator by hashing a description of the
+decision (`run_id`, purpose, lane, shard, epoch). Same inputs, same result, on any machine,
+years later. Replay therefore never needs to store random state — just a position.
 
-### 2. The shard id *is* the content hash
+**2. A shard's filename contains a hash of its contents.**
+E.g. `shard-indic-train-0002-d073e546cd`. A shard whose contents changed cannot keep its
+name, so "same code, same data, next month" is *checkable* rather than merely claimed. The
+build runs twice and compares. A single unordered `set()` iteration or stray timestamp
+anywhere in the pipeline would break this — and nothing else would catch it.
 
-`shard-indic-train-0002-d073e546cd`. The trailing hash is derived from the tokens. A shard
-whose content changed cannot keep its name, so "same code, different day, same shard" is
-checkable rather than assertable — `build_registry(verify_immutability=True)` builds every
-shard twice and compares. A single `set()` iteration or `time.time()` anywhere in the path
-breaks it, silently, and this is the only thing that catches that.
+**3. A manifest is a precondition, not a description.**
+Missing duplicate-check status, missing contamination status, a tokenizer that doesn't match,
+unredacted personal data, or a non-training split — any one and the shard never enters
+training. The loader **re-derives this itself at load time** and deliberately ignores what
+the build stage concluded. If the build-side check had a bug, the load-side check is the one
+that has to catch it.
 
-### 3. A manifest is a precondition, not a description
+### Handling different kinds of data differently
 
-`ShardManifest.is_trainable()` returns `(bool, reasons)`. Missing dedup status, missing
-contamination status, a tokenizer hash that differs from the loader's, an unscrubbed PII
-flag, a non-train split — any of these and the shard does not enter the stream. The loader
-re-derives this independently at load time (`DataStream._admit_shard`) and deliberately
-consults no decision made at build time. If the build-side firewall had a bug, the load-side
-check is the one that has to catch it.
+**4. Packing strategy follows from what the data *is*.**
 
-### 4. Packing policy is a property of the data, not of the run
-
-Six policies. Which one a lane uses follows from what its documents are:
-
-| lane | policy | why |
+| Lane | Strategy | Why |
 |---|---|---|
-| general_web, indic | greedy | prose survives being split; padding is the only cost |
-| code, stem | best_fit | fewer holes; a file split mid-function is still valid training data |
-| reasoning, agentic | structure_preserving | a chain of thought cut in half teaches half a chain |
-| long_context | long_context | one document per sequence, which is the point of the lane |
+| `general_web`, `indic` | greedy | prose survives being split mid-way; wasted space is the only cost |
+| `code`, `stem` | best-fit | minimise gaps; a source file split mid-function is still useful |
+| `reasoning`, `agentic` | structure-preserving | a chain of reasoning cut in half teaches half a chain |
+| `long_context` | one document per window, short ones turned away | a 200-token document in a 1024-token window wastes 80% of an expensive step and teaches nothing about long-range retrieval |
 
-`ledgers/packing.json` runs *every* policy against the largest shard of every lane, at that
-lane's own window. `concat_chop` wins on efficiency almost everywhere — it always will,
-because it truncates. On the agentic shard it reaches 87% efficiency by cutting nine
-documents mid-structure. That is what the chosen policy is refusing to buy.
+`ledgers/packing.json` runs *every* strategy against every lane so the trade-off is measured
+rather than asserted. The truncating strategy always wins on raw efficiency — on the
+tool-use lane it hits 87% by cutting nine documents mid-structure. That is precisely what the
+chosen strategy is declining to buy.
 
-The corollary: policies that refuse to split an atomic document report **zero sequences**
-on a shard whose documents all exceed the window. That is the policy working, not failing.
+A consequence worth knowing: a strategy that refuses to split documents reports **zero
+sequences** when every document in a shard is longer than the window. That is the strategy
+working correctly, not failing.
 
-### 5. Attention and position policy are per-lane, and both are logged
+**5. Attention rules are also per-lane, and both choices are logged.**
+When two documents share a training window, should the model be *allowed* to look across the
+boundary?
 
-| policy | lanes | rationale |
-|---|---|---|
-| `causal_eos_only` | web, indic, long_context | the lecture's position; a leaked neighbour costs wasted signal |
-| `causal_block_diagonal` | code, stem, reasoning, agentic | a packed neighbour here is *actively misleading* |
-| `continuous` positions | web, indic, long_context | matches EOS-only attention |
-| `reset_per_document` | code, stem, reasoning, agentic | matches block-diagonal attention |
+- **Web, Indic, long-context:** allowed. The model learns not to, and the wasted signal is cheap.
+- **Code, STEM, reasoning, tool-use:** blocked outright. Here a neighbouring document is
+  actively misleading, and learning-not-to is too slow and too unreliable.
 
-`verify_masks()` asserts that a block-diagonal mask actually blocks — it checks the
-materialized `(L, L)` boolean, rather than trusting the label. Position embeddings are
-learned and absolute *deliberately*: it makes reset-per-document a one-line change and makes
-the difference between the two policies visible in the arithmetic.
+`verify_masks()` checks the actual mask matrix rather than trusting its label.
 
-### 6. EOS is supervised; BOS is not emitted
+**6. The end-of-document marker is graded; the start marker doesn't exist.**
+The model must learn where documents end, so the end marker carries loss and its perplexity
+is tracked on its own line. If it doesn't improve, generated text will run one document into
+the next — invisible in an average where ~550 end markers sit among 350,000 other tokens.
+A start marker is omitted entirely: with an end marker present it carries no information the
+position numbers don't already have.
 
-EOS is the document boundary and the model has to predict it, so it carries loss. Its
-perplexity is tracked as its own line in the learning ledger, because a model whose EOS
-perplexity does not fall will bleed one document into the next at inference — and that is
-invisible in the mean loss, where 550 EOS tokens sit among 350,000 others.
+### Keeping the mixture honest
 
-BOS is not emitted at all. The session's phrase is "waste of space": with EOS as a boundary,
-a start marker carries no information the position ids don't already have.
+**7. Fractional allocations carry over between steps.**
+*This is the least obvious decision and had the largest consequence.* With 16 sequences per
+step, the tool-use lane's 2% target works out to 0.32 sequences. Ordinary rounding takes that
+to zero, every step, forever — so the lane came out at 0.2%, below even its 1% **protected
+floor**. A floor that rounding can quietly delete is decoration. The allocator now carries the
+fractional remainder forward until it accumulates into a whole sequence: that lane now lands
+at 1.63%, comfortably above its floor and close to its 2% target.
 
-### 7. Lane allocation carries error across steps
+Across all seven lanes the largest gap between planned and actual share is **0.68 percentage
+points**, and both protected floors hold. The three lanes that fall short do so because
+eligible data ran out, which the scheduler records explicitly in
+`ledgers/mixture_compliance.json` rather than absorbing silently.
 
-This is the least obvious decision and the one with the largest consequence.
+**8. The reuse ceiling is enforced during allocation, not checked afterwards.**
+Checked at the end, a lane sitting at 3.9 epochs is granted one more full step and lands at
+4.5 — over the limit, discovered too late. It is clamped inside the allocation loop instead,
+and the freed capacity is redistributed to lanes with room. In this demo run no lane exceeds
+2.1 epochs, so the clamp is not what limits it here. Two tests exercise it at a budget where
+it *does* bind: one asserts six lanes press right up against the ceiling without crossing it,
+the other disables the clamp at the same budget and confirms the run then overshoots — so
+the first test cannot pass by accident.
 
-With 16 sequences per step, a 2%-target lane wants 0.32 sequences. Largest-remainder
-rounding floors that to 0 and loses every tie-break, so the agentic lane realized **0.2%
-against a 2.0% protected floor** in the first version. A protected floor that integer
-rounding can delete is decorative.
+### The two ledgers
 
-`_allocate` keeps a per-lane fractional carry across steps, so the deficit accumulates until
-it buys a whole sequence. Agentic now realizes 1.63% of 2.0% at demo scale, limited by
-supply rather than by arithmetic — and it is the lane that hits the epoch ceiling first,
-which is exactly what S5 decision 3 predicted.
+**9. Record the loader's position on both sides of every step.**
+The position *after* a step is where you resume from; the position *before* it is what you
+need to regenerate that exact batch. Record only one and the ledger is resumable **or**
+replayable, but not both. Each row also carries a hash of the actual tokens — reproducing the
+file list but not the contents would reproduce the paperwork and not the training.
 
-### 8. The epoch ceiling is enforced per step, not checked at the end
+**10. Resuming after a crash must repair the ledger, not just restore the weights.**
+This failure exists only on disk. The ledger is written every step; weights are saved
+periodically. After a crash the ledger contains rows for steps whose weights were thrown
+away — so a naive resume claims the model consumed data it has never seen, in the one file
+whose entire purpose is to be trusted. The resume path truncates those rows and recomputes
+totals from what survives. The drill in `ledgers/crash_resume.json` shows 4 orphan rows
+repaired, weights identical bit for bit, and the final ledger matching the uninterrupted run
+row for row.
 
-The 4-epoch repetition ceiling (arXiv:2305.16264) is clamped inside the allocation loop and
-the freed sequences are redistributed to lanes with headroom. Checked afterwards instead,
-a lane at 3.9 epochs is allowed one more full step and lands at 4.5. The ceiling has to bind
-before the allocation, not after it.
+**11. Checkpoints are bound to the data they were trained on.**
+Each carries hashes of the tokenizer, the shard registry, the schedule and the source code.
+Loading one against a rebuilt corpus raises an error instead of resuming into data the
+weights have never seen. The fork feature deliberately relaxes this — a different schedule
+*is* the experiment — and reports exactly what differs.
 
-### 9. Both ledgers, or neither
+### Sample selection
 
-The consumption ledger records the cursor state on **both sides** of every step. `after` is
-the resume point; `before` is what replay needs to regenerate the batch. Recording only one
-makes the ledger resumable *or* replayable, not both.
+**12. The selection reference is rebuilt every round, from held-out data.**
+OPUS scores a candidate by comparing it against a reference map of "what the model currently
+needs to learn". Two subtleties:
 
-Each row also carries a `batch_hash` over the actual token content. Replay checks the
-regenerated batch against it — reproducing the shard list but not the tokens would reproduce
-the bookkeeping and not the training.
+- That reference is built from the **validation split**, never from the training batch.
+  Building it from data already being consumed would make it a map of the training stream
+  rather than of the target capability.
+- It is **rebuilt every round** against current weights. A reference computed once goes stale
+  as the model moves, and its decaying scores look exactly like a degrading data pool — same
+  number, opposite conclusion. An early version made this mistake.
 
-### 10. Resume must repair the ledger, not just restore the weights
+Related: selection quality is measured over score-based accepts only. Protected lanes are
+admitted regardless of score, so including them would manufacture a false decline out of the
+protection policy.
 
-The failure this prevents only exists on disk. The ledger is appended to every step; the
-weights are only checkpointed periodically. After a crash the ledger file contains rows for
-steps whose weights were discarded, and a resume that keeps them claims the model consumed
-tokens it has never seen — in the one artifact whose entire purpose is to be believed.
+**13. Rejections are kept.**
+`ledgers/opus_trail.jsonl` records every decision, including everything thrown away, with a
+reason code. "The selector judged this low value" is a *judgement*, and judgements should be
+auditable. It is also the only surviving evidence that a given sample was ever considered.
 
-`truncate_ledgers` cuts the rows back to the checkpoint's recorded offsets and recomputes
-the totals from the survivors rather than trusting the running counters. The drill in
-`ledgers/crash_resume.json` shows 4 orphan rows repaired, weights bitwise identical, and the
-final ledger matching the uninterrupted run row for row.
-
-### 11. Checkpoints are bound to their data
-
-Every checkpoint carries the tokenizer hash, registry hash, schedule hash and source-tree
-hash. Loading one against a rebuilt shard set raises `CheckpointBindingError` rather than
-resuming into a corpus the weights have never seen. The fork path passes
-`strict_binding=False` on purpose — the schedule hash *is* what differs between branches —
-and reports the drift so the difference stays visible.
-
-### 12. The OPUS proxy is rebuilt every round, from held-out data
-
-Two things that look like details and aren't.
-
-The golden set comes from the **validation split**, never from the training batch. It
-defines what the model should become good at; taking it from the data being consumed would
-make the proxy a map of the training stream rather than of the target capability.
-
-And the proxy is re-derived from that fixed golden set **at every round**, against current
-weights. A proxy computed once goes stale as the model moves, and its decaying alignment
-reads exactly like a degrading data pool — the same number, the opposite conclusion. The
-first version of this made that mistake; `proxy_hashes` in `ledgers/opus.json` now differ
-per round.
-
-Relatedly, selection drift is measured over **threshold accepts only**. Protected-flow
-overrides are admitted by policy regardless of score, and since their alignment can be
-negative, folding them in manufactures a degradation signal out of the floor policy.
-
-### 13. Rejections are kept
-
-`ledgers/opus_trail.jsonl` holds every decision including the rejected ones, with a reason code
-and the alignment that produced it. "The selector considered the value to be low" is a
-judgement, and judgements are auditable. It is also the only record that a given sample was
-ever considered.
-
-### 14. The advisory recommends; it does not act
-
-`ledgers/v6_shard_advisory.json` applies the 1.2 shard-perplexity reuse cutoff and emits four
-distinct actions. A high ratio is ambiguous between *informative* and *broken*, so the
-advisory separates them using loss movement across exposures — a shard that stays hard while
-being re-read is usually damaged, not rich — and a shard already at the epoch ceiling gets
-"acquire more like this", because more epochs are not available to it.
+**14. The advisory recommends; it never acts.**
+`ledgers/v6_shard_advisory.json` flags shards the model still finds hard. But "hard" is
+ambiguous between *rich* and *broken*, so the advisory distinguishes them by whether the loss
+is still moving — a shard that stays hard while being re-read is usually damaged, not
+informative — and issues one of four recommendations rather than changing anything itself.
 
 ---
 
 ## What the run found
 
-From the artifacts of the last full run (`submission_artifacts/run_summary.json`):
+Real results from the last full run, all traceable to files in `submission_artifacts/`:
 
-- **Indic fertility 7.78 tokens/word against English 2.06** (Telugu 8.20, Kannada 8.90) —
-  a ~3.8× budget penalty on the same content, reproducing the session's Telugu warning at
-  demo scale. The 1,024-token demo vocabulary makes this worse than S5's 2.0 target assumes;
-  the direction is the finding, not the magnitude.
-- **`tool_call` perplexity 68.7 against `response` 12.5** — on agentic data the model is
-  learning to narrate around the action faster than it is learning to act. A lane-level
-  average cannot show this; only the per-role attribution can.
-- **EOS perplexity 1284 → 183** over the run, as the model learns where documents end.
-- **Agentic is the first lane to approach the epoch ceiling**, exactly as S5 decision 3
-  predicted when it set the 2% floor and funded synthesis.
-- **The band-perplexity table runs backwards** (B0 1018, B5 11.4) — a curriculum confound,
-  not a difficulty finding, and labelled as such in the artifact rather than presented as
-  a result.
+- **Indian-language text costs ~3.8× more tokens than English** for the same content (7.78
+  tokens per word vs 2.06; Telugu 8.20, Kannada 8.90). Since training budgets are counted in
+  tokens, that is a direct tax on those languages. *The direction is the finding; the exact
+  magnitude is inflated by the demo's small vocabulary.*
+- **The model learns to describe tool use faster than to do it.** On tool-use data,
+  perplexity on the actual tool calls is 68.7 against 12.5 on the surrounding prose. An
+  average over that lane shows one number and hides this completely — it is visible only
+  because loss is traced per text role.
+- **End-of-document perplexity fell 1284 → 183**, so the model is genuinely learning where
+  documents stop.
+- **Scarce lanes survive only because they are protected.** The tool-use lane's 2% target
+  rounds to zero sequences per step; without the carry-forward fix it collapsed to 0.2%,
+  under its own 1% floor. With it, the run lands within 0.68 percentage points of plan on
+  every lane and both protected floors hold. Three lanes still fall short — the scheduler
+  records that eligible data ran out rather than hiding the gap.
+- **The difficulty-band results run backwards** (easiest band worst, hardest band best).
+  That is a side effect of the curriculum — easy material is only ever shown to an untrained
+  model — not a statement about difficulty. It is labelled as such in the artifact rather
+  than presented as a result.
+
+---
 
 ## Repository layout
 
 ```
 run_demo.py               the single entry point
-ledger/                   the system (see architecture above)
-tests/                    38 tests for the invariants the demo asserts
-docs/s5-inheritance.md    what S5 decided, and where each decision is enforced here
-docs/band-gating.md       the difficulty-band mechanism S5 deferred to S6
-submission_artifacts/     the generated bundle (committed)
-artifacts/                shard payloads and the tokenizer (gitignored; rebuilt in ~2s)
-EVIDENCE.md               long-form companion, generated from the bundle
+ledger/                   the implementation
+tests/                    40 tests covering the invariants
+docs/s5-inheritance.md    the inherited plan, and where each part is enforced in code
+docs/band-gating.md       how difficulty gating works, and why it happens at build time
+submission_artifacts/     the generated output bundle (committed)
+artifacts/                bulk token data (not committed; rebuilt in ~2 seconds)
+EVIDENCE.md               long-form results write-up, generated from the bundle
 ```
+
+---
 
 ## Limits
 
-The corpus is synthetic and small (1,634 documents, ~326k shard tokens). The model is 1.05M
-parameters. Neither is a claim about scale — they are sized so the ledger's behaviour is
-visible in one run on a laptop.
+The corpus is synthetic and small (1,634 documents, ~326k tokens). The model is 1.05M
+parameters — thousands of times smaller than a real one. Neither is a claim about scale;
+both are sized so the ledger's behaviour is fully visible in a single run on a laptop.
 
-What is genuinely demonstrated: the accounting is exact, the invariants are checked rather
-than asserted, and every number in `EVIDENCE.md` traces to an artifact. What is *not*
-demonstrated: that any of these numbers hold on a real corpus. The OPUS drift verdict in
-particular is computed over four rounds and reports its own confidence as low.
+**What is genuinely demonstrated:** the accounting is exact, the invariants are checked
+rather than asserted, and every number in the evidence bundle traces to a file the run wrote.
+
+**What is not:** that any of these *measurements* would hold on a real corpus. Where a result
+is weakly supported, the artifact says so — the sample-selection trend, for instance, is
+computed over four rounds and reports its own confidence as low.
