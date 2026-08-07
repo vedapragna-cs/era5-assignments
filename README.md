@@ -3,6 +3,8 @@
 ERA V5 Session 6. The accounting system that sits between raw documents and the training
 loop — recording both what goes into the model and what comes back out.
 
+**Repository:** https://github.com/vedapragna-cs/era-v5-s6-data-ledger
+
 ```bash
 python -m venv .venv && .venv/bin/pip install -r requirements.txt
 .venv/bin/python run_demo.py
