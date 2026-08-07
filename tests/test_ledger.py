@@ -399,3 +399,135 @@ def test_band_gate_admits_only_shards_in_the_stage_range(registry):
                 band = registry.manifest(sid).difficulty_bands[0]
                 assert band in stage.band_range, \
                     "{} ({}) reachable in {}".format(sid, band, stage.name)
+
+
+# ---------------------------------------------------------------------------
+# batch identity, spans and the evidence bundle
+# ---------------------------------------------------------------------------
+
+
+def test_batch_spans_address_immutable_shard_coordinates(registry, tokenizer):
+    """A span must be a permanent address: shard + document + offset range.
+
+    This is what makes replay a lookup instead of a re-derivation, so the coordinates have
+    to resolve back to exactly the tokens that were consumed.
+    """
+    from ledger.mixture import RunShape, compile_schedule
+    from ledger.stream import DataStream
+    from ledger.trainer import batch_token_spans
+
+    shape = RunShape(total_tokens=60_000)
+    sched = compile_schedule(registry, shape, Scale(factor=3.0e12 / 60_000))
+    stream = DataStream(registry, sched, tokenizer, run_id="span-test")
+    batch = stream.batch(0)
+    spans = batch_token_spans(batch)
+    assert spans
+
+    for sp in spans:
+        shard = registry.get(sp["shard_id"])
+        rec = next(d for d in shard.documents if d.doc_id == sp["doc_id"])
+        # Resolve the span independently, straight out of the shard.
+        lo = rec.start + sp["doc_start"]
+        hi = rec.start + sp["doc_end"]
+        assert hi - lo == sp["tokens"]
+        assert content_hash(shard.tokens[lo:hi].tolist())[:16] == sp["token_hash"], sp
+
+
+def test_batch_id_changes_when_content_changes(registry, tokenizer):
+    """Two different steps must not collide on batch id."""
+    from ledger.mixture import RunShape, compile_schedule
+    from ledger.stream import DataStream
+    from ledger.trainer import batch_id
+
+    shape = RunShape(total_tokens=60_000)
+    sched = compile_schedule(registry, shape, Scale(factor=3.0e12 / 60_000))
+    stream = DataStream(registry, sched, tokenizer, run_id="id-test")
+    ids = [batch_id(stream.batch(i)) for i in range(4)]
+    assert len(set(ids)) == len(ids), ids
+
+
+def test_event_log_verdicts_are_computed_not_asserted(tmp_path):
+    """`check()` must derive PASS/FAIL from the condition it is given.
+
+    The whole evidence bundle rests on this: if a caller could stamp PASS unconditionally,
+    the log would be decoration rather than evidence.
+    """
+    from ledger.events import FAIL, PASS, EventLog
+
+    log = EventLog(str(tmp_path / "run.log"), echo=False)
+    log.check("truthy", 1 == 1)
+    log.check("falsy", 1 == 2)
+    assert log.events[0].level == PASS
+    assert log.events[1].level == FAIL
+    summary = log.close()
+    assert summary["pass"] == 1 and summary["fail"] == 1
+    assert summary["all_passed"] is False
+
+
+def test_event_log_reports_missing_required_events(tmp_path):
+    from ledger.events import REQUIRED_EVENTS, EventLog
+
+    log = EventLog(str(tmp_path / "run.log"), echo=False)
+    log.check(REQUIRED_EVENTS[0], True)
+    missing = log.missing_required()
+    assert REQUIRED_EVENTS[0] not in missing
+    assert len(missing) == len(REQUIRED_EVENTS) - 1
+
+
+def test_evidence_predicates_fail_on_missing_artifacts(tmp_path):
+    """An empty bundle must fail every requirement, not pass by default.
+
+    Guards the failure mode that would matter most: an evidence generator that reports PASS
+    because it could not find the file that would have said otherwise.
+    """
+    from ledger.evidence import evaluate
+
+    result = evaluate(str(tmp_path))
+    assert result["total"] > 0
+    assert result["passed"] == 0
+    assert all(r["result"] == "FAIL" for r in result["requirements"])
+    assert all("missing" in r.get("error", "") for r in result["requirements"])
+
+
+def test_evidence_predicate_fails_on_false_value(tmp_path):
+    """A predicate reading an explicit False must produce FAIL, not an error."""
+    import json as _json
+
+    from ledger.evidence import evaluate
+
+    d = tmp_path / "ledgers"
+    d.mkdir()
+    (d / "replay.json").write_text(_json.dumps({"all_match": False}))
+    rows = {r["key"]: r for r in evaluate(str(tmp_path))["requirements"]}
+    assert rows["replay"]["result"] == "FAIL"
+    assert rows["replay"]["observed_value"] is False
+    assert "error" not in rows["replay"]
+
+
+def test_perf_totals_reconstruct_from_the_ledger():
+    """Throughput must be re-derivable from the consumption ledger, or it is not credited."""
+    from ledger.perf import PerfRecorder, verify_against_ledger
+
+    class _Seq:
+        seq_len = 256
+        real_tokens = 200
+        supervised_tokens = 120
+        doc_ids = ["d1"]
+
+    class _S:
+        seq = _Seq()
+
+    class _Cons:
+        steps = [{"tokens": 512, "supervised_tokens": 240}]
+
+    perf = PerfRecorder()
+    perf.start_step()
+    perf.end_step(step=0, stage="S1", samples=[_S(), _S()])
+    check = verify_against_ledger(perf, _Cons())
+    assert check["reconstructible"], check
+    rep = perf.report(consumption=_Cons())
+    # Loss-bearing throughput must be strictly below window throughput whenever padding or
+    # masked context exists -- the distinction the report is for.
+    assert rep["overall"]["loss_bearing_tokens_per_s"] < rep["overall"]["window_tokens_per_s"]
+    assert rep["efficiency_decomposition"]["lost_to_padding"] == 112
+    assert rep["efficiency_decomposition"]["lost_to_masked_context"] == 160

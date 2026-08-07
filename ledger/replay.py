@@ -34,7 +34,8 @@ from .checkpoint import (Binding, load_checkpoint, save_checkpoint,
 from .determinism import content_hash
 from .documents import SPLIT_TRAIN
 from .stream import DataStream
-from .trainer import Trainer, batch_content_hash
+from .trainer import (Trainer, batch_content_hash, batch_id, batch_token_spans,
+                      spans_hash)
 
 
 # ---------------------------------------------------------------------------
@@ -80,27 +81,53 @@ def replay_steps(
         batch = stream.batch(step)
 
         recomputed = batch_content_hash(batch)
+        spans = batch_token_spans(batch)
+        recomputed_spans = spans_hash(spans)
+        rid = batch_id(batch)
         shards = sorted({s.shard_id for s in batch.samples})
         docs = sorted({d for s in batch.samples for d in s.seq.doc_ids})
-        results.append({
-            "step": step,
-            "ok": recomputed == row["batch_hash"],
-            "ledger_batch_hash": row["batch_hash"][:16],
-            "replayed_batch_hash": recomputed[:16],
+
+        checks = {
+            "batch_id_matches": rid == row["batch_id"],
+            "batch_hash_matches": recomputed == row["batch_hash"],
+            "spans_hash_matches": recomputed_spans == row["spans_hash"],
             "shards_match": shards == row["shards_read"],
             "documents_match": docs == row["documents"],
             "tokens_match": batch.token_count() == row["tokens"],
             "cursors_after_match": stream.state_dict()["cursors"] == cursors.get("after"),
+        }
+        results.append({
+            "step": step,
+            "ok": all(checks.values()),
+            "ledger_batch_id": row["batch_id"],
+            "replayed_batch_id": rid,
+            "ledger_batch_hash": row["batch_hash"][:16],
+            "replayed_batch_hash": recomputed[:16],
+            "ledger_spans_hash": row["spans_hash"][:16],
+            "replayed_spans_hash": recomputed_spans[:16],
+            "spans": len(spans),
+            "span_sample": spans[:3],
+            **checks,
         })
 
     ok = [r for r in results if r.get("ok")]
     return {
         "what_this_is": (
-            "Batches regenerated from the ledger's recorded cursor state and re-hashed. "
-            "The ledger is the source of truth; the code is only asked to agree with it."),
+            "Batches regenerated from the ledger's recorded cursor state, then compared on "
+            "batch id, token spans and content hash. The ledger is the source of truth; the "
+            "code is only asked to agree with it."),
+        "compared_on": [
+            "batch_id -- step plus content fingerprint",
+            "token spans -- (shard_id, doc_id, doc_start, doc_end) placed at "
+            "(seq_start, seq_end), each with its own token hash",
+            "batch content hash -- the actual token values",
+        ],
         "steps_replayed": len(results),
         "steps_matching": len(ok),
-        "all_match": len(ok) == len(results),
+        "all_match": len(ok) == len(results) and bool(results),
+        "batch_ids_match": all(r.get("batch_id_matches") for r in results),
+        "spans_match": all(r.get("spans_hash_matches") for r in results),
+        "hashes_match": all(r.get("batch_hash_matches") for r in results),
         "results": results,
         "mismatches": [r for r in results if not r.get("ok")],
     }
@@ -229,6 +256,55 @@ def crash_resume_drill(
     trainer_b.learning.step_rows = _read_lines(curve_path)
     truncation = truncate_ledgers(trainer_b, restored["ledger_offsets"])
 
+    # --- the central claim: the NEXT batch is exactly the expected batch ---
+    #
+    # Not "a batch of the right shape", and not "the loss looks similar". The batch the
+    # resumed loader produces first must be identical to the one the uninterrupted run
+    # produced at that step, on three independent levels:
+    #
+    #   id     -- same step, same content fingerprint
+    #   spans  -- same (shard, document, offset range) placed at the same window offsets
+    #   hash   -- same actual token values
+    #
+    # Checking only the id would pass a loader that skipped a batch and relabelled it.
+    # Checking only the hash would pass one that produced the right tokens from the wrong
+    # documents. The failure mode this is really guarding -- a resumed cursor that is one
+    # batch ahead or behind -- shows up as a mismatch on all three at once, which is why
+    # all three are recorded rather than just the cheapest.
+    expected_row = ref_rows[checkpoint_at]
+    peek_stream = make_run()[2]
+    peek_stream.load_state_dict({"run_id": stream_b.run_id,
+                                 "cursors": restored_cursors(ck_entry["dir"])})
+    next_batch = peek_stream.batch(checkpoint_at)
+    next_spans = batch_token_spans(next_batch)
+    next_batch_proof = {
+        "step": checkpoint_at,
+        "expected_batch_id": expected_row["batch_id"],
+        "resumed_batch_id": batch_id(next_batch),
+        "batch_id_matches": batch_id(next_batch) == expected_row["batch_id"],
+        "expected_batch_hash": expected_row["batch_hash"],
+        "resumed_batch_hash": batch_content_hash(next_batch),
+        "batch_hash_matches": batch_content_hash(next_batch) == expected_row["batch_hash"],
+        "expected_spans_hash": expected_row["spans_hash"],
+        "resumed_spans_hash": spans_hash(next_spans),
+        "spans_hash_matches": spans_hash(next_spans) == expected_row["spans_hash"],
+        "expected_documents": expected_row["documents"],
+        "resumed_documents": sorted({d for s in next_batch.samples for d in s.seq.doc_ids}),
+        "expected_shards": expected_row["shards_read"],
+        "resumed_shards": sorted({s.shard_id for s in next_batch.samples}),
+        "expected_tokens": expected_row["tokens"],
+        "resumed_tokens": next_batch.token_count(),
+        "span_sample": next_spans[:4],
+    }
+    next_batch_proof["no_batch_skipped_or_repeated"] = all([
+        next_batch_proof["batch_id_matches"],
+        next_batch_proof["batch_hash_matches"],
+        next_batch_proof["spans_hash_matches"],
+        next_batch_proof["resumed_documents"] == next_batch_proof["expected_documents"],
+        next_batch_proof["resumed_shards"] == next_batch_proof["expected_shards"],
+        next_batch_proof["resumed_tokens"] == next_batch_proof["expected_tokens"],
+    ])
+
     for step in range(checkpoint_at, crash_at):
         before = stream_b.state_dict()["cursors"]
         batch = stream_b.batch(step)
@@ -264,6 +340,7 @@ def crash_resume_drill(
         "checkpoint": ck_entry,
         "checkpoint_verifies": verify_checkpoint(ck_entry["dir"])["ok"],
         "restored": restored,
+        "next_batch_proof": next_batch_proof,
         "ledger_rows_on_disk_at_crash": len(ledger_on_disk_at_crash),
         "ledger_truncation": truncation,
         "orphan_rows_repaired": len(ledger_on_disk_at_crash) - checkpoint_at,
@@ -280,6 +357,18 @@ def crash_resume_drill(
         "loss_curve_original_tail": ref_curve[-3:],
         "loss_curve_resumed_tail": trainer_b.learning.step_rows[-3:],
     }
+
+
+def restored_cursors(ckpt_dir: str) -> Dict[str, Any]:
+    """The loader cursors a checkpoint carries, read without touching the model.
+
+    Used by the next-batch proof so that the peek stream is seeded from the *checkpoint*
+    rather than from the already-resumed stream -- otherwise the proof would be checking
+    the resumed loader against itself.
+    """
+    import json as _json
+    with open(os.path.join(ckpt_dir, "meta.json")) as fh:
+        return _json.load(fh)["data_cursors"]["cursors"]
 
 
 def _json_line(row: Dict[str, Any]) -> str:

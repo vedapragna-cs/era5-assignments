@@ -5,7 +5,13 @@ __pycache__/
 .DS_Store
 .pytest_cache/
 
-# Generated shards, tokenizer and checkpoints: ~52MB of binary that `run_demo.py`
-# rebuilds deterministically from source in about two seconds. The manifests and hashes
-# that make them auditable live in logs/05_shards.json, which IS committed.
+# Working directory: tokenized shard payloads, the saved tokenizer, and the scratch
+# checkpoints used by the crash/resume drill. ~52MB, rebuilt deterministically from source
+# in about two seconds by `python run_demo.py`. The auditable objects -- every shard
+# manifest, every checkpoint's metadata and ledger offsets -- are in submission_artifacts/,
+# which IS committed.
 artifacts/
+
+# Checkpoint weight blobs. run_demo.py removes them after verification unless
+# --keep-weights is passed; this catches the case where it was.
+submission_artifacts/checkpoints/**/state.pt

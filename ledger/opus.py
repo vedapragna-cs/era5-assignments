@@ -59,7 +59,21 @@ R_DEFER_LOW_MARGIN = "deferred_near_threshold"
 
 PROBE_TOKENS = 64           # the demo's analogue of the session's first-512-of-32k probe
 PROXY_TOPK = 256            # parameters the golden proxy marks as "needs update"
-DEFER_MARGIN = 0.02         # candidates within this of the cut are deferred, not rejected
+
+# Deferral band, as a fraction of the round's own interquartile alignment spread.
+#
+# An *absolute* margin is meaningless here: alignment is a cosine on [-1, 1] whose spread
+# depends on the model's age and on how similar the round's candidates happen to be. A fixed
+# 0.02 catches everything early in training and nothing later, which is a knob that looks
+# principled and behaves arbitrarily. Scaling to the round's own spread gives "too close to
+# call" a stable meaning at any point in the run.
+DEFER_BAND_FRACTION = 0.35
+MIN_DEFER_MARGIN = 0.01
+
+
+def _sample_key(sample) -> str:
+    """Identity of a candidate across rounds: its shard and the documents it packed."""
+    return content_hash([sample.shard_id, sample.seq.doc_ids, sample.sequence_index])
 
 
 # ---------------------------------------------------------------------------
@@ -218,8 +232,10 @@ class SelectionRound:
     model_age_tokens: int
     accept_rate: float
     threshold: float
+    defer_margin: float
     decisions: List[Decision]
     proxy: GoldenProxy
+    reconsidered_from_previous_round: int = 0
 
     # ---- statistics ----------------------------------------------------
 
@@ -261,6 +277,8 @@ class SelectionRound:
             "realized_accept_rate": round(len(acc) / max(1, len(self.decisions)), 4),
             "target_accept_rate": self.accept_rate,
             "threshold": round(self.threshold, 6),
+            "defer_margin": round(self.defer_margin, 6),
+            "reconsidered_from_previous_round": self.reconsidered_from_previous_round,
             "accepted_alignment_mean": round(float(np.mean(aligns)), 6) if aligns else None,
             "accepted_alignment_min": round(float(np.min(aligns)), 6) if aligns else None,
             "accepted_alignment_max": round(float(np.max(aligns)), 6) if aligns else None,
@@ -292,6 +310,8 @@ class OpusSelector:
         self.api_model = api_model
         self.rounds: List[SelectionRound] = []
         self._seen_signatures: Dict[str, int] = {}
+        # Samples deferred and awaiting reconsideration in a later round.
+        self._deferred: set = set()
         self.api_calls = 0
         self.api_errors: List[str] = []
 
@@ -362,7 +382,12 @@ class OpusSelector:
         n_accept = max(1, int(round(len(ordered) * self.accept_rate))) if ordered else 0
         threshold = ordered[n_accept - 1][2] if n_accept and ordered else 0.0
 
+        aligns = np.array([t[2] for t in ordered]) if ordered else np.zeros(1)
+        spread = float(np.percentile(aligns, 75) - np.percentile(aligns, 25))
+        defer_margin = max(MIN_DEFER_MARGIN, DEFER_BAND_FRACTION * spread)
+
         decisions: List[Decision] = list(stage_rejects)
+        deferred_now: List[str] = []
         for rank, (i, s, align, gnorm, sig) in enumerate(ordered):
             protected = LANE_SPEC[s.lane].protected
             outcome, reason = REJECT, R_BELOW_THRESHOLD
@@ -372,8 +397,14 @@ class OpusSelector:
             elif protected:
                 # The whole point of a protected flow: it is admitted regardless of score.
                 outcome, reason = ACCEPT, R_PROTECTED_OVERRIDE
-            elif align >= threshold - DEFER_MARGIN:
+            elif align >= threshold - defer_margin:
+                # Too close to the cut to reject outright. Deferral is a real state, not a
+                # softer label for rejection: the sample is queued and reconsidered in the
+                # next round against a freshly derived proxy, when the model has moved and
+                # the same sample may score differently. A "deferral" that is never
+                # revisited is a rejection with better manners.
                 outcome, reason = DEFER, R_DEFER_LOW_MARGIN
+                deferred_now.append(_sample_key(s))
 
             if outcome == ACCEPT and sig in self._seen_signatures:
                 outcome, reason = REJECT, R_DUPLICATE_SIGNATURE
@@ -391,12 +422,19 @@ class OpusSelector:
         if self.use_api:
             self._annotate_with_api(decisions, candidates)
 
+        reconsidered = sum(1 for _i, s, _a, _g, _sg in ordered
+                           if _sample_key(s) in self._deferred)
         rnd = SelectionRound(
             round_index=len(self.rounds), step=step, stage=stage,
             model_age_tokens=model_age_tokens, accept_rate=self.accept_rate,
-            threshold=threshold, decisions=sorted(decisions, key=lambda d: d.sample_index),
-            proxy=proxy,
+            threshold=threshold, defer_margin=defer_margin,
+            decisions=sorted(decisions, key=lambda d: d.sample_index),
+            proxy=proxy, reconsidered_from_previous_round=reconsidered,
         )
+        # Carry the deferral queue forward. Anything decided this round leaves the queue;
+        # anything newly deferred joins it.
+        decided = {_sample_key(s) for _i, s, _a, _g, _sg in ordered}
+        self._deferred = (self._deferred - decided) | set(deferred_now)
         self.rounds.append(rnd)
         return rnd
 
@@ -515,6 +553,24 @@ class OpusSelector:
                 "source": "validation split, never trained on",
                 "proxy_rebuilt_each_round": True,
                 "proxy_hashes": [r.proxy.proxy_hash[:12] for r in self.rounds],
+            },
+            "deferral": {
+                "band_fraction_of_iqr": DEFER_BAND_FRACTION,
+                "min_margin": MIN_DEFER_MARGIN,
+                "still_queued_at_end": len(self._deferred),
+                "reconsidered_total": sum(r.reconsidered_from_previous_round
+                                          for r in self.rounds),
+                "note": ("Deferred candidates are queued and reconsidered whenever they "
+                         "reappear as candidates, against a freshly derived proxy. The "
+                         "margin scales with the round's own alignment spread, so 'too "
+                         "close to call' means the same thing early and late in the run."),
+                "honest_limitation": (
+                    "At demo scale `reconsidered_total` is typically 0: OPUS runs every N "
+                    "steps and the loader has moved on, so a deferred sample rarely "
+                    "reappears before the run ends. The queue is carried and the "
+                    "reconsideration path is live, but this run does not exercise it. A "
+                    "production selector would re-offer the queue explicitly rather than "
+                    "waiting for the sample to recur."),
             },
             "unique_gradient_signatures": len(self._seen_signatures),
             "api_enabled": self.use_api,

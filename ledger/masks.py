@@ -28,7 +28,7 @@ of taste.
 
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import Any, Dict, List, Optional, Sequence, Tuple
 
 import numpy as np
@@ -89,6 +89,14 @@ class MaterializedSequence:
     doc_ids: List[str]
     lane: str
     seq_len: int
+    # Where each document landed, in shard coordinates. Carried through from the pack plan
+    # because replay addresses tokens by (shard, doc, offset range) and would otherwise
+    # have to re-derive the placement -- which is precisely the re-derivation replay exists
+    # to avoid.
+    placements: List[Dict[str, Any]] = field(default_factory=list)
+
+    def placements_view(self) -> List[Dict[str, Any]]:
+        return self.placements
 
     @property
     def real_tokens(self) -> int:
@@ -201,6 +209,9 @@ def materialize(
         loss_mask[real[-1]] = 0
 
     return MaterializedSequence(
+        placements=[{"doc_id": pl.doc_id, "doc_start": pl.doc_start,
+                     "doc_end": pl.doc_end, "seq_start": pl.seq_start,
+                     "seq_end": pl.seq_end} for pl in seq.placements],
         input_ids=input_ids,
         loss_mask=loss_mask,
         segment_ids=segment_ids,

@@ -127,6 +127,54 @@ def batch_content_hash(batch: Batch) -> str:
     return content_hash(parts)
 
 
+def batch_id(batch: Batch) -> str:
+    """The stable identity of a batch: its step and the content it carried.
+
+    Distinct from `batch_content_hash` only in that it is short and readable. Resume proves
+    equality on this, on the spans, and on the full content hash -- three levels, because
+    matching ids with different tokens is exactly the failure that would otherwise pass.
+    """
+    return "b{:06d}-{}".format(batch.step, batch_content_hash(batch)[:12])
+
+
+def batch_token_spans(batch: Batch) -> List[Dict[str, Any]]:
+    """Every token span in the batch, addressed in shard coordinates.
+
+    A span is `(shard_id, doc_id, doc_start, doc_end)` -- an offset range inside an immutable
+    shard -- placed at `(seq_start, seq_end)` inside a specific sequence of a specific
+    micro-batch. Because shards are immutable and content-addressed, this tuple is a
+    permanent address: it resolves to the same tokens on any machine, forever, which is what
+    makes replay a lookup rather than a re-derivation.
+
+    `token_hash` covers the actual token values in the span, so a replay that reproduces the
+    coordinates but not the content is caught rather than credited.
+    """
+    spans: List[Dict[str, Any]] = []
+    for mb in batch.micro_batches:
+        for si, s in enumerate(mb.samples):
+            for pl in s.seq.placements_view():
+                lo, hi = pl["seq_start"], pl["seq_end"]
+                spans.append({
+                    "rank": mb.rank, "accum": mb.accum_index, "sample": si,
+                    "shard_id": s.shard_id, "doc_id": pl["doc_id"],
+                    "doc_start": pl["doc_start"], "doc_end": pl["doc_end"],
+                    "seq_start": lo, "seq_end": hi,
+                    "tokens": hi - lo,
+                    "loss_bearing_tokens": int(s.seq.loss_mask[lo:hi].sum()),
+                    "token_hash": content_hash(
+                        s.seq.input_ids[lo:hi].tolist())[:16],
+                })
+    return spans
+
+
+def spans_hash(spans: Sequence[Dict[str, Any]]) -> str:
+    return content_hash([
+        [s["rank"], s["accum"], s["sample"], s["shard_id"], s["doc_id"],
+         s["doc_start"], s["doc_end"], s["seq_start"], s["seq_end"], s["token_hash"]]
+        for s in spans
+    ])
+
+
 # ---------------------------------------------------------------------------
 # the learning ledger
 # ---------------------------------------------------------------------------
@@ -418,7 +466,12 @@ class ConsumptionLedger:
             # The fingerprint replay checks itself against: the actual token content of the
             # batch, not a description of it. A replay that reproduces the shard list but
             # not the tokens has reproduced the bookkeeping and not the training.
+            "batch_id": batch_id(batch),
             "batch_hash": batch_content_hash(batch),
+            # Spans are the permanent address of what was consumed: an offset range inside
+            # an immutable shard. The hash lets replay assert equality without the ledger
+            # having to carry every span for every step.
+            "spans_hash": spans_hash(batch_token_spans(batch)),
             "mean_loss": round(loss, 6),
             "perplexity": round(math.exp(min(loss, 20.0)), 4),
             "lr": round(lr, 8),

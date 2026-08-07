@@ -1,0 +1,95 @@
+==============================================================================
+ERA V5 Session 6 -- the data ledger
+run.log: every event, its verdict, and the artifact that proves it
+==============================================================================
+
+
+--- environment -------------------------------------------------
+[    0.01s] [INFO] environment_captured               seed=20260801 source_hash=9e464ce6ab7a torch_deterministic=True
+
+--- plan (inherited from S5) ------------------------------------
+[    0.01s] [PASS] s5_plan_verified                   stages=5 lanes=7 problems=0 -> ledgers/plan.json
+
+--- corpus ------------------------------------------------------
+[    0.12s] [INFO] corpus_built                       documents=1634 fingerprint=65d040c15212 -> ledgers/corpus.json
+
+--- tokenizer ---------------------------------------------------
+
+--- evaluation firewall (build side) ----------------------------
+[    0.98s] [PASS] contamination_quarantine_applied   quarantined=1 admitted=1630 -> ledgers/firewall.json
+[    0.98s] [PASS] unsafe_documents_refused           refused=2 reasons=[PII not scrubbed,license tier 'C' is not trainable] -> ledgers/firewall.json
+
+--- shards and manifests ----------------------------------------
+[    2.07s] [PASS] shards_created                     shards=122 tokens=326260 -> manifests/shard_index.json
+[    2.07s] [PASS] manifests_validated                complete=122 incomplete=0 -> manifests/shard_index.json
+[    2.07s] [PASS] shard_immutability_verified        method=every shard built twice, ids and hashes compared -> manifests/shard_index.json
+[    2.07s] [PASS] shard_reload_verified              shards=122 -> manifests/shard_index.json
+[    2.07s] [PASS] tokenizer_hash_verified            tokenizer_hash=30086a83edff shards=122 -> manifests/tokenizer.json
+[    2.07s] [PASS] eval_shard_blocked                 blocked=48 reason=split_not_trainable -> manifests/shard_index.json
+
+--- packing -----------------------------------------------------
+[    2.11s] [INFO] packing_policies_compared          lanes=7 overall_utilization=0.7443 -> ledgers/packing.json
+
+--- mixture schedule --------------------------------------------
+[    2.13s] [PASS] mixture_compiled                   steps=102 seam_steps=13 schedule_hash=d8e16e36e6a6 -> ledgers/mixture_compliance.json
+
+--- masks -------------------------------------------------------
+[    2.13s] [PASS] batches_packed                     sequences=16 seq_len=256 -> ledgers/masks.json
+[    2.13s] [PASS] masks_verified                     samples=12 -> ledgers/masks.json
+
+--- training ----------------------------------------------------
+[    2.91s] [PASS] embeddings_trainable               rule=S5 seam rule 1 -> ledgers/consumption_ledger.json
+[    2.91s] [PASS] initial_loss_equals_ln_vocab       observed=6.9430 expected=6.9315 ratio=1.0017 -> ledgers/consumption_ledger.json
+[    2.91s] [PASS] opus_golden_set_held_out           sequences=7 source=validation split -> ledgers/opus.json
+[   13.93s] [PASS] checkpoint_saved                   step=34 bytes=12693661 -> checkpoints/checkpoint_index.json
+[   25.88s] [PASS] checkpoint_saved                   step=68 bytes=12694072 -> checkpoints/checkpoint_index.json
+[   57.28s] [PASS] checkpoint_saved                   step=102 bytes=12694899 -> checkpoints/checkpoint_index.json
+[   57.30s] [PASS] consumption_ledger_written         steps=102 tokens=503808 ledger_hash=3a9a12cc1e0a -> ledgers/consumption_ledger.json
+[   57.34s] [PASS] learning_ledger_linked_to_source   samples=1632 documents=1183 unresolved=0 -> ledgers/learning_ledger.json
+[   57.34s] [PASS] token_level_loss_tracked           eos_perplexity=182.5949 roles=6 -> ledgers/learning_ledger.json
+
+--- mixture compliance ------------------------------------------
+[   57.35s] [PASS] mixture_compliance_verified        max_deviation=0.0068 noncompliant=0 floors_broken=0 -> ledgers/mixture_compliance.json
+[   57.35s] [PASS] protected_floors_held              protected=[agentic,indic] -> ledgers/mixture_compliance.json
+[   57.35s] [PASS] epoch_ceiling_respected            ceiling=4.0000 max_epochs=2.0764 -> ledgers/mixture_compliance.json
+
+--- opus selector -----------------------------------------------
+[   57.35s] [PASS] opus_decisions_recorded            decisions=64 outcomes={accept:21,defer:1,reject:42} protected_overrides=15 -> ledgers/opus.json
+[   57.35s] [PASS] opus_protected_floor_override      overrides=15 note=protected lanes admitted regardless of gradient score -> ledgers/opus.json
+
+--- crash and resume --------------------------------------------
+[   57.35s] [INFO] crash_simulated                    checkpoint_at=34 crash_at=38 method=process state discarded, ledger file retained -> ledgers/crash_resume.json
+[   71.81s] [PASS] run_resumed                        checkpoint_at=34 crash_at=38 -> ledgers/crash_resume.json
+[   71.81s] [PASS] resume_next_batch_matched          expected=b000034-a6307c2219db resumed=b000034-a6307c2219db spans_match=True -> ledgers/crash_resume.json
+[   71.81s] [PASS] resume_ledger_repaired             orphan_rows_repaired=4 totals_match=True -> ledgers/crash_resume.json
+
+--- replay ------------------------------------------------------
+[   71.86s] [PASS] historical_stream_replayed         steps=5 matching=5 -> ledgers/replay.json
+[   71.86s] [PASS] replay_hash_matched                batch_ids=True spans=True hashes=True -> ledgers/replay.json
+
+--- fork --------------------------------------------------------
+[   75.29s] [PASS] branch_forked                      fork_at=34 branches=[as_planned,indic_boost] indic_token_delta=2816 -> ledgers/fork.json
+
+--- audit -------------------------------------------------------
+[   75.29s] [PASS] eval_firewall_consumption_side     non_train_docs_consumed=0 shards_blocked=48 -> ledgers/audit.json
+[   75.29s] [PASS] audit_completed                    steps=102 documents=1183 -> ledgers/audit.json
+
+--- checkpoints -------------------------------------------------
+[   75.37s] [PASS] checkpoints_verified               checkpoints=3 -> checkpoints/checkpoint_index.json
+[   75.37s] [PASS] checkpoint_corruption_detected     flavours=3 -> checkpoints/checkpoint_index.json
+[   75.37s] [PASS] checkpoints_tied_to_ledger_offsets offsets=[34,68,102] -> checkpoints/checkpoint_index.json
+
+--- performance -------------------------------------------------
+[   75.38s] [PASS] performance_measured               loss_bearing_tok_s=6925.3000 packing_utilization=0.7482 reconstructible=True -> performance.json
+
+--- v6 advisory -------------------------------------------------
+[   75.38s] [INFO] v6_advisory_generated              shards=60 actions={acquire_more_like_this:1,keep_placement:8,promote_earlier_or_extra_epoch:24,reduce_exposure:27} -> ledgers/v6_shard_advisory.json
+
+--- evidence bundle ---------------------------------------------
+[   75.42s] [PASS] all_required_events_emitted        missing=none -> run.log
+
+==============================================================================
+SUMMARY  44 events  39 PASS  0 FAIL  5 INFO
+required events present: 13/13
+RESULT: ALL CHECKS PASSED
+==============================================================================

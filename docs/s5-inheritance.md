@@ -32,11 +32,11 @@ With that fixed, all seven lanes reproduce S5's published epoch figures exactly.
 | 5 | tail languages **gated at 1.30B** | supply-side; no runtime consequence at demo scale | recorded only |
 | 6 | prioritise the NCERT/SCERT negotiation | acquisition decision; no runtime consequence | recorded only |
 | 7 | execution environments **not scoped** | agentic traces are static; tool results are masked context, never supervised | `documents.py` `MASKED_ROLES` |
-| 8 | romanized Indic **1%** (Dakshina) | `hi/Latn` present in the corpus and visible in the fertility table | `corpus.py`, `03_tokenizer.json` |
+| 8 | romanized Indic **1%** (Dakshina) | `hi/Latn` present in the corpus and visible in the fertility table | `corpus.py`, `manifests/tokenizer.json` |
 | 9 | CommitPackFT **8× upsample** | repetition is bounded by the shared 4-epoch ceiling, not by a per-source multiplier | `mixture.py` epoch clamp |
 | 10 | IndicGenBench **14/29** | evaluation-side; follows #5 | recorded only |
-| 11 | Indic **17%** | target share; realized 17.68% integrated over the demo run | `08_curriculum.json` |
-| 12 | STEM supply **146B** | target share 12%; realized 11.99% | `08_curriculum.json` |
+| 11 | Indic **17%** | target share; realized 17.68% integrated over the demo run | `ledgers/mixture_compliance.json` |
+| 12 | STEM supply **146B** | target share 12%; realized 11.99% | `ledgers/mixture_compliance.json` |
 
 Five of the twelve are acquisition or evaluation decisions with no runtime surface. Saying
 so explicitly is better than implying the system enforces more than it does.
@@ -51,7 +51,7 @@ S5's seam rules carry into the trainer:
   token whose distribution changed at the seam is stuck with its pre-seam representation.
   The damage only appears in evaluation on the new mixture.
 - **Seam blending.** Lane weights interpolate across a band centred on the stage boundary
-  rather than switching discretely. `_blended_weights` computes the blend; `logs/08_curriculum.json`
+  rather than switching discretely. `_blended_weights` computes the blend; `ledgers/mixture_compliance.json`
   records `in_seam` per step.
 
 At demo scale the seams needed a floor to be visible at all: S5's 2B seam band is 333 demo
@@ -90,7 +90,7 @@ seen.
 
 ## What S6 sends back to S5's successor
 
-`logs/v6_shard_advisory.json`. S5 planned the mixture from supply and demand estimates. S6
+`ledgers/v6_shard_advisory.json`. S5 planned the mixture from supply and demand estimates. S6
 measures what the model actually learned per shard and turns that into placement
 recommendations for the next run — promote, acquire more, investigate, or reduce. That is
 the loop closing: S5 decided the plan from what was available, S6 reports what it was worth.

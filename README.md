@@ -6,19 +6,53 @@ loop — recording both what goes into the model and what comes back out.
 ```bash
 python -m venv .venv && .venv/bin/pip install -r requirements.txt
 .venv/bin/python run_demo.py
-.venv/bin/python -m pytest tests/ -q      # 31 tests, ~3s
+.venv/bin/python -m pytest tests/ -q      # 38 tests, ~4s
 ```
 
-One command. ~65 seconds. No API key, no network, no downloaded dataset. It builds the
-shards, trains a real transformer on them, crashes, resumes, replays, forks, audits, and
-writes every artifact to `logs/`. [`EVIDENCE.md`](EVIDENCE.md) is regenerated from those
-artifacts at the end of the run.
+One command. ~64 seconds. No API key, no network, no downloaded dataset. It runs the full
+path — documents → tokenized shards → manifests → mixture schedule → packing → batches →
+training → consumption ledger → learning ledger → checkpoint → crash → resume → replay →
+audit — and writes the complete submission bundle.
+
+**Last run: 14/14 requirements passed, 39 log checks PASS, 0 FAIL.**
 
 ```
-python run_demo.py --fast        # ~22s, smaller token budget
-python run_demo.py --no-train    # data path only
-python run_demo.py --with-api    # additionally annotate OPUS accepts with Claude
+python run_demo.py --fast           # ~24s, smaller token budget
+python run_demo.py --with-api       # additionally annotate OPUS accepts with Claude
+python run_demo.py --keep-weights   # keep checkpoint .pt blobs
 ```
+
+## The submission bundle
+
+```
+submission_artifacts/
+  run.log                   every event, its verdict, and the artifact that proves it
+  evidence.json             machine-readable: each requirement, its predicate, its result
+  evidence.md               the REQUIREMENT / RESULT / EVIDENCE table
+  performance.json          throughput, packing utilisation, loss-bearing tokens/s
+  run_summary.json          hashes, phase timings, model config
+  execution_log.json        the run.log events, structured
+  manifests/
+    tokenizer.json          the frozen tokenizer, verified against every shard
+    shard_index.json        registry hash, immutability proof, reload verification
+    shards/*.json           one manifest per shard (122 of them)
+  ledgers/
+    consumption_ledger.json what went out, per step, with cursors either side
+    learning_ledger.json    what came back, attributed to shard/doc/lane/band/role
+    mixture_compliance.json planned versus actual shares, floors, epoch ceiling
+    opus.json               every candidate decision, with reason codes
+    opus_trail.jsonl        the same, one decision per line, rejections included
+    crash_resume.json       the next-batch-exact proof
+    replay.json             batch ids, token spans and hashes, original versus replay
+    fork.json, audit.json, masks.json, packing.json, firewall.json, plan.json, corpus.json
+    v6_shard_advisory.json  what to place differently next run
+  checkpoints/
+    checkpoint_index.json   ledger offsets, cursors, binding hashes, corruption drill
+    step-NNNNNN/            meta.json + rng.json per checkpoint
+```
+
+`EVIDENCE.md` at the repo root is a long-form companion to `evidence.md`, generated from the
+same artifacts so the two cannot disagree.
 
 ---
 
@@ -35,7 +69,7 @@ The second and third are the ones that don't exist in most training stacks. Trai
 normally keeps the scalar mean loss and throws away the per-token tensor it was computed
 from. Keeping that tensor, and attributing it back through the packing plan to the document,
 shard, lane and role that produced each token, is the artifact the session calls the one
-nobody publishes. It is `logs/10_learning_ledger.json`.
+nobody publishes. It is `submission_artifacts/ledgers/learning_ledger.json`.
 
 ## Architecture
 
@@ -79,7 +113,11 @@ opus.py          golden-proxy gradient selector: accept ~25%, protected-flow ove
 checkpoint.py    atomic save of weights + optimizer + cursors + RNG + ledger offsets
 replay.py        crash / resume / replay-from-ledger / fork / audit
 advisory.py      the v6 shard re-placement recommendation
-report.py        EVIDENCE.md, generated from logs/
+perf.py          throughput, packing utilisation, loss-bearing tokens/s
+events.py        run.log -- structured events whose verdicts are computed, not passed in
+evidence.py      evidence.json / evidence.md -- one predicate per requirement, run
+                 against the artifacts on disk
+report.py        EVIDENCE.md, the long-form companion
 ```
 
 `determinism.py` sits under all of it: canonical JSON, content hashing, and counter-based
@@ -128,7 +166,7 @@ Six policies. Which one a lane uses follows from what its documents are:
 | reasoning, agentic | structure_preserving | a chain of thought cut in half teaches half a chain |
 | long_context | long_context | one document per sequence, which is the point of the lane |
 
-`logs/06_packing.json` runs *every* policy against the largest shard of every lane, at that
+`ledgers/packing.json` runs *every* policy against the largest shard of every lane, at that
 lane's own window. `concat_chop` wins on efficiency almost everywhere — it always will,
 because it truncates. On the agentic shard it reaches 87% efficiency by cutting nine
 documents mid-structure. That is what the chosen policy is refusing to buy.
@@ -200,7 +238,7 @@ tokens it has never seen — in the one artifact whose entire purpose is to be b
 
 `truncate_ledgers` cuts the rows back to the checkpoint's recorded offsets and recomputes
 the totals from the survivors rather than trusting the running counters. The drill in
-`logs/13_crash_resume.json` shows 4 orphan rows repaired, weights bitwise identical, and the
+`ledgers/crash_resume.json` shows 4 orphan rows repaired, weights bitwise identical, and the
 final ledger matching the uninterrupted run row for row.
 
 ### 11. Checkpoints are bound to their data
@@ -222,7 +260,7 @@ make the proxy a map of the training stream rather than of the target capability
 And the proxy is re-derived from that fixed golden set **at every round**, against current
 weights. A proxy computed once goes stale as the model moves, and its decaying alignment
 reads exactly like a degrading data pool — the same number, the opposite conclusion. The
-first version of this made that mistake; `proxy_hashes` in `logs/11_opus.json` now differ
+first version of this made that mistake; `proxy_hashes` in `ledgers/opus.json` now differ
 per round.
 
 Relatedly, selection drift is measured over **threshold accepts only**. Protected-flow
@@ -231,14 +269,14 @@ negative, folding them in manufactures a degradation signal out of the floor pol
 
 ### 13. Rejections are kept
 
-`logs/opus_trail.jsonl` holds every decision including the rejected ones, with a reason code
+`ledgers/opus_trail.jsonl` holds every decision including the rejected ones, with a reason code
 and the alignment that produced it. "The selector considered the value to be low" is a
 judgement, and judgements are auditable. It is also the only record that a given sample was
 ever considered.
 
 ### 14. The advisory recommends; it does not act
 
-`logs/v6_shard_advisory.json` applies the 1.2 shard-perplexity reuse cutoff and emits four
+`ledgers/v6_shard_advisory.json` applies the 1.2 shard-perplexity reuse cutoff and emits four
 distinct actions. A high ratio is ambiguous between *informative* and *broken*, so the
 advisory separates them using loss movement across exposures — a shard that stays hard while
 being re-read is usually damaged, not rich — and a shard already at the epoch ceiling gets
@@ -248,7 +286,7 @@ being re-read is usually damaged, not rich — and a shard already at the epoch 
 
 ## What the run found
 
-From the artifacts of the last full run (`logs/summary.json`):
+From the artifacts of the last full run (`submission_artifacts/run_summary.json`):
 
 - **Indic fertility 7.78 tokens/word against English 2.06** (Telugu 8.20, Kannada 8.90) —
   a ~3.8× budget penalty on the same content, reproducing the session's Telugu warning at
@@ -269,12 +307,12 @@ From the artifacts of the last full run (`logs/summary.json`):
 ```
 run_demo.py               the single entry point
 ledger/                   the system (see architecture above)
-tests/                    unit tests for the invariants the demo asserts
+tests/                    38 tests for the invariants the demo asserts
 docs/s5-inheritance.md    what S5 decided, and where each decision is enforced here
 docs/band-gating.md       the difficulty-band mechanism S5 deferred to S6
-logs/                     artifacts, regenerated by every run
-artifacts/                shards, tokenizer, checkpoints
-EVIDENCE.md               generated from logs/
+submission_artifacts/     the generated bundle (committed)
+artifacts/                shard payloads and the tokenizer (gitignored; rebuilt in ~2s)
+EVIDENCE.md               long-form companion, generated from the bundle
 ```
 
 ## Limits

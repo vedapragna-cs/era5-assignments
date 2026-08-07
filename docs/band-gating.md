@@ -52,7 +52,7 @@ Three properties follow, and each of them is the reason for the choice:
 1. **Zero rejection cost.** A stage never looks at a shard outside its bands. The gate is
    a lookup, not a filter, so the late stages get cheaper rather than more expensive.
 2. **The gate is auditable from the artifacts alone.** `difficulty_bands` is a manifest
-   field. Given only `logs/05_shards.json` and `logs/08_curriculum.json`, a reader can
+   field. Given only `manifests/shard_index.json` and `ledgers/mixture_compliance.json`, a reader can
    verify that no B4 shard was reachable in S1 without running any code.
 3. **Replay is unaffected by re-classification.** If the band assignment is later revised,
    the revision produces *different shards with different content hashes*. The old shards
@@ -92,7 +92,7 @@ the gate would admit the shard for both.
 
 ## Verification
 
-`logs/08_curriculum.json` records `band_gate` per step, and `logs/09_consumption_ledger.json`
+`ledgers/mixture_compliance.json` records `band_gate` per step, and `ledgers/consumption_ledger.json`
 records the band gate alongside the shards actually read. The OPUS selector independently
 rejects any candidate whose band falls outside the current stage with reason code
 `stage_mismatch`, *before* scoring it — a curriculum breach is not redeemable by a good
