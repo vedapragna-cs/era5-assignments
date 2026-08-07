@@ -15,3 +15,6 @@ artifacts/
 # Checkpoint weight blobs. run_demo.py removes them after verification unless
 # --keep-weights is passed; this catches the case where it was.
 submission_artifacts/checkpoints/**/state.pt
+
+# Lesson transcript: kept locally, not published.
+*Transcript.txt
