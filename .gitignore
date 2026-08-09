@@ -1,20 +1,8 @@
-.venv/
 __pycache__/
 *.pyc
-*.egg-info/
-.DS_Store
 .pytest_cache/
+.venv/
+.DS_Store
 
-# Working directory: tokenized shard payloads, the saved tokenizer, and the scratch
-# checkpoints used by the crash/resume drill. ~52MB, rebuilt deterministically from source
-# in about two seconds by `python run_demo.py`. The auditable objects -- every shard
-# manifest, every checkpoint's metadata and ledger offsets -- are in submission_artifacts/,
-# which IS committed.
-artifacts/
-
-# Checkpoint weight blobs. run_demo.py removes them after verification unless
-# --keep-weights is passed; this catches the case where it was.
-submission_artifacts/checkpoints/**/state.pt
-
-# Lesson transcript: kept locally, not published.
+# Not published: course material, not mine to redistribute.
 *Transcript.txt

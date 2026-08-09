@@ -1,0 +1,193 @@
+{
+  "capability_lane": "reasoning",
+  "cleaning_pipeline_hash": "375f1762c583425243238238e41b7e340bc7b3d191df66d1c4781d1430633af3",
+  "content_hash": "b630cae56b9b877ab72307225d92ae4004f2bcbf88ea1b9b18362609ce6bc936",
+  "dedup_clusters": [],
+  "dedup_status": "unique",
+  "difficulty_bands": [
+    "B1",
+    "B2",
+    "B3",
+    "B4",
+    "B5"
+  ],
+  "document_ids": [
+    "reason-0001",
+    "reason-0002",
+    "reason-0003",
+    "reason-0010",
+    "reason-0011"
+  ],
+  "eligible_stages": [
+    "S1_seed",
+    "S2_general",
+    "S3_reasoning",
+    "S4_longctx",
+    "anneal"
+  ],
+  "eval_overlap_status": "clear",
+  "fertility_by_language": {
+    "en": 3.1233
+  },
+  "language_validated": true,
+  "languages": [
+    "en"
+  ],
+  "license_tier": "safe",
+  "parent_shard_ids": [],
+  "pii_kinds_found": [],
+  "pii_screen_status": "screened",
+  "provenance_tier": "audited",
+  "repeat_ngram_status": "screened",
+  "scripts": [
+    "Latn"
+  ],
+  "shard_id": "v5_reasoning_train_004",
+  "source_ids": [
+    "aon_v4",
+    "gsm8k_like"
+  ],
+  "split": "train",
+  "stage_eligibility": {
+    "S1_seed": {
+      "band_permitted": true,
+      "documents_fitting_window": 0,
+      "documents_total": 5,
+      "eligible": true,
+      "longest_document_tokens": 238,
+      "stage_window_tokens": 16
+    },
+    "S2_general": {
+      "band_permitted": true,
+      "documents_fitting_window": 0,
+      "documents_total": 5,
+      "eligible": true,
+      "longest_document_tokens": 238,
+      "stage_window_tokens": 16
+    },
+    "S3_reasoning": {
+      "band_permitted": true,
+      "documents_fitting_window": 0,
+      "documents_total": 5,
+      "eligible": true,
+      "longest_document_tokens": 238,
+      "stage_window_tokens": 32
+    },
+    "S4_longctx": {
+      "band_permitted": true,
+      "documents_fitting_window": 3,
+      "documents_total": 5,
+      "eligible": true,
+      "longest_document_tokens": 238,
+      "stage_window_tokens": 128
+    },
+    "anneal": {
+      "band_permitted": true,
+      "documents_fitting_window": 3,
+      "documents_total": 5,
+      "eligible": true,
+      "longest_document_tokens": 238,
+      "stage_window_tokens": 128
+    }
+  },
+  "token_count": 690,
+  "token_spans": [
+    {
+      "doc_id": "reason-0001",
+      "end": 85,
+      "lane": "reasoning",
+      "roles": [
+        {
+          "end": 84,
+          "role": "text",
+          "start": 0
+        },
+        {
+          "end": 85,
+          "role": "boundary",
+          "start": 84
+        }
+      ],
+      "span_id": "reason-0001:0-85",
+      "start": 0
+    },
+    {
+      "doc_id": "reason-0002",
+      "end": 280,
+      "lane": "reasoning",
+      "roles": [
+        {
+          "end": 279,
+          "role": "text",
+          "start": 85
+        },
+        {
+          "end": 280,
+          "role": "boundary",
+          "start": 279
+        }
+      ],
+      "span_id": "reason-0002:85-280",
+      "start": 85
+    },
+    {
+      "doc_id": "reason-0003",
+      "end": 518,
+      "lane": "reasoning",
+      "roles": [
+        {
+          "end": 517,
+          "role": "text",
+          "start": 280
+        },
+        {
+          "end": 518,
+          "role": "boundary",
+          "start": 517
+        }
+      ],
+      "span_id": "reason-0003:280-518",
+      "start": 280
+    },
+    {
+      "doc_id": "reason-0010",
+      "end": 569,
+      "lane": "reasoning",
+      "roles": [
+        {
+          "end": 568,
+          "role": "text",
+          "start": 518
+        },
+        {
+          "end": 569,
+          "role": "boundary",
+          "start": 568
+        }
+      ],
+      "span_id": "reason-0010:518-569",
+      "start": 518
+    },
+    {
+      "doc_id": "reason-0011",
+      "end": 690,
+      "lane": "reasoning",
+      "roles": [
+        {
+          "end": 689,
+          "role": "text",
+          "start": 569
+        },
+        {
+          "end": 690,
+          "role": "boundary",
+          "start": 689
+        }
+      ],
+      "span_id": "reason-0011:569-690",
+      "start": 569
+    }
+  ],
+  "tokenizer_hash": "75b8661f606877ee2eb1398876fdc6f757ec30d6e989b481aa8f5ed0f53c6ec1",
+  "tokenizer_version": "v5-tok-1"
+}

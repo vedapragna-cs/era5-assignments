@@ -1,0 +1,252 @@
+{
+  "all_invariants_are_falsifiable": true,
+  "controls": [
+    {
+      "caught_by_verifier": true,
+      "control": "tokenizer_hash_detects_merge_change",
+      "detail": "original 75b8661f6068 vs mutated 69740b7ac8aa",
+      "invariant": "tokenizer is frozen and hashed",
+      "mutation": "drop the last merge rule and re-hash",
+      "result": "PASS"
+    },
+    {
+      "caught_by_verifier": true,
+      "control": "exactly_once_coverage_detects_duplicate_and_missing_batches",
+      "detail": "clean dup=0/missing=0; duplicated batch dup=1; dropped batch missing=1",
+      "invariant": "the delivered step sequence has no repeats and no gaps",
+      "mutation": "deliver one batch twice, and separately drop one batch, then recompute coverage",
+      "result": "PASS"
+    },
+    {
+      "caught_by_verifier": true,
+      "control": "replay_fails_when_the_stream_is_perturbed",
+      "detail": "clean all_match=True; rotated pool order all_match=False; restored all_match=True",
+      "invariant": "replay re-derives the stream rather than re-reading the record it checks",
+      "mutation": "rotate every lane's pool order by one and replay the same interval",
+      "result": "PASS"
+    },
+    {
+      "caught_by_verifier": true,
+      "control": "attention_crossings_detects_removed_segment_isolation",
+      "detail": "crossings with isolation=0, with isolation removed=9, after restore=0",
+      "invariant": "cross-document attention is counted against the mask the MODEL applies",
+      "mutation": "replace TinyLM.attention_mask with a causal-only mask and recount",
+      "result": "PASS"
+    },
+    {
+      "caught_by_verifier": true,
+      "control": "checkpoint_integrity_detects_every_corruption_flavour",
+      "detail": "clean checkpoint verifies=True; caught weight_bit_flip=True, torn_write_truncated_weights=True, loader_cursor_moved=True, ledger_offset_moved=True, step_counter_moved=True, tokenizer_identity_swapped=True",
+      "invariant": "a checkpoint that fails integrity never reaches the model",
+      "mutation": "induce 6 corruption flavours: weight_bit_flip, torn_write_truncated_weights, loader_cursor_moved, ledger_offset_moved, step_counter_moved, tokenizer_identity_swapped",
+      "result": "PASS"
+    },
+    {
+      "caught_by_verifier": true,
+      "control": "restore_refuses_a_corrupt_checkpoint",
+      "detail": "restore() raised AssertionError",
+      "invariant": "integrity failure blocks the restore rather than being logged",
+      "mutation": "move the loader cursor by one sample and call restore()",
+      "result": "PASS"
+    },
+    {
+      "caught_by_verifier": true,
+      "control": "spike_detector_fires_only_on_a_real_jump",
+      "detail": "flat series -> 0 detections; injected series -> [(14, 3842.0)]",
+      "invariant": "loss spikes are detected relative to the run's own trailing baseline",
+      "mutation": "inject one 9.0 loss into an otherwise flat 6.0 series, and separately check the flat series",
+      "result": "PASS"
+    },
+    {
+      "caught_by_verifier": true,
+      "control": "spike_never_becomes_a_shard_verdict",
+      "detail": "in-window shard -> unattributed (was harmful); out-of-window shard -> harmful; withheld=['sh-spiking']",
+      "invariant": "a shard consumed during a spike has its verdict withheld, not guessed",
+      "mutation": "classify two shards `harmful`, one inside a spike window and one outside, then apply spike attribution",
+      "result": "PASS"
+    },
+    {
+      "caught_by_verifier": true,
+      "control": "ablation_can_restore_a_withheld_verdict",
+      "detail": "verdict=harmful, upheld=['sh-implicated']",
+      "invariant": "withholding is resolvable by PaLM's ablation, not permanent",
+      "mutation": "re-run attribution with the ablation verdict `data_implicated`",
+      "result": "PASS"
+    },
+    {
+      "caught_by_verifier": true,
+      "control": "ngram_containment_catches_what_jaccard_cannot",
+      "detail": "jaccard=0.0806 < overlap_threshold; gates that block it in isolation: ['ngram_containment']",
+      "invariant": "a benchmark passage quoted inside a long host is caught by 13-gram containment",
+      "mutation": "plant a long ordinary article containing one verbatim benchmark item, with no canary, not marked derived, and global Jaccard below the overlap threshold",
+      "result": "PASS"
+    },
+    {
+      "caught_by_verifier": true,
+      "control": "repeat_ngram_screen_catches_planted_degenerate_document",
+      "detail": "flagged ['web-0008'] (run=60 >= 32)",
+      "invariant": "documents with long repeated n-gram runs are excluded at curation",
+      "mutation": "plant a unique document containing a 60x repeated token run",
+      "result": "PASS"
+    },
+    {
+      "caught_by_verifier": true,
+      "control": "repeat_ngram_screen_is_not_subsumed_by_dedup",
+      "detail": "dedup_status=unique while repeat screen flagged it",
+      "invariant": "the repeated-n-gram screen catches what similarity-based dedup cannot",
+      "mutation": "check the dedup verdict on the same planted document",
+      "result": "PASS"
+    },
+    {
+      "caught_by_verifier": true,
+      "control": "trainer_side_repeat_mask_fires_when_curation_is_bypassed",
+      "detail": "masked 40 of 43 positions, 3 left loss-bearing; a non-degenerate sequence of the same length masks 0",
+      "invariant": "the trainer masks repeated-n-gram spans even if they reach the loader",
+      "mutation": "feed a 40x repeated token run straight to the packer's mask step",
+      "result": "PASS"
+    },
+    {
+      "caught_by_verifier": true,
+      "control": "tokenizer_retrains_identically",
+      "detail": "f802a48db3c1 vs f802a48db3c1 (this control PASSES when they MATCH)",
+      "invariant": "same inputs produce the same tokenizer",
+      "mutation": "retrain from the same texts and compare hashes",
+      "result": "PASS"
+    },
+    {
+      "caught_by_verifier": true,
+      "control": "shard_content_hash_detects_byte_flip",
+      "detail": "content_hash mismatch: manifest c20a5760d4fb vs actual f48c7c6a2828",
+      "invariant": "shard identity is its token bytes",
+      "mutation": "flip one token id and re-verify against the manifest",
+      "result": "PASS"
+    },
+    {
+      "caught_by_verifier": true,
+      "control": "admission_blocks_missing_pii_screen_status",
+      "detail": "reasons=['missing_or_unsafe:pii_screen_status=missing']",
+      "invariant": "all four S4 fields are hard blockers",
+      "mutation": "set pii_screen_status=missing",
+      "result": "PASS"
+    },
+    {
+      "caught_by_verifier": true,
+      "control": "admission_blocks_missing_dedup_status",
+      "detail": "reasons=['missing_or_unsafe:dedup_status=missing']",
+      "invariant": "all four S4 fields are hard blockers",
+      "mutation": "set dedup_status=missing",
+      "result": "PASS"
+    },
+    {
+      "caught_by_verifier": true,
+      "control": "admission_blocks_missing_cleaning_pipeline_hash",
+      "detail": "reasons=['missing_or_unsafe:cleaning_pipeline_hash=missing']",
+      "invariant": "all four S4 fields are hard blockers",
+      "mutation": "set cleaning_pipeline_hash=missing",
+      "result": "PASS"
+    },
+    {
+      "caught_by_verifier": true,
+      "control": "admission_blocks_missing_tokenizer_hash",
+      "detail": "reasons=['missing_or_unsafe:tokenizer_hash=missing']",
+      "invariant": "all four S4 fields are hard blockers",
+      "mutation": "set tokenizer_hash=missing",
+      "result": "PASS"
+    },
+    {
+      "caught_by_verifier": true,
+      "control": "admission_blocks_missing_eval_overlap_status",
+      "detail": "reasons=['missing_or_unsafe:eval_overlap_status=missing']",
+      "invariant": "all four S4 fields are hard blockers",
+      "mutation": "set eval_overlap_status=missing",
+      "result": "PASS"
+    },
+    {
+      "caught_by_verifier": true,
+      "control": "admission_blocks_unsafe_license",
+      "detail": "reasons=['license_tier=unsafe']",
+      "invariant": "unsafe license blocks training",
+      "mutation": "set license_tier=unsafe",
+      "result": "PASS"
+    },
+    {
+      "caught_by_verifier": true,
+      "control": "firewall_blocks_smuggled_eval_doc",
+      "detail": "reasons=['content hash identical to eval doc eval-milu-001', 'canary match CANARY-MILU-7f3a9c (MILU)', 'benchmark overlap 100% with MILU', '13-gram containment match: MILU']",
+      "invariant": "eval data cannot enter training",
+      "mutation": "relabel a registered test document as split=train and resubmit",
+      "result": "PASS"
+    },
+    {
+      "caught_by_verifier": true,
+      "control": "firewall_blocks_eval_in_served_batch",
+      "detail": "flagged=['eval-milu-001']",
+      "invariant": "per-batch check is a second line of defence",
+      "mutation": "put a registered test doc id into a served batch",
+      "result": "PASS"
+    },
+    {
+      "caught_by_verifier": true,
+      "control": "firewall_derived_gate_independent",
+      "detail": "reasons=['benchmark-derived content']",
+      "invariant": "derived content is caught without the overlap gate",
+      "mutation": "disable the overlap gate and submit a benchmark paraphrase",
+      "result": "PASS"
+    },
+    {
+      "caught_by_verifier": true,
+      "control": "firewall_leaks_when_content_gates_off",
+      "detail": "control PASSES when the doc LEAKS - proving none of the three is redundant (allowed=True)",
+      "invariant": "the content gates are genuinely load-bearing",
+      "mutation": "disable overlap, derived AND ngram_containment, then submit the paraphrase",
+      "result": "PASS"
+    },
+    {
+      "caught_by_verifier": true,
+      "control": "mask_validator_detects_loss_bearing_pad",
+      "detail": "clean=True, after mutation=False, errors=['pad token at 101 is loss-bearing']",
+      "invariant": "padding is never loss-bearing",
+      "mutation": "set loss_mask=1 on pad position 101 of a sample that has padding",
+      "result": "PASS"
+    },
+    {
+      "caught_by_verifier": true,
+      "control": "attention_isolation_is_real_and_non_vacuous",
+      "detail": "2 documents in the window; real mask allows 0 cross-document pairs; segment isolation blocks 3600 pairs a causal-only mask would have permitted",
+      "invariant": "no token attends across a document boundary, and the mask is load-bearing",
+      "mutation": "count pairs the real mask allows vs pairs a plain causal mask would have allowed",
+      "result": "PASS"
+    },
+    {
+      "caught_by_verifier": true,
+      "control": "floors_survive_normalisation",
+      "detail": "raw->effective per protected lane {'indic': (0.172, 0.172), 'agentic': (0.01, 0.02), 'reasoning': (0.02, 0.06)}; floors={'indic': 0.12, 'agentic': 0.02, 'reasoning': 0.06}; mixture sums to 1.0",
+      "invariant": "protected floors hold after the mixture is normalised",
+      "mutation": "read the effective mixture at stage 0 and compare each protected lane against its floor",
+      "result": "PASS"
+    },
+    {
+      "caught_by_verifier": true,
+      "control": "unprotected_lanes_are_not_floored",
+      "detail": "unprotected lanes below 0.02: {'longctx': 0.0019}",
+      "invariant": "the floor is selective, not a global minimum",
+      "mutation": "check that at least one unprotected lane sits below the smallest protected floor",
+      "result": "PASS"
+    },
+    {
+      "caught_by_verifier": true,
+      "control": "ledger_chain_detects_edit",
+      "detail": "chain intact across 5 entries -> entry 2: payload was modified (entry_hash mismatch)",
+      "invariant": "the ledger is tamper-evident",
+      "mutation": "edit global_step on historical entry #2",
+      "result": "PASS"
+    }
+  ],
+  "every_declared_control_ran": true,
+  "expected_controls_declared": 16,
+  "expected_controls_missing": [],
+  "meaning": "each control breaks one invariant and requires the verifier to reject it. A control that does not trigger a rejection means the corresponding check is vacuous, and is reported as a FAILURE.",
+  "n_controls": 30,
+  "n_failed": 0,
+  "n_passed": 30
+}

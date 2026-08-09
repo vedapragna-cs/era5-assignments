@@ -1,0 +1,331 @@
+{
+  "feasibility": {
+    "ceiling_parameterisation": {
+      "quantity": "repetition_factor_r = demand / supply, per lane",
+      "weakest_for_us": "their hardest extrapolation case is Swahili and their weakest predictions are on quality-tiered mixtures - i.e. exactly the Indic lane.",
+      "why_per_lane": "arXiv:2605.12715 measures degradation as a function of each lane's OWN repetition factor, not a global epoch count. Scarcer lanes tolerate higher r (5x-smaller target -> r about 30; 5x-larger -> r < 7).",
+      "why_the_level_is_unchanged": "the same paper measures optimal r and optimal target weight both FALLING with model size (9.5% at 101M -> 1.9% at 539M) and states that extrapolation beyond about 900M is open. We plan ~30B. Re-shaping the ceiling is free; raising it is an extrapolation the evidence does not support, so the level stays at 4.0 (arXiv:2305.16264)."
+    },
+    "demand_rule": "need = stage_window * stage_share / (1 - rejection_rate), summed over stages",
+    "epoch_ceiling": 4.0,
+    "infeasible_lanes": [
+      "agentic",
+      "indic",
+      "reasoning"
+    ],
+    "lanes": [
+      {
+        "ceiling_applied": 4.0,
+        "ceiling_source": "global_default",
+        "demand_tokens": 80337837838,
+        "epochs": 127.52,
+        "lane": "agentic",
+        "per_stage": [
+          {
+            "demand_tokens": 2862407862,
+            "share": 0.01,
+            "stage": "S1_seed",
+            "window_tokens": 233000000000
+          },
+          {
+            "demand_tokens": 17156019656,
+            "share": 0.015,
+            "stage": "S2_general",
+            "window_tokens": 931000000000
+          },
+          {
+            "demand_tokens": 25749385749,
+            "share": 0.02,
+            "stage": "S3_reasoning",
+            "window_tokens": 1048000000000
+          },
+          {
+            "demand_tokens": 25724815725,
+            "share": 0.03,
+            "stage": "S4_longctx",
+            "window_tokens": 698000000000
+          },
+          {
+            "demand_tokens": 8845208845,
+            "share": 0.08,
+            "stage": "anneal",
+            "window_tokens": 90000000000
+          }
+        ],
+        "protected_floor": 0.02,
+        "repetition_factor_r": 127.52,
+        "supply_tokens": 630000000,
+        "within_ceiling": false
+      },
+      {
+        "ceiling_applied": 4.0,
+        "ceiling_source": "global_default",
+        "demand_tokens": 879788697789,
+        "epochs": 0.798,
+        "lane": "code",
+        "per_stage": [
+          {
+            "demand_tokens": 41791154791,
+            "share": 0.146,
+            "stage": "S1_seed",
+            "window_tokens": 233000000000
+          },
+          {
+            "demand_tokens": 219597051597,
+            "share": 0.192,
+            "stage": "S2_general",
+            "window_tokens": 931000000000
+          },
+          {
+            "demand_tokens": 345041769042,
+            "share": 0.268,
+            "stage": "S3_reasoning",
+            "window_tokens": 1048000000000
+          },
+          {
+            "demand_tokens": 251245700246,
+            "share": 0.293,
+            "stage": "S4_longctx",
+            "window_tokens": 698000000000
+          },
+          {
+            "demand_tokens": 22113022113,
+            "share": 0.2,
+            "stage": "anneal",
+            "window_tokens": 90000000000
+          }
+        ],
+        "protected_floor": null,
+        "repetition_factor_r": 0.798,
+        "supply_tokens": 1103000000000,
+        "within_ceiling": true
+      },
+      {
+        "ceiling_applied": 4.0,
+        "ceiling_source": "global_default",
+        "demand_tokens": 638554054054,
+        "epochs": 4.062,
+        "lane": "indic",
+        "per_stage": [
+          {
+            "demand_tokens": 49233415233,
+            "share": 0.172,
+            "stage": "S1_seed",
+            "window_tokens": 233000000000
+          },
+          {
+            "demand_tokens": 193291154791,
+            "share": 0.169,
+            "stage": "S2_general",
+            "window_tokens": 931000000000
+          },
+          {
+            "demand_tokens": 217582309582,
+            "share": 0.169,
+            "stage": "S3_reasoning",
+            "window_tokens": 1048000000000
+          },
+          {
+            "demand_tokens": 147488943489,
+            "share": 0.172,
+            "stage": "S4_longctx",
+            "window_tokens": 698000000000
+          },
+          {
+            "demand_tokens": 30958230958,
+            "share": 0.28,
+            "stage": "anneal",
+            "window_tokens": 90000000000
+          }
+        ],
+        "protected_floor": 0.12,
+        "repetition_factor_r": 4.062,
+        "supply_tokens": 157200000000,
+        "within_ceiling": false
+      },
+      {
+        "ceiling_applied": 4.0,
+        "ceiling_source": "global_default",
+        "demand_tokens": 79601965602,
+        "epochs": 0.796,
+        "lane": "longctx",
+        "per_stage": [
+          {
+            "demand_tokens": 572481572,
+            "share": 0.002,
+            "stage": "S1_seed",
+            "window_tokens": 233000000000
+          },
+          {
+            "demand_tokens": 4574938575,
+            "share": 0.004,
+            "stage": "S2_general",
+            "window_tokens": 931000000000
+          },
+          {
+            "demand_tokens": 11587223587,
+            "share": 0.009,
+            "stage": "S3_reasoning",
+            "window_tokens": 1048000000000
+          },
+          {
+            "demand_tokens": 54022113022,
+            "share": 0.063,
+            "stage": "S4_longctx",
+            "window_tokens": 698000000000
+          },
+          {
+            "demand_tokens": 8845208845,
+            "share": 0.08,
+            "stage": "anneal",
+            "window_tokens": 90000000000
+          }
+        ],
+        "protected_floor": null,
+        "repetition_factor_r": 0.796,
+        "supply_tokens": 100000000000,
+        "within_ceiling": true
+      },
+      {
+        "ceiling_applied": 4.0,
+        "ceiling_source": "global_default",
+        "demand_tokens": 341786240786,
+        "epochs": 4.016,
+        "lane": "reasoning",
+        "per_stage": [
+          {
+            "demand_tokens": 5724815725,
+            "share": 0.02,
+            "stage": "S1_seed",
+            "window_tokens": 233000000000
+          },
+          {
+            "demand_tokens": 54899262899,
+            "share": 0.048,
+            "stage": "S2_general",
+            "window_tokens": 931000000000
+          },
+          {
+            "demand_tokens": 160933660934,
+            "share": 0.125,
+            "stage": "S3_reasoning",
+            "window_tokens": 1048000000000
+          },
+          {
+            "demand_tokens": 100326781327,
+            "share": 0.117,
+            "stage": "S4_longctx",
+            "window_tokens": 698000000000
+          },
+          {
+            "demand_tokens": 19901719902,
+            "share": 0.18,
+            "stage": "anneal",
+            "window_tokens": 90000000000
+          }
+        ],
+        "protected_floor": 0.06,
+        "repetition_factor_r": 4.016,
+        "supply_tokens": 85100000000,
+        "within_ceiling": false
+      },
+      {
+        "ceiling_applied": 4.0,
+        "ceiling_source": "global_default",
+        "demand_tokens": 439474201474,
+        "epochs": 3.01,
+        "lane": "stem",
+        "per_stage": [
+          {
+            "demand_tokens": 25761670762,
+            "share": 0.09,
+            "stage": "S1_seed",
+            "window_tokens": 233000000000
+          },
+          {
+            "demand_tokens": 134960687961,
+            "share": 0.118,
+            "stage": "S2_general",
+            "window_tokens": 931000000000
+          },
+          {
+            "demand_tokens": 164796068796,
+            "share": 0.128,
+            "stage": "S3_reasoning",
+            "window_tokens": 1048000000000
+          },
+          {
+            "demand_tokens": 102899262899,
+            "share": 0.12,
+            "stage": "S4_longctx",
+            "window_tokens": 698000000000
+          },
+          {
+            "demand_tokens": 11056511057,
+            "share": 0.1,
+            "stage": "anneal",
+            "window_tokens": 90000000000
+          }
+        ],
+        "protected_floor": null,
+        "repetition_factor_r": 3.01,
+        "supply_tokens": 146000000000,
+        "within_ceiling": true
+      },
+      {
+        "ceiling_applied": 4.0,
+        "ceiling_source": "global_default",
+        "demand_tokens": 1224245700246,
+        "epochs": 0.261,
+        "lane": "web",
+        "per_stage": [
+          {
+            "demand_tokens": 160581081081,
+            "share": 0.561,
+            "stage": "S1_seed",
+            "window_tokens": 233000000000
+          },
+          {
+            "demand_tokens": 518111793612,
+            "share": 0.453,
+            "stage": "S2_general",
+            "window_tokens": 931000000000
+          },
+          {
+            "demand_tokens": 361778869779,
+            "share": 0.281,
+            "stage": "S3_reasoning",
+            "window_tokens": 1048000000000
+          },
+          {
+            "demand_tokens": 174928746929,
+            "share": 0.204,
+            "stage": "S4_longctx",
+            "window_tokens": 698000000000
+          },
+          {
+            "demand_tokens": 8845208845,
+            "share": 0.08,
+            "stage": "anneal",
+            "window_tokens": 90000000000
+          }
+        ],
+        "protected_floor": null,
+        "repetition_factor_r": 0.261,
+        "supply_tokens": 4691000000000,
+        "within_ceiling": true
+      }
+    ],
+    "per_lane_epoch_ceiling": {},
+    "rejection_rate": 0.186,
+    "scope": "production 3T, arithmetic only - no tokens trained"
+  },
+  "finding": "lanes that flip to infeasible on a sub-percent rate change had no margin at 3T; this is a property of the plan, not of the run",
+  "gate": "PASS/FAIL is on |observed - planned| <= 0.05, a ~3 sigma band for a rate estimated from a few hundred distinct samples. The lane breaches above are reported, not gated.",
+  "newly_infeasible_lanes": [
+    "reasoning"
+  ],
+  "observed_rejection_rate": 0.186,
+  "planned_rejection_rate": 0.18,
+  "rate_basis": "supply rejection rate: distinct judged samples never admitted on any step. NOT the per-step selection rate, which is floored by the oversample factor and is not what need = share/(1-r) uses."
+}

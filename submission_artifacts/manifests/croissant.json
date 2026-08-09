@@ -1,0 +1,395 @@
+{
+  "@context": {
+    "@vocab": "https://schema.org/",
+    "cr": "http://mlcommons.org/croissant/",
+    "prov": "http://www.w3.org/ns/prov#",
+    "sc": "https://schema.org/"
+  },
+  "@type": "sc:Dataset",
+  "conformsTo": "http://mlcommons.org/croissant/1.1",
+  "cr:capabilityLanes": [
+    "agentic",
+    "code",
+    "indic",
+    "longctx",
+    "reasoning",
+    "stem",
+    "web"
+  ],
+  "cr:conformanceClaim": "UNVALIDATED - fields are mapped and lineage edges are present, but this has not been run through the MLCommons validator (no network in this environment). Running it is the next step, not a claim made here.",
+  "cr:regulatoryNote": "EU AI Act provenance obligations for high-risk systems enter enforcement August 2026; this view exists so the lineage already recorded here is machine-readable by a third party rather than only by this repository's own tooling.",
+  "cr:tokenizer": {
+    "hash": "75b8661f606877ee2eb1398876fdc6f757ec30d6e989b481aa8f5ed0f53c6ec1",
+    "n_merges": 253,
+    "size": 512,
+    "specials": {
+      "<bos>": 1,
+      "<eos>": 2,
+      "<pad>": 0
+    },
+    "version": "v5-tok-1"
+  },
+  "description": "Tokenized training corpus executed by run v5-s6-20260806 against mixture plan era-v5-mixture-v1. 7 immutable shards across 7 capability lanes.",
+  "distribution": [
+    {
+      "@id": "v5_agentic_train_000",
+      "@type": "cr:FileObject",
+      "cr:containedIn": [
+        "openhands",
+        "swe_gym"
+      ],
+      "cr:documentIds": [
+        "agent-0001",
+        "agent-0002"
+      ],
+      "cr:sha256Scope": "shard token bytes (little-endian uint32), not a file on disk - the tokenized shard is the artifact in this system",
+      "description": "Immutable tokenized shard for the agentic lane, 489 tokens, split=train.",
+      "encodingFormat": "application/x-tokenized-shard",
+      "name": "v5_agentic_train_000",
+      "prov:wasDerivedFrom": [],
+      "prov:wasGeneratedBy": {
+        "@type": "prov:Activity",
+        "cr:qualityGates": {
+          "dedup_status": "unique",
+          "eval_overlap_status": "clear",
+          "language_validated": true,
+          "pii_screen_status": "screened",
+          "repeat_ngram_status": "screened"
+        },
+        "prov:used": [
+          {
+            "@id": "tokenizer",
+            "@type": "prov:Entity",
+            "cr:version": "v5-tok-1",
+            "sha256": "75b8661f606877ee2eb1398876fdc6f757ec30d6e989b481aa8f5ed0f53c6ec1"
+          },
+          {
+            "@id": "cleaning_pipeline",
+            "@type": "prov:Entity",
+            "sha256": "375f1762c583425243238238e41b7e340bc7b3d191df66d1c4781d1430633af3"
+          }
+        ]
+      },
+      "sc:license": "safe",
+      "sha256": "c20a5760d4fbf503cd9a441e3b83adf9732cb2a12aa7f1f7e54fd50dfde6b9d9"
+    },
+    {
+      "@id": "v5_code_train_001",
+      "@type": "cr:FileObject",
+      "cr:containedIn": [
+        "commitpackft",
+        "swebench_like",
+        "the_stack_v2"
+      ],
+      "cr:documentIds": [
+        "code-0001",
+        "code-0002",
+        "code-0003",
+        "code-0004",
+        "code-0005",
+        "code-0010",
+        "code-0011"
+      ],
+      "cr:sha256Scope": "shard token bytes (little-endian uint32), not a file on disk - the tokenized shard is the artifact in this system",
+      "description": "Immutable tokenized shard for the code lane, 658 tokens, split=train.",
+      "encodingFormat": "application/x-tokenized-shard",
+      "name": "v5_code_train_001",
+      "prov:wasDerivedFrom": [],
+      "prov:wasGeneratedBy": {
+        "@type": "prov:Activity",
+        "cr:qualityGates": {
+          "dedup_status": "unique",
+          "eval_overlap_status": "clear",
+          "language_validated": true,
+          "pii_screen_status": "screened",
+          "repeat_ngram_status": "screened"
+        },
+        "prov:used": [
+          {
+            "@id": "tokenizer",
+            "@type": "prov:Entity",
+            "cr:version": "v5-tok-1",
+            "sha256": "75b8661f606877ee2eb1398876fdc6f757ec30d6e989b481aa8f5ed0f53c6ec1"
+          },
+          {
+            "@id": "cleaning_pipeline",
+            "@type": "prov:Entity",
+            "sha256": "375f1762c583425243238238e41b7e340bc7b3d191df66d1c4781d1430633af3"
+          }
+        ]
+      },
+      "sc:license": "safe",
+      "sha256": "6bd48a517e99cfcd8de66df1e45bcb577c9037ee9515577556e6e3197267b92b"
+    },
+    {
+      "@id": "v5_indic_train_002",
+      "@type": "cr:FileObject",
+      "cr:containedIn": [
+        "indiccorp_v2",
+        "sangraha_verified"
+      ],
+      "cr:documentIds": [
+        "indic-0001",
+        "indic-0002",
+        "indic-0003",
+        "indic-0004",
+        "indic-0005",
+        "indic-0006",
+        "indic-0010",
+        "indic-0011",
+        "indic-0012"
+      ],
+      "cr:sha256Scope": "shard token bytes (little-endian uint32), not a file on disk - the tokenized shard is the artifact in this system",
+      "description": "Immutable tokenized shard for the indic lane, 1046 tokens, split=train.",
+      "encodingFormat": "application/x-tokenized-shard",
+      "name": "v5_indic_train_002",
+      "prov:wasDerivedFrom": [],
+      "prov:wasGeneratedBy": {
+        "@type": "prov:Activity",
+        "cr:qualityGates": {
+          "dedup_status": "unique",
+          "eval_overlap_status": "clear",
+          "language_validated": true,
+          "pii_screen_status": "screened",
+          "repeat_ngram_status": "screened"
+        },
+        "prov:used": [
+          {
+            "@id": "tokenizer",
+            "@type": "prov:Entity",
+            "cr:version": "v5-tok-1",
+            "sha256": "75b8661f606877ee2eb1398876fdc6f757ec30d6e989b481aa8f5ed0f53c6ec1"
+          },
+          {
+            "@id": "cleaning_pipeline",
+            "@type": "prov:Entity",
+            "sha256": "375f1762c583425243238238e41b7e340bc7b3d191df66d1c4781d1430633af3"
+          }
+        ]
+      },
+      "sc:license": "safe",
+      "sha256": "ac358b1e8040c5263686b2a3699c853cd6407d181fdf3d86fbe5be9348d0407e"
+    },
+    {
+      "@id": "v5_longctx_train_003",
+      "@type": "cr:FileObject",
+      "cr:containedIn": [
+        "repo_packed"
+      ],
+      "cr:documentIds": [
+        "longctx-0001"
+      ],
+      "cr:sha256Scope": "shard token bytes (little-endian uint32), not a file on disk - the tokenized shard is the artifact in this system",
+      "description": "Immutable tokenized shard for the longctx lane, 1132 tokens, split=train.",
+      "encodingFormat": "application/x-tokenized-shard",
+      "name": "v5_longctx_train_003",
+      "prov:wasDerivedFrom": [],
+      "prov:wasGeneratedBy": {
+        "@type": "prov:Activity",
+        "cr:qualityGates": {
+          "dedup_status": "unique",
+          "eval_overlap_status": "clear",
+          "language_validated": true,
+          "pii_screen_status": "screened",
+          "repeat_ngram_status": "screened"
+        },
+        "prov:used": [
+          {
+            "@id": "tokenizer",
+            "@type": "prov:Entity",
+            "cr:version": "v5-tok-1",
+            "sha256": "75b8661f606877ee2eb1398876fdc6f757ec30d6e989b481aa8f5ed0f53c6ec1"
+          },
+          {
+            "@id": "cleaning_pipeline",
+            "@type": "prov:Entity",
+            "sha256": "375f1762c583425243238238e41b7e340bc7b3d191df66d1c4781d1430633af3"
+          }
+        ]
+      },
+      "sc:license": "safe",
+      "sha256": "b99cf11e2f5609a39e7a4c3dfb3b35379461f51ca566be4c30127eb0abf58c94"
+    },
+    {
+      "@id": "v5_reasoning_train_004",
+      "@type": "cr:FileObject",
+      "cr:containedIn": [
+        "aon_v4",
+        "gsm8k_like"
+      ],
+      "cr:documentIds": [
+        "reason-0001",
+        "reason-0002",
+        "reason-0003",
+        "reason-0010",
+        "reason-0011"
+      ],
+      "cr:sha256Scope": "shard token bytes (little-endian uint32), not a file on disk - the tokenized shard is the artifact in this system",
+      "description": "Immutable tokenized shard for the reasoning lane, 690 tokens, split=train.",
+      "encodingFormat": "application/x-tokenized-shard",
+      "name": "v5_reasoning_train_004",
+      "prov:wasDerivedFrom": [],
+      "prov:wasGeneratedBy": {
+        "@type": "prov:Activity",
+        "cr:qualityGates": {
+          "dedup_status": "unique",
+          "eval_overlap_status": "clear",
+          "language_validated": true,
+          "pii_screen_status": "screened",
+          "repeat_ngram_status": "screened"
+        },
+        "prov:used": [
+          {
+            "@id": "tokenizer",
+            "@type": "prov:Entity",
+            "cr:version": "v5-tok-1",
+            "sha256": "75b8661f606877ee2eb1398876fdc6f757ec30d6e989b481aa8f5ed0f53c6ec1"
+          },
+          {
+            "@id": "cleaning_pipeline",
+            "@type": "prov:Entity",
+            "sha256": "375f1762c583425243238238e41b7e340bc7b3d191df66d1c4781d1430633af3"
+          }
+        ]
+      },
+      "sc:license": "safe",
+      "sha256": "b630cae56b9b877ab72307225d92ae4004f2bcbf88ea1b9b18362609ce6bc936"
+    },
+    {
+      "@id": "v5_stem_train_005",
+      "@type": "cr:FileObject",
+      "cr:containedIn": [
+        "pes2o",
+        "proof_pile_2",
+        "simple_science"
+      ],
+      "cr:documentIds": [
+        "stem-0001",
+        "stem-0002",
+        "stem-0003",
+        "stem-0010",
+        "stem-0011"
+      ],
+      "cr:sha256Scope": "shard token bytes (little-endian uint32), not a file on disk - the tokenized shard is the artifact in this system",
+      "description": "Immutable tokenized shard for the stem lane, 549 tokens, split=train.",
+      "encodingFormat": "application/x-tokenized-shard",
+      "name": "v5_stem_train_005",
+      "prov:wasDerivedFrom": [],
+      "prov:wasGeneratedBy": {
+        "@type": "prov:Activity",
+        "cr:qualityGates": {
+          "dedup_status": "unique",
+          "eval_overlap_status": "clear",
+          "language_validated": true,
+          "pii_screen_status": "screened",
+          "repeat_ngram_status": "screened"
+        },
+        "prov:used": [
+          {
+            "@id": "tokenizer",
+            "@type": "prov:Entity",
+            "cr:version": "v5-tok-1",
+            "sha256": "75b8661f606877ee2eb1398876fdc6f757ec30d6e989b481aa8f5ed0f53c6ec1"
+          },
+          {
+            "@id": "cleaning_pipeline",
+            "@type": "prov:Entity",
+            "sha256": "375f1762c583425243238238e41b7e340bc7b3d191df66d1c4781d1430633af3"
+          }
+        ]
+      },
+      "sc:license": "safe",
+      "sha256": "5ddd4a791c40065fbea66e6c81a3f0f72704c7bf5eef84f36206f5b3c72403cd"
+    },
+    {
+      "@id": "v5_web_train_006",
+      "@type": "cr:FileObject",
+      "cr:containedIn": [
+        "crawl_misc",
+        "dclm_baseline",
+        "fineweb_edu",
+        "simple_wiki",
+        "tinystories_like"
+      ],
+      "cr:documentIds": [
+        "web-0001",
+        "web-0002",
+        "web-0003",
+        "web-0004",
+        "web-0005",
+        "web-0006",
+        "web-0010",
+        "web-0011"
+      ],
+      "cr:sha256Scope": "shard token bytes (little-endian uint32), not a file on disk - the tokenized shard is the artifact in this system",
+      "description": "Immutable tokenized shard for the web lane, 946 tokens, split=train.",
+      "encodingFormat": "application/x-tokenized-shard",
+      "name": "v5_web_train_006",
+      "prov:wasDerivedFrom": [],
+      "prov:wasGeneratedBy": {
+        "@type": "prov:Activity",
+        "cr:qualityGates": {
+          "dedup_status": "unique",
+          "eval_overlap_status": "clear",
+          "language_validated": true,
+          "pii_screen_status": "screened",
+          "repeat_ngram_status": "screened"
+        },
+        "prov:used": [
+          {
+            "@id": "tokenizer",
+            "@type": "prov:Entity",
+            "cr:version": "v5-tok-1",
+            "sha256": "75b8661f606877ee2eb1398876fdc6f757ec30d6e989b481aa8f5ed0f53c6ec1"
+          },
+          {
+            "@id": "cleaning_pipeline",
+            "@type": "prov:Entity",
+            "sha256": "375f1762c583425243238238e41b7e340bc7b3d191df66d1c4781d1430633af3"
+          }
+        ]
+      },
+      "sc:license": "safe",
+      "sha256": "a781a8f936cb98926e9fb92390395baa9c0663f5c2a950d985a1d296562b747b"
+    }
+  ],
+  "inLanguage": [
+    "en",
+    "hi",
+    "mr",
+    "te"
+  ],
+  "name": "era-v5-mixture-v1-training-corpus",
+  "recordSet": [
+    {
+      "@id": "token_spans",
+      "@type": "cr:RecordSet",
+      "description": "Each shard records the byte range of every source document inside its flat token array, which is what makes per-document consumption auditable after the fact.",
+      "field": [
+        {
+          "@id": "doc_id",
+          "@type": "cr:Field",
+          "dataType": "sc:Text"
+        },
+        {
+          "@id": "start",
+          "@type": "cr:Field",
+          "dataType": "sc:Integer"
+        },
+        {
+          "@id": "end",
+          "@type": "cr:Field",
+          "dataType": "sc:Integer"
+        },
+        {
+          "@id": "lane",
+          "@type": "cr:Field",
+          "dataType": "sc:Text"
+        }
+      ]
+    }
+  ],
+  "sc:license": [
+    "safe"
+  ]
+}

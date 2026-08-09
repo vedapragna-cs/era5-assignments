@@ -1,0 +1,233 @@
+{
+  "capability_lane": "code",
+  "cleaning_pipeline_hash": "375f1762c583425243238238e41b7e340bc7b3d191df66d1c4781d1430633af3",
+  "content_hash": "6bd48a517e99cfcd8de66df1e45bcb577c9037ee9515577556e6e3197267b92b",
+  "dedup_clusters": [],
+  "dedup_status": "unique",
+  "difficulty_bands": [
+    "B1",
+    "B2",
+    "B3",
+    "B5"
+  ],
+  "document_ids": [
+    "code-0001",
+    "code-0002",
+    "code-0003",
+    "code-0004",
+    "code-0005",
+    "code-0010",
+    "code-0011"
+  ],
+  "eligible_stages": [
+    "S1_seed",
+    "S2_general",
+    "S3_reasoning",
+    "S4_longctx",
+    "anneal"
+  ],
+  "eval_overlap_status": "clear",
+  "fertility_by_language": {
+    "en": 5.2822
+  },
+  "language_validated": true,
+  "languages": [
+    "en"
+  ],
+  "license_tier": "safe",
+  "parent_shard_ids": [],
+  "pii_kinds_found": [],
+  "pii_screen_status": "screened",
+  "provenance_tier": "audited",
+  "repeat_ngram_status": "screened",
+  "scripts": [
+    "Latn"
+  ],
+  "shard_id": "v5_code_train_001",
+  "source_ids": [
+    "commitpackft",
+    "swebench_like",
+    "the_stack_v2"
+  ],
+  "split": "train",
+  "stage_eligibility": {
+    "S1_seed": {
+      "band_permitted": true,
+      "documents_fitting_window": 0,
+      "documents_total": 7,
+      "eligible": true,
+      "longest_document_tokens": 113,
+      "stage_window_tokens": 16
+    },
+    "S2_general": {
+      "band_permitted": true,
+      "documents_fitting_window": 0,
+      "documents_total": 7,
+      "eligible": true,
+      "longest_document_tokens": 113,
+      "stage_window_tokens": 16
+    },
+    "S3_reasoning": {
+      "band_permitted": true,
+      "documents_fitting_window": 0,
+      "documents_total": 7,
+      "eligible": true,
+      "longest_document_tokens": 113,
+      "stage_window_tokens": 32
+    },
+    "S4_longctx": {
+      "band_permitted": true,
+      "documents_fitting_window": 7,
+      "documents_total": 7,
+      "eligible": true,
+      "longest_document_tokens": 113,
+      "stage_window_tokens": 128
+    },
+    "anneal": {
+      "band_permitted": true,
+      "documents_fitting_window": 7,
+      "documents_total": 7,
+      "eligible": true,
+      "longest_document_tokens": 113,
+      "stage_window_tokens": 128
+    }
+  },
+  "token_count": 658,
+  "token_spans": [
+    {
+      "doc_id": "code-0001",
+      "end": 101,
+      "lane": "code",
+      "roles": [
+        {
+          "end": 100,
+          "role": "text",
+          "start": 0
+        },
+        {
+          "end": 101,
+          "role": "boundary",
+          "start": 100
+        }
+      ],
+      "span_id": "code-0001:0-101",
+      "start": 0
+    },
+    {
+      "doc_id": "code-0002",
+      "end": 207,
+      "lane": "code",
+      "roles": [
+        {
+          "end": 206,
+          "role": "text",
+          "start": 101
+        },
+        {
+          "end": 207,
+          "role": "boundary",
+          "start": 206
+        }
+      ],
+      "span_id": "code-0002:101-207",
+      "start": 101
+    },
+    {
+      "doc_id": "code-0003",
+      "end": 313,
+      "lane": "code",
+      "roles": [
+        {
+          "end": 312,
+          "role": "text",
+          "start": 207
+        },
+        {
+          "end": 313,
+          "role": "boundary",
+          "start": 312
+        }
+      ],
+      "span_id": "code-0003:207-313",
+      "start": 207
+    },
+    {
+      "doc_id": "code-0004",
+      "end": 426,
+      "lane": "code",
+      "roles": [
+        {
+          "end": 425,
+          "role": "text",
+          "start": 313
+        },
+        {
+          "end": 426,
+          "role": "boundary",
+          "start": 425
+        }
+      ],
+      "span_id": "code-0004:313-426",
+      "start": 313
+    },
+    {
+      "doc_id": "code-0005",
+      "end": 533,
+      "lane": "code",
+      "roles": [
+        {
+          "end": 532,
+          "role": "text",
+          "start": 426
+        },
+        {
+          "end": 533,
+          "role": "boundary",
+          "start": 532
+        }
+      ],
+      "span_id": "code-0005:426-533",
+      "start": 426
+    },
+    {
+      "doc_id": "code-0010",
+      "end": 578,
+      "lane": "code",
+      "roles": [
+        {
+          "end": 577,
+          "role": "text",
+          "start": 533
+        },
+        {
+          "end": 578,
+          "role": "boundary",
+          "start": 577
+        }
+      ],
+      "span_id": "code-0010:533-578",
+      "start": 533
+    },
+    {
+      "doc_id": "code-0011",
+      "end": 658,
+      "lane": "code",
+      "roles": [
+        {
+          "end": 657,
+          "role": "text",
+          "start": 578
+        },
+        {
+          "end": 658,
+          "role": "boundary",
+          "start": 657
+        }
+      ],
+      "span_id": "code-0011:578-658",
+      "start": 578
+    }
+  ],
+  "tokenizer_hash": "75b8661f606877ee2eb1398876fdc6f757ec30d6e989b481aa8f5ed0f53c6ec1",
+  "tokenizer_version": "v5-tok-1"
+}

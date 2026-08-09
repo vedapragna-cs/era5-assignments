@@ -1,95 +1,356 @@
-==============================================================================
-ERA V5 Session 6 -- the data ledger
-run.log: every event, its verdict, and the artifact that proves it
-==============================================================================
-
-
---- environment -------------------------------------------------
-[    0.01s] [INFO] environment_captured               seed=20260801 source_hash=9e464ce6ab7a torch_deterministic=True
-
---- plan (inherited from S5) ------------------------------------
-[    0.01s] [PASS] s5_plan_verified                   stages=5 lanes=7 problems=0 -> ledgers/plan.json
-
---- corpus ------------------------------------------------------
-[    0.14s] [INFO] corpus_built                       documents=1634 fingerprint=65d040c15212 -> ledgers/corpus.json
-
---- tokenizer ---------------------------------------------------
-
---- evaluation firewall (build side) ----------------------------
-[    1.04s] [PASS] contamination_quarantine_applied   quarantined=1 admitted=1630 -> ledgers/firewall.json
-[    1.04s] [PASS] unsafe_documents_refused           refused=2 reasons=[PII not scrubbed,license tier 'C' is not trainable] -> ledgers/firewall.json
-
---- shards and manifests ----------------------------------------
-[    2.20s] [PASS] shards_created                     shards=122 tokens=326260 -> manifests/shard_index.json
-[    2.20s] [PASS] manifests_validated                complete=122 incomplete=0 -> manifests/shard_index.json
-[    2.20s] [PASS] shard_immutability_verified        method=every shard built twice, ids and hashes compared -> manifests/shard_index.json
-[    2.20s] [PASS] shard_reload_verified              shards=122 -> manifests/shard_index.json
-[    2.20s] [PASS] tokenizer_hash_verified            tokenizer_hash=30086a83edff shards=122 -> manifests/tokenizer.json
-[    2.20s] [PASS] eval_shard_blocked                 blocked=48 reason=split_not_trainable -> manifests/shard_index.json
-
---- packing -----------------------------------------------------
-[    2.24s] [INFO] packing_policies_compared          lanes=7 overall_utilization=0.7443 -> ledgers/packing.json
-
---- mixture schedule --------------------------------------------
-[    2.26s] [PASS] mixture_compiled                   steps=102 seam_steps=13 schedule_hash=d8e16e36e6a6 -> ledgers/mixture_compliance.json
-
---- masks -------------------------------------------------------
-[    2.26s] [PASS] batches_packed                     sequences=16 seq_len=256 -> ledgers/masks.json
-[    2.26s] [PASS] masks_verified                     samples=12 -> ledgers/masks.json
-
---- training ----------------------------------------------------
-[    3.10s] [PASS] embeddings_trainable               rule=S5 seam rule 1 -> ledgers/consumption_ledger.json
-[    3.10s] [PASS] initial_loss_equals_ln_vocab       observed=6.9430 expected=6.9315 ratio=1.0017 -> ledgers/consumption_ledger.json
-[    3.10s] [PASS] opus_golden_set_held_out           sequences=7 source=validation split -> ledgers/opus.json
-[   14.34s] [PASS] checkpoint_saved                   step=34 bytes=12693661 -> checkpoints/checkpoint_index.json
-[   24.62s] [PASS] checkpoint_saved                   step=68 bytes=12694072 -> checkpoints/checkpoint_index.json
-[   58.16s] [PASS] checkpoint_saved                   step=102 bytes=12694899 -> checkpoints/checkpoint_index.json
-[   58.18s] [PASS] consumption_ledger_written         steps=102 tokens=503808 ledger_hash=3a9a12cc1e0a -> ledgers/consumption_ledger.json
-[   58.22s] [PASS] learning_ledger_linked_to_source   samples=1632 documents=1183 unresolved=0 -> ledgers/learning_ledger.json
-[   58.22s] [PASS] token_level_loss_tracked           eos_perplexity=182.5949 roles=6 -> ledgers/learning_ledger.json
-
---- mixture compliance ------------------------------------------
-[   58.23s] [PASS] mixture_compliance_verified        max_deviation=0.0068 noncompliant=0 floors_broken=0 -> ledgers/mixture_compliance.json
-[   58.23s] [PASS] protected_floors_held              protected=[agentic,indic] -> ledgers/mixture_compliance.json
-[   58.23s] [PASS] epoch_ceiling_respected            ceiling=4.0000 max_epochs=2.0764 -> ledgers/mixture_compliance.json
-
---- opus selector -----------------------------------------------
-[   58.23s] [PASS] opus_decisions_recorded            decisions=64 outcomes={accept:21,defer:1,reject:42} protected_overrides=15 -> ledgers/opus.json
-[   58.23s] [PASS] opus_protected_floor_override      overrides=15 note=protected lanes admitted regardless of gradient score -> ledgers/opus.json
-
---- crash and resume --------------------------------------------
-[   58.23s] [INFO] crash_simulated                    checkpoint_at=34 crash_at=38 method=process state discarded, ledger file retained -> ledgers/crash_resume.json
-[   71.49s] [PASS] run_resumed                        checkpoint_at=34 crash_at=38 -> ledgers/crash_resume.json
-[   71.49s] [PASS] resume_next_batch_matched          expected=b000034-a6307c2219db resumed=b000034-a6307c2219db spans_match=True -> ledgers/crash_resume.json
-[   71.49s] [PASS] resume_ledger_repaired             orphan_rows_repaired=4 totals_match=True -> ledgers/crash_resume.json
-
---- replay ------------------------------------------------------
-[   71.55s] [PASS] historical_stream_replayed         steps=5 matching=5 -> ledgers/replay.json
-[   71.55s] [PASS] replay_hash_matched                batch_ids=True spans=True hashes=True -> ledgers/replay.json
-
---- fork --------------------------------------------------------
-[   74.12s] [PASS] branch_forked                      fork_at=34 branches=[as_planned,indic_boost] indic_token_delta=2816 -> ledgers/fork.json
-
---- audit -------------------------------------------------------
-[   74.13s] [PASS] eval_firewall_consumption_side     non_train_docs_consumed=0 shards_blocked=48 -> ledgers/audit.json
-[   74.13s] [PASS] audit_completed                    steps=102 documents=1183 -> ledgers/audit.json
-
---- checkpoints -------------------------------------------------
-[   74.19s] [PASS] checkpoints_verified               checkpoints=3 -> checkpoints/checkpoint_index.json
-[   74.19s] [PASS] checkpoint_corruption_detected     flavours=3 -> checkpoints/checkpoint_index.json
-[   74.19s] [PASS] checkpoints_tied_to_ledger_offsets offsets=[34,68,102] -> checkpoints/checkpoint_index.json
-
---- performance -------------------------------------------------
-[   74.20s] [PASS] performance_measured               loss_bearing_tok_s=6831.7000 packing_utilization=0.7482 reconstructible=True -> performance.json
-
---- v6 advisory -------------------------------------------------
-[   74.20s] [INFO] v6_advisory_generated              shards=60 actions={acquire_more_like_this:1,keep_placement:8,promote_earlier_or_extra_epoch:24,reduce_exposure:27} -> ledgers/v6_shard_advisory.json
-
---- evidence bundle ---------------------------------------------
-[   74.23s] [PASS] all_required_events_emitted        missing=none -> run.log
-
-==============================================================================
-SUMMARY  44 events  39 PASS  0 FAIL  5 INFO
-required events present: 13/13
-RESULT: ALL CHECKS PASSED
-==============================================================================
+[  0.000s] 
+[  0.000s] ==============================================================================
+[  0.000s]   ERA V5 · Session 6 · Training Data Execution System
+[  0.000s] ==============================================================================
+[  0.000s] run_id=v5-s6-20260806 seed=20260806 steps=26 depth=default lr=0.35 global_batch=8 seq_len=128 world_size=4
+[  0.000s] 
+[  0.000s] ==============================================================================
+[  0.000s]   1. Mixture plan (from the S5 submission)
+[  0.000s] ==============================================================================
+[  0.000s] plan=era-v5-mixture-v1 stages=['S1_seed', 'S2_general', 'S3_reasoning', 'S4_longctx', 'anneal']
+[  0.000s] protected floors: {'indic': 0.12, 'agentic': 0.02, 'reasoning': 0.06}
+[  0.001s]   feasibility agentic   demand=    79.8B supply=     0.6B r=126.59 ceiling=4.0 (global_default) [BREACH]
+[  0.001s]   feasibility code      demand=   873.4B supply=  1103.0B r=  0.79 ceiling=4.0 (global_default) [OK ]
+[  0.001s]   feasibility indic     demand=   633.9B supply=   157.2B r=  4.03 ceiling=4.0 (global_default) [BREACH]
+[  0.001s]   feasibility longctx   demand=    79.0B supply=   100.0B r=  0.79 ceiling=4.0 (global_default) [OK ]
+[  0.001s]   feasibility reasoning demand=   339.3B supply=    85.1B r=  3.99 ceiling=4.0 (global_default) [OK ]
+[  0.001s]   feasibility stem      demand=   436.3B supply=   146.0B r=  2.99 ceiling=4.0 (global_default) [OK ]
+[  0.001s]   feasibility web       demand=  1215.3B supply=  4691.0B r=  0.26 ceiling=4.0 (global_default) [OK ]
+[  0.009s]   infeasible lanes at 18% rejection: ['agentic', 'indic']
+[  0.009s]   ceiling is per-lane repetition factor r, not a global epoch count (arXiv:2605.12715); the LEVEL is deliberately unchanged at 4.0 because optimal r falls with model size and their validation stops near 900M
+[  0.009s]   dedup sensitivity (supply figures are PRE-dedup - the ceiling verdict above is an upper bound):
+[  0.009s]     agentic   tolerates at most -3064.7% deduplication before breaching -> already_breached
+[  0.009s]     indic     tolerates at most   -0.8% deduplication before breaching -> already_breached
+[  0.009s]     reasoning tolerates at most   +0.3% deduplication before breaching -> fragile
+[  0.009s]     stem      tolerates at most  +25.3% deduplication before breaching -> robust
+[  0.009s]     code      tolerates at most  +80.2% deduplication before breaching -> robust
+[  0.009s]     longctx   tolerates at most  +80.2% deduplication before breaching -> robust
+[  0.009s]     web       tolerates at most  +93.5% deduplication before breaching -> robust
+[  0.009s]   [PASS] dedup_sensitivity_computed: 3 lane(s) cannot survive measurement of their own dedup rate: ['agentic', 'indic', 'reasoning']. Note `reasoning` reads [OK] above at r=3.99 against a 4.0 ceiling, but its true margin is a fraction of a percent - a binary ceiling verdict hides that entirely.
+[  0.009s] 
+[  0.009s] ==============================================================================
+[  0.009s]   2. Documents -> cleaning -> firewall -> tokenizer -> shards
+[  0.009s] ==============================================================================
+[  2.238s] documents=52 (train=42, validation=2, test=3)
+[  2.238s] cleaning: pipeline_hash=375f1762c583 dedup_flagged=1 pii_redacted=1
+[  2.238s]   [PASS] pii_redacted web-0006 kinds=['email', 'phone_in', 'street_address']
+[  2.238s]   [PASS] dedup_flagged web-0007 status=near_duplicate cluster=web-0001
+[  2.238s] repeated-n-gram screen (OLMo 2 rule: run of >=32 repeats of any 1-13-token span): 1 flagged
+[  2.238s]   [PASS] repeated_ngram_flagged web-0008 run=60x1-gram span=(3, 63) dedup_status=unique (dedup alone would NOT have caught it)
+[  2.239s] tokenizer frozen: version=v5-tok-1 vocab=512 hash=75b8661f606877ee
+[  2.239s] [PASS] tokenizer_hash_verified (7 shard manifests carry exactly one tokenizer hash, equal to the frozen tokenizer's own)
+[  2.239s] shards created: 7
+[  2.240s]   [PASS] croissant_provenance_emitted 7 shards as cr:FileObject with prov:wasGeneratedBy lineage -> manifests/croissant.json (conformance UNVALIDATED - the MLCommons validator needs network)
+[  2.240s] [PASS] shard_content_hashes_verified (7/7)
+[  2.240s]   shard v5_agentic_train_000     lane=agentic   tokens=   489 hash=c20a5760d4fb admitted=True
+[  2.240s]   shard v5_code_train_001        lane=code      tokens=   658 hash=6bd48a517e99 admitted=True
+[  2.240s]   shard v5_indic_train_002       lane=indic     tokens=  1046 hash=ac358b1e8040 admitted=True
+[  2.240s]   shard v5_longctx_train_003     lane=longctx   tokens=  1132 hash=b99cf11e2f56 admitted=True
+[  2.240s]   shard v5_reasoning_train_004   lane=reasoning tokens=   690 hash=b630cae56b9b admitted=True
+[  2.240s]   shard v5_stem_train_005        lane=stem      tokens=   549 hash=5ddd4a791c40 admitted=True
+[  2.240s]   shard v5_web_train_006         lane=web       tokens=   946 hash=a781a8f936cb admitted=True
+[  2.240s] [PASS] manifests_validated (7/7 admitted; admission recomputed from manifests agrees with the build for all 7 shards; removing each of the 6 hard fields individually blocks the gate: {'tokenizer_hash': True, 'cleaning_pipeline_hash': True, 'dedup_status': True, 'pii_screen_status': True, 'eval_overlap_status': True, 'repeat_ngram_status': True})
+[  2.243s]   wrote 7 shard token arrays to manifests/shard_tokens/ (22040 bytes) so content_hash is recomputable from the bundle alone
+[  2.243s] 
+[  2.243s] ==============================================================================
+[  2.243s]   3. Evaluation and validation firewall
+[  2.243s] ==============================================================================
+[  2.243s] registry: 5 eval/validation documents (3 never-train)
+[  2.243s]   [PASS] eval_shard_blocked web-0100 -> blocked_or_unknown
+[  2.243s]   [PASS] eval_shard_blocked web-0102 -> blocked_or_unknown
+[  2.243s]   blocked web-0100: benchmark-derived content
+[  2.243s]   blocked web-0102: 13-gram containment match: GSM8K
+[  2.244s] [PASS] no_eval_document_in_any_training_sample (checked 46 packed samples)
+[  2.244s] [PASS] no_served_document_overlaps_eval_content (re-scanned 37 served documents against 5 registered, by 13-gram containment and exact text; independent of the admission gate)
+[  2.244s] 
+[  2.244s] ==============================================================================
+[  2.244s]   4. Packing policies, masks and position ids
+[  2.244s] ==============================================================================
+[  2.245s]   best_fit               seqs= 45 util=0.957 loss_bearing=0.920 truncated=0
+[  2.245s]   concat_chop            seqs= 44 util=0.978 loss_bearing=0.938 truncated=74
+[  2.245s]   greedy                 seqs= 48 util=0.897 loss_bearing=0.863 truncated=0
+[  2.245s]   long_context           seqs= 60 util=0.717 loss_bearing=0.690 truncated=0
+[  2.245s]   pad_only               seqs= 37 util=0.822 loss_bearing=0.795 truncated=15
+[  2.245s]   structure_preserving   seqs= 33 util=0.922 loss_bearing=0.891 truncated=15
+[  2.394s] [PASS] loss_and_position_masks_valid (46 packed samples)
+[  2.394s] [PASS] attention_isolation_no_cross_document_crossings (allowed=0; segment masking blocks 31860 pairs across 13 multi-document windows that a causal-only mask would have permitted)
+[  2.397s] [PASS] no_cross_document_supervision (0 positions supervised whose predecessor is in another document, across 46 packed samples). Distinct from attention isolation: that is what a token may READ, this is what it is trained to PREDICT.
+[  2.397s] [PASS] attention_isolation_enforced_in_the_arithmetic: rewriting document 1 of a packed window leaves document 2 bit-identical (True); with the segment ids merged the same rewrite moves document 2 by 3.03e-03 (True) - so the isolation is the MASK, not the architecture declining to look
+[  2.397s] [E4] agentic supervision yield = 161/256 = 62.9% (S5 measured 356/668 = 53% on the reference trajectory)
+[  2.397s] 
+[  2.397s] ==============================================================================
+[  2.397s]   5. Mixture compiled -> batches packed -> training
+[  2.397s] ==============================================================================
+[  3.405s] reference model trained on 5 golden sequences (40 steps): final mean loss 5.7518 weights 7b2682abc3b4831e
+[  3.405s]   excess_loss = loss(trained) - loss(reference); high-loss cut = 6.0394 (the reference's own scale, not an absolute)
+[  3.405s]   length reserve (session rule the plan does not carry: 'you need to preserve that shard for future'):
+[  3.406s]     S1_seed        plan_seq=  4096 demo_window=  16 -> 22 documents held back for a later stage
+[  3.406s]     S2_general     plan_seq=  4096 demo_window=  16 -> 22 documents held back for a later stage
+[  3.406s]     S3_reasoning   plan_seq=  8192 demo_window=  32 -> 21 documents held back for a later stage
+[  3.406s]     S4_longctx     plan_seq= 32768 demo_window= 128 ->  0 documents held back for a later stage
+[  3.406s]     anneal         plan_seq= 32768 demo_window= 128 ->  0 documents held back for a later stage
+[  3.406s] stage schedule (scaled): S1_seed[0-2330), S2_general[2330-11640), S3_reasoning[11640-22120), S4_longctx[22120-29100), anneal[29100-30000)
+[  3.406s] [PASS] mixture_compiled plan=era-v5-mixture-v1 stages=5 lanes=7 floors={'indic': 0.12, 'agentic': 0.02, 'reasoning': 0.06} run_tokens=30000 steps=26 (step 26 x 1024 tok covers all 5 stages incl. anneal at token 29100)
+[  3.494s]   [PASS] checkpoint_saved ckpt_00000 @ ledger_offset=0 integrity=verified
+[  3.781s]   step   0 stage=S1_seed       lanes={'agentic': 1, 'code': 1, 'indic': 1, 'reasoning': 1, 'web': 1} loss=6.2407 |g|=0.1842 batch=b4d53b942196
+[  3.877s]   step   1 stage=S1_seed       lanes={'indic': 1, 'web': 1} loss=6.2330 |g|=0.3125 batch=69a7b9f69620
+[  3.991s]   step   2 stage=S1_seed       lanes={'indic': 1, 'web': 1} loss=6.2235 |g|=0.3023 batch=6832ff0de6e2
+[  4.232s]   step   3 stage=S2_general    lanes={'code': 2, 'reasoning': 1, 'stem': 1, 'web': 4} loss=6.2255 |g|=0.2307 batch=8338e8ede35a
+[  4.487s]   step   4 stage=S2_general    lanes={'code': 2, 'indic': 1, 'web': 4} loss=6.2167 |g|=0.1852 batch=ab4675cb12e2
+[  4.692s]   step   5 stage=S2_general    lanes={'code': 2, 'indic': 1, 'stem': 1, 'web': 4} loss=6.2100 |g|=0.2139 batch=931b56854200
+[  4.825s]   [PASS] checkpoint_saved ckpt_00006 @ ledger_offset=7 integrity=verified
+[  5.174s]   step   6 stage=S2_general    lanes={'code': 2, 'indic': 1, 'reasoning': 1, 'web': 4} loss=6.2054 |g|=0.2060 batch=441d6919d0a3
+[  5.357s]   step   7 stage=S2_general    lanes={'code': 2, 'indic': 1, 'web': 4} loss=6.1956 |g|=0.1867 batch=5e9eedda88f7
+[  5.573s]   step   8 stage=S2_general    lanes={'agentic': 1, 'code': 1, 'reasoning': 1, 'stem': 1, 'web': 4} loss=6.1892 |g|=0.2363 batch=2aaa1861743a
+[  5.759s]   step   9 stage=S2_general    lanes={'code': 2, 'indic': 1, 'web': 4} loss=6.1851 |g|=0.1859 batch=20715d5246a9
+[  5.974s]   step  10 stage=S2_general    lanes={'code': 1, 'indic': 1, 'reasoning': 1, 'stem': 1, 'web': 4} loss=6.1772 |g|=0.2228 batch=0670a5d4ed38
+[  6.179s]   step  11 stage=S2_general    lanes={'code': 2, 'indic': 1, 'web': 4} loss=6.1672 |g|=0.1964 batch=deb04ccc22ca
+[  6.338s]   [PASS] checkpoint_saved ckpt_00012 @ ledger_offset=14 integrity=verified
+[  6.718s]   step  12 stage=S3_reasoning  lanes={'code': 2, 'indic': 1, 'reasoning': 1, 'stem': 1, 'web': 2} loss=6.1690 |g|=0.1921 batch=d567c4693db6
+[  6.956s]   step  13 stage=S3_reasoning  lanes={'code': 2, 'indic': 1, 'reasoning': 1, 'stem': 1, 'web': 2} loss=6.1772 |g|=0.1998 batch=d1fc26604e0e
+[  7.173s]   step  14 stage=S3_reasoning  lanes={'code': 2, 'indic': 2, 'reasoning': 1, 'stem': 1, 'web': 2} loss=6.1644 |g|=0.2053 batch=62e6b7423b02
+[  7.346s]   step  15 stage=S3_reasoning  lanes={'agentic': 1, 'code': 2, 'reasoning': 1, 'stem': 1, 'web': 2} loss=6.1445 |g|=0.2178 batch=10c94afb1039
+[  7.518s]   step  16 stage=S3_reasoning  lanes={'code': 2, 'reasoning': 1, 'stem': 1, 'web': 2} loss=6.1332 |g|=0.2678 batch=c3aedad3a33f
+[  7.734s]   step  17 stage=S3_reasoning  lanes={'code': 2, 'indic': 1, 'reasoning': 1, 'stem': 1, 'web': 2} loss=6.1309 |g|=0.2051 batch=52a189800b8a
+[  7.886s]   [PASS] checkpoint_saved ckpt_00018 @ ledger_offset=21 integrity=verified
+[  8.223s]   step  18 stage=S3_reasoning  lanes={'code': 2, 'indic': 1, 'reasoning': 1, 'stem': 1, 'web': 2} loss=6.1358 |g|=0.1990 batch=c342b6673e2d
+[  8.484s]   step  19 stage=S3_reasoning  lanes={'code': 2, 'indic': 1, 'reasoning': 1, 'stem': 1, 'web': 2} loss=6.1185 |g|=0.2121 batch=43b23e86ab6a
+[  8.732s]   step  20 stage=S3_reasoning  lanes={'code': 2, 'reasoning': 1, 'stem': 1, 'web': 2} loss=6.0975 |g|=0.2760 batch=ab0f78a42629
+[  8.934s]   step  21 stage=S3_reasoning  lanes={'code': 2, 'indic': 2, 'reasoning': 1, 'stem': 1, 'web': 2} loss=6.1194 |g|=0.2270 batch=7affa03978ca
+[  9.098s]   step  22 stage=S4_longctx    lanes={'agentic': 1, 'code': 2, 'longctx': 1, 'stem': 1} loss=6.1050 |g|=0.2318 batch=2fe45f4dd6a0
+[  9.260s]   step  23 stage=S4_longctx    lanes={'code': 2, 'indic': 1, 'longctx': 1, 'reasoning': 1, 'stem': 1} loss=6.1423 |g|=0.2460 batch=d77a9448a11e
+[  9.405s]   [PASS] checkpoint_saved ckpt_00024 @ ledger_offset=28 integrity=verified
+[  9.703s]   step  24 stage=S4_longctx    lanes={'code': 2, 'longctx': 1, 'reasoning': 1, 'stem': 1} loss=6.0856 |g|=0.2354 batch=9dd4fcdea6c2
+[  9.856s]   step  25 stage=S4_longctx    lanes={'code': 2, 'indic': 1, 'longctx': 1, 'stem': 1} loss=6.1144 |g|=0.1949 batch=ce34c3a22cf6
+[  9.856s] [PASS] batches_packed_and_committed (26 batch records on run-a for 26 steps trained)
+[  9.856s] [PASS] opus_decisions_recorded (454 decisions on branch run-a through step 26, 454 carrying an explicit reason; forks, replay and the ablation add more later)
+[  9.856s]   OPUS: {'accepted': 153, 'deferred': 158, 'protected': 15, 'rejected': 128} observed_rejection_rate=0.5962
+[  9.856s]     lane agentic   {'deferred': 2, 'protected': 4}
+[  9.856s]     lane code      {'accepted': 45, 'deferred': 25, 'rejected': 22}
+[  9.856s]     lane indic     {'accepted': 15, 'deferred': 30, 'protected': 6, 'rejected': 42}
+[  9.856s]     lane longctx   {'accepted': 4}
+[  9.856s]     lane reasoning {'accepted': 12, 'deferred': 31, 'protected': 5, 'rejected': 13}
+[  9.856s]     lane stem      {'accepted': 18, 'deferred': 14, 'rejected': 17}
+[  9.856s]     lane web       {'accepted': 59, 'deferred': 56, 'rejected': 34}
+[  9.856s]   length reserve: honoured=284 relaxed=132 (31.7% of draws)
+[  9.856s]     -> a relaxation means the lane had no short-enough document left, so the scheduler served a long one rather than deadlock. The rate measures how badly this corpus lacks short documents for its early stages - the same shortfall as the stage x band gap. In production this number should be near zero; if it is not, the early stages are eating the long-context lane.
+[  9.856s]   delivered lane shares after initial training (measured from the ledger, not the plan; recomputed at the end of the run for evidence):
+[  9.856s]     agentic    2.38%  floor=2% OK
+[  9.856s]     code      26.79%
+[  9.856s]     indic     12.50%  floor=12% OK
+[  9.856s]     longctx    2.38%
+[  9.856s]     reasoning 10.12%  floor=6% OK
+[  9.856s]     stem      10.71%
+[  9.856s]     web       35.12%
+[  9.856s] 
+[  9.856s] ==============================================================================
+[  9.856s]   6. Checkpoint -> crash -> resume
+[  9.856s] ==============================================================================
+[  9.856s] latest checkpoint=ckpt_00024 at ledger_offset=28
+[  9.856s] expected next batch after resume: step=24 hash=9dd4fcdea6c23778
+[  9.970s]   [INFO] crash_simulated at step=26 reason=simulated OOM during checkpoint write (weights destroyed 093579ef2db1->c9561fc999c1, in-memory checkpoints cleared, pool cursors zeroed)
+[  9.970s]   in-memory checkpoints after crash: 0; rescanning checkpoints/ and reloading 5 file(s) from disk
+[ 10.344s] [PASS] checkpoint_reloaded_from_disk (ckpt_00024, 4157590 bytes, integrity verified on load; on-disk weights 36fa21b7148e are not the post-crash wreckage c9561fc999c1)
+[ 10.676s]   [PASS] run_resumed from ckpt_00024 ledger_offset=28 world_size 4->8 regenerated=2
+[ 10.869s] [PASS] checkpoint_restores_in_a_fresh_process (subprocess pid-independent reconstruction from ckpt_00024.json alone -> 36fa21b7148e, recorded 36fa21b7148e)
+[ 10.869s]     step 24: original=9dd4fcdea6c23778 regenerated=9dd4fcdea6c23778 match=True
+[ 10.869s]     step 25: original=ce34c3a22cf60019 regenerated=ce34c3a22cf60019 match=True
+[ 10.869s] [PASS] resume_next_batch_matched
+[ 10.869s]   running the exactly-once comparison (two independent runs of the same plan)
+[ 14.681s] [PASS] exactly_once_across_world_size (ws 4 -> 8; 57 positions; order_identical=True; dup_positions=0; missing=0)
+[ 14.900s]   step  26 stage=S4_longctx    lanes={'code': 2, 'indic': 1, 'longctx': 1, 'reasoning': 1, 'stem': 1} loss=6.0982 batch=4ad432834daf  (post-resume)
+[ 15.067s]   step  27 stage=S4_longctx    lanes={'code': 2, 'longctx': 1, 'reasoning': 1, 'stem': 1} loss=6.0616 batch=c2747899385c  (post-resume)
+[ 15.223s]   step  28 stage=S4_longctx    lanes={'code': 2, 'indic': 1, 'longctx': 1, 'stem': 1} loss=6.0956 batch=38f80c7db07a  (post-resume)
+[ 15.319s]   step  29 stage=anneal        lanes={'indic': 1, 'reasoning': 1} loss=6.0882 batch=c73191221dbd  (post-resume)
+[ 15.319s]   advanced 4 step(s) after resume to step 30; tokens_consumed=30720 of planned 30000 (the run ends where the plan ends)
+[ 15.319s] 
+[ 15.319s] ==============================================================================
+[ 15.319s]   7. Replay of a historical interval
+[ 15.319s] ==============================================================================
+[ 16.505s]   [PASS] replay_hash_matched steps 2-6 (4 batches re-derived from a checkpoint, not re-read from the ledger)
+[ 16.505s]     step 2: original=6832ff0de6e26223 replay=6832ff0de6e26223 spans_match=True hash_match=True
+[ 16.505s]     step 3: original=8338e8ede35ae472 replay=8338e8ede35ae472 spans_match=True hash_match=True
+[ 16.505s]     step 4: original=ab4675cb12e2b9b9 replay=ab4675cb12e2b9b9 spans_match=True hash_match=True
+[ 16.505s]     step 5: original=931b5685420005de replay=931b5685420005de spans_match=True hash_match=True
+[ 18.805s] [PASS] replayed_samples_repack_from_shard_bytes (13 replayed sample ids re-derived by a fresh build; missing=0 span_drift=0) - sample_id is a content hash, so this chains shard bytes to spans without going through the run's in-memory dict
+[ 18.805s] 
+[ 18.805s] ==============================================================================
+[ 18.805s]   8. Fork from an earlier checkpoint
+[ 18.805s] ==============================================================================
+[ 18.805s]   forking from ckpt_00012 at global_step=12 ledger_offset=14 (of 5 checkpoints; NOT the first, so the branch inherits real history)
+[ 18.805s] [PASS] fork_point_inherits_consumed_history (divergence_ledger_offset=14; a fork from offset 0 proves nothing about cursor restoration)
+[ 19.266s] [PASS] control_fork_with_no_change_reproduces_parent (2/2 batches identical) - this is what makes the divergence below attributable
+[ 19.345s]   [PASS] branch_forked run-control->run-b from ckpt_00012 at ledger_offset=14 change={'stream_seed': 20260807, 'rationale': 'reshuffle lane draw order to test order-sensitivity at fixed mixture'}
+[ 19.940s] [PASS] fork_created_distinct_branch (run-b batches=3, comparable steps=3)
+[ 19.940s]     step 12: run-a=d567c4693db66eb3 run-b=22f6710e110c510d differs=True
+[ 19.940s]     step 13: run-a=d1fc26604e0ee671 run-b=1e119ad41dd86109 differs=True
+[ 19.940s]     step 14: run-a=62e6b7423b02daf1 run-b=94e98fbbb2ab82a4 differs=True
+[ 19.941s] 
+[ 19.941s] ==============================================================================
+[ 19.941s]   9. Audit
+[ 19.941s] ==============================================================================
+[ 19.941s]   audit step 3: shards=['v5_code_train_001', 'v5_reasoning_train_004', 'v5_stem_train_005', 'v5_web_train_006'] docs=['code-0001', 'code-0010', 'code-0011', 'reason-0002', 'stem-0010', 'web-0001', 'web-0002', 'web-0003', 'web-0004', 'web-0005']
+[ 19.941s]   audit interval [0,6): 6 batches, shards=['v5_agentic_train_000', 'v5_code_train_001', 'v5_indic_train_002', 'v5_reasoning_train_004', 'v5_stem_train_005']
+[ 19.944s] [PASS] ledger_hash_chain_intact — chain intact across 55 entries
+[ 19.944s] [PASS] audit_completed (step query returned 4 shards, interval query returned 6, chain intact=True)
+[ 19.944s] 
+[ 19.944s] ==============================================================================
+[ 19.944s]   10. Learning ledger and the V6 corpus feedback
+[ 19.944s] ==============================================================================
+[ 20.079s]   ledger volume: full(extrapolated)=19,704,285B stored[quantized,1-in-4]=4,861,563B aggregate=3,777B (650.28 B/token full tier)
+[ 20.079s]   extrapolated: the full tier would cost 1.95 PB at 3T loss-bearing tokens - which is why it is a proxy/debug tier, not a run-wide one
+[ 20.082s]   perplexity by lane (geometric mean, measured):
+[ 20.082s]     indic     ppl=   505.50 hot=100.0% n=709
+[ 20.082s]     agentic   ppl=   477.07 hot=100.0% n=72
+[ 20.082s]     web       ppl=   471.93 hot=100.0% n=1811
+[ 20.082s]     code      ppl=   465.46 hot=100.0% n=1375
+[ 20.082s]     reasoning ppl=   461.42 hot=100.0% n=603
+[ 20.082s]     longctx   ppl=   456.99 hot=100.0% n=217
+[ 20.082s]     stem      ppl=   448.69 hot=100.0% n=594
+[ 20.082s]   learning-signal check: lane ppl spread 1.13x, vocab=512, near-uniform=True
+[ 20.082s]     exposure: web=34%, code=26%, indic=13%, reasoning=11%, stem=11%, longctx=4%, agentic=1%
+[ 20.082s]     -> the model is barely trained at this depth, so per-lane perplexity sits near exp(ln V) = V and the lane ORDERING is not meaningful. The ledger's structure is demonstrated; its values are not a finding. Re-run with --deep for a usable signal.
+[ 20.085s]   position-bucket spread = 10.7567 (monotone_decreasing=False)
+[ 20.087s]   EOS perplexity: at_boundary={'n_tokens': 37, 'mean_loss': 6.128559, 'geometric_mean_ppl': 458.7745, 'hot_token_pct': 100.0} other={'n_tokens': 5344, 'mean_loss': 6.153277, 'geometric_mean_ppl': 470.2557, 'hot_token_pct': 100.0}
+[ 20.087s]   V6 recommendations:
+[ 20.087s]     v5_agentic_train_000     keep_with_phase_guard        (productive but hard: 100.0% of tokens above ppl 20.0)
+[ 20.087s]     v5_code_train_001        keep_with_phase_guard        (productive but hard: 100.0% of tokens above ppl 20.0)
+[ 20.087s]     v5_indic_train_002       phase_guard                  (usefulness inverts with phase: best at early, negative elsewhere)
+[ 20.087s]     v5_longctx_train_003     keep_with_phase_guard        (productive but hard: 100.0% of tokens above ppl 20.0)
+[ 20.087s]     v5_reasoning_train_004   keep_with_phase_guard        (productive but hard: 100.0% of tokens above ppl 20.0)
+[ 20.087s]     v5_stem_train_005        keep_with_phase_guard        (productive but hard: 100.0% of tokens above ppl 20.0)
+[ 20.087s]     v5_web_train_006         keep_with_phase_guard        (productive but hard: 100.0% of tokens above ppl 20.0)
+[ 20.098s]   excess loss vs reference (golden_proxy): 5381 tokens scored
+[ 20.098s]     quadrants: already_learned=11.9%, irreducible_hard=43.4%, learnable_hard=40.8%, saturating=3.9%
+[ 20.098s]     lanes by remaining headroom (DoReMi order): ['web', 'agentic', 'code', 'stem', 'longctx', 'reasoning', 'indic']
+[ 20.098s]       agentic   mean_excess=+0.2033 (behind_reference, 72 tokens)
+[ 20.098s]       code      mean_excess=+0.1938 (behind_reference, 1375 tokens)
+[ 20.098s]       indic     mean_excess=+0.0497 (matched, 709 tokens)
+[ 20.098s]       longctx   mean_excess=+0.0938 (behind_reference, 217 tokens)
+[ 20.098s]       reasoning mean_excess=+0.0849 (behind_reference, 603 tokens)
+[ 20.098s]       stem      mean_excess=+0.1852 (behind_reference, 594 tokens)
+[ 20.098s]       web       mean_excess=+0.2572 (behind_reference, 1811 tokens)
+[ 20.193s]   [PASS] loss_spike_detected step=29 metric=grad_norm z=13.32 value=0.4553 vs baseline 0.2273 [at the anneal seam]
+[ 20.193s]     ablation (PaLM s5): replayed from ckpt_00018 -> 0.391638 | reproduced=True -> verdict=seam_composition
+[ 20.193s]     reproducible AND at the anneal stage transition: the batch's lane COMPOSITION changed here, so this is a curriculum seam, not a verdict on any document. The fix is seam blending, not removing data.
+[ 20.317s]   shard verdicts withheld pending attribution: ['v5_code_train_001', 'v5_indic_train_002', 'v5_longctx_train_003', 'v5_reasoning_train_004', 'v5_stem_train_005']
+[ 20.317s]   shard reuse advisory (ratio vs median ppl 433.98, cutoff 1.2):
+[ 20.317s]     v5_agentic_train_000     ratio=1.019 exposures=4 -> typical_keep_as_is
+[ 20.317s]     v5_code_train_001        ratio=0.973 exposures=27 -> withheld_pending_spike_attribution
+[ 20.317s]     v5_indic_train_002       ratio=1.180 exposures=22 -> withheld_pending_spike_attribution
+[ 20.317s]     v5_longctx_train_003     ratio=1.033 exposures=7 -> withheld_pending_spike_attribution
+[ 20.317s]     v5_reasoning_train_004   ratio=0.948 exposures=20 -> withheld_pending_spike_attribution
+[ 20.317s]     v5_stem_train_005        ratio=0.967 exposures=21 -> withheld_pending_spike_attribution
+[ 20.317s]     v5_web_train_006         ratio=1.000 exposures=22 -> typical_keep_as_is
+[ 20.321s]   token trajectories: 1201 instances seen more than once (1030 seen once, no slope)
+[ 20.321s]     H_to_H=75.3%, H_to_L=15.9%, L_to_L=8.7%  (RHO-1 at scale: L_to_L 51%, H_to_L 26%, H_to_H 11%, L_to_H 12%)
+[ 20.321s]     mean loss delta across repeated exposures: -0.0688 (negative = loss falling, i.e. the slope is being measured, not assumed)
+[ 20.321s]     NOT comparable to RHO-1's distribution: at this depth the model is close to the vocabulary floor, so almost everything is still 'high loss' and H_to_H is inflated by training depth rather than by aleatoric content. The MECHANISM is what is demonstrated here; the distribution needs a real run.
+[ 20.324s] 
+[ 20.324s] ==============================================================================
+[ 20.324s]   11. Throughput and packing efficiency
+[ 20.324s] ==============================================================================
+[ 20.337s]     S1_seed        steps= 3 util=0.761 useful_tok/s=   2185.5
+[ 20.337s]     S2_general     steps= 9 util=0.939 useful_tok/s=   4196.0
+[ 20.337s]     S3_reasoning   steps=10 util=0.932 useful_tok/s=   3744.1
+[ 20.337s]     S4_longctx     steps= 7 util=0.928 useful_tok/s=   3737.8
+[ 20.337s]     anneal         steps= 1 util=0.695 useful_tok/s=   1826.7
+[ 20.337s]   rank compute skew: tokens differ by 0.0% across 4 ranks but attention cost differs by 17.3% (straggler = rank 1)
+[ 20.337s]     quadratic attention means composition, not token count, sets the step time (MegaScale-Data arXiv:2504.09844). Measured, not fixed: see performance.json.rank_compute_skew.not_fixed_here
+[ 20.337s]   packing_utilization = 0.922841
+[ 20.337s]   useful_fraction_of_raw = 0.902344
+[ 20.337s]   useful_loss_bearing_tokens_per_sec = 3760.67
+[ 20.337s]   candidate_preparation_share_of_step_time = 0.485837
+[ 20.339s] 
+[ 20.339s] ==============================================================================
+[ 20.339s]   11b. Pre-registered experiments (E1, E6, determinism)
+[ 20.339s] ==============================================================================
+[ 26.212s] [PASS] two_runs_produce_identical_artifacts {'tokenizer_hash': True, 'shard_content_hashes': True, 'batch_stream_hash': True, 'model_weight_hash': True, 'final_loss': True}
+[ 33.691s]   E1 (instructor's open question - mixed vs pure lane shards):
+[ 33.691s]     P_pure: indic by lane-tag=0.2000 by content=0.2000 auditable=True stage_spread=0.1015
+[ 33.691s]     M_mixed: indic by lane-tag=0.1639 by content=0.4426 auditable=False stage_spread=0.0654
+[ 33.691s]     hypothesis_refuted=False -> decision: pure-lane shards; protected lanes are injected post-selection as whole batches
+[ 40.720s]   E6 (Indic intra-lane ordering): advantage=-0.001463 verdict=UNDER-POWERED AT DEMO SCALE
+[ 40.721s] 
+[ 40.721s] ==============================================================================
+[ 40.721s]   12. Negative controls (every invariant must be falsifiable)
+[ 40.721s] ==============================================================================
+[ 44.202s]   [PASS] tokenizer_hash_detects_merge_change: drop the last merge rule and re-hash
+[ 44.202s]   [PASS] exactly_once_coverage_detects_duplicate_and_missing_batches: deliver one batch twice, and separately drop one batch, then recompute coverage
+[ 44.202s]   [PASS] replay_fails_when_the_stream_is_perturbed: rotate every lane's pool order by one and replay the same interval
+[ 44.202s]   [PASS] attention_crossings_detects_removed_segment_isolation: replace TinyLM.attention_mask with a causal-only mask and recount
+[ 44.202s]   [PASS] checkpoint_integrity_detects_every_corruption_flavour: induce 6 corruption flavours: weight_bit_flip, torn_write_truncated_weights, loader_cursor_moved, ledger_offset_moved, step_counter_moved, tokenizer_identity_swapped
+[ 44.202s]   [PASS] restore_refuses_a_corrupt_checkpoint: move the loader cursor by one sample and call restore()
+[ 44.202s]   [PASS] spike_detector_fires_only_on_a_real_jump: inject one 9.0 loss into an otherwise flat 6.0 series, and separately check the flat series
+[ 44.202s]   [PASS] spike_never_becomes_a_shard_verdict: classify two shards `harmful`, one inside a spike window and one outside, then apply spike attribution
+[ 44.202s]   [PASS] ablation_can_restore_a_withheld_verdict: re-run attribution with the ablation verdict `data_implicated`
+[ 44.202s]   [PASS] ngram_containment_catches_what_jaccard_cannot: plant a long ordinary article containing one verbatim benchmark item, with no canary, not marked derived, and global Jaccard below the overlap threshold
+[ 44.202s]   [PASS] repeat_ngram_screen_catches_planted_degenerate_document: plant a unique document containing a 60x repeated token run
+[ 44.202s]   [PASS] repeat_ngram_screen_is_not_subsumed_by_dedup: check the dedup verdict on the same planted document
+[ 44.202s]   [PASS] trainer_side_repeat_mask_fires_when_curation_is_bypassed: feed a 40x repeated token run straight to the packer's mask step
+[ 44.202s]   [PASS] tokenizer_retrains_identically: retrain from the same texts and compare hashes
+[ 44.202s]   [PASS] shard_content_hash_detects_byte_flip: flip one token id and re-verify against the manifest
+[ 44.202s]   [PASS] admission_blocks_missing_pii_screen_status: set pii_screen_status=missing
+[ 44.202s]   [PASS] admission_blocks_missing_dedup_status: set dedup_status=missing
+[ 44.202s]   [PASS] admission_blocks_missing_cleaning_pipeline_hash: set cleaning_pipeline_hash=missing
+[ 44.202s]   [PASS] admission_blocks_missing_tokenizer_hash: set tokenizer_hash=missing
+[ 44.202s]   [PASS] admission_blocks_missing_eval_overlap_status: set eval_overlap_status=missing
+[ 44.202s]   [PASS] admission_blocks_unsafe_license: set license_tier=unsafe
+[ 44.202s]   [PASS] firewall_blocks_smuggled_eval_doc: relabel a registered test document as split=train and resubmit
+[ 44.202s]   [PASS] firewall_blocks_eval_in_served_batch: put a registered test doc id into a served batch
+[ 44.202s]   [PASS] firewall_derived_gate_independent: disable the overlap gate and submit a benchmark paraphrase
+[ 44.202s]   [PASS] firewall_leaks_when_content_gates_off: disable overlap, derived AND ngram_containment, then submit the paraphrase
+[ 44.202s]   [PASS] mask_validator_detects_loss_bearing_pad: set loss_mask=1 on pad position 101 of a sample that has padding
+[ 44.202s]   [PASS] attention_isolation_is_real_and_non_vacuous: count pairs the real mask allows vs pairs a plain causal mask would have allowed
+[ 44.202s]   [PASS] floors_survive_normalisation: read the effective mixture at stage 0 and compare each protected lane against its floor
+[ 44.202s]   [PASS] unprotected_lanes_are_not_floored: check that at least one unprotected lane sits below the smallest protected floor
+[ 44.202s]   [PASS] ledger_chain_detects_edit: edit global_step on historical entry #2
+[ 44.202s] [PASS] negative_controls 30/30
+[ 44.204s]   [PASS] anneal_reserve_deferrals_recorded 46 deferrals over 5 documents; 1/5 drawn and admitted once the reserve released them at the anneal stage
+[ 44.204s]     the run reaches anneal for exactly 1 step (S5 budgets anneal at 3% of the run), so it offers 8 sample slots and can only draw a fraction of the 5 reserved documents before the plan ends. RELEASE is asserted for every reserved sample in tests/test_invariants.py::test_reserve_releases_every_reserved_sample_in_anneal; what the run shows is that the release is real, not that all of them were consumed.
+[ 44.204s]     1636719927e2461d deferred in ['S1_seed', 'S2_general', 'S3_reasoning', 'S4_longctx'] -> admitted in NEVER (still reserved)
+[ 44.204s]     4d289a2bc9824596 deferred in ['S1_seed', 'S2_general', 'S3_reasoning', 'S4_longctx'] -> admitted in NEVER (still reserved)
+[ 44.204s]     742f893ff0b4bc80 deferred in ['S1_seed', 'S3_reasoning'] -> admitted in NEVER (still reserved)
+[ 44.204s]     83b31f3bbb7b784c deferred in ['S1_seed', 'S2_general', 'S3_reasoning', 'S4_longctx'] -> admitted in ['anneal']
+[ 44.204s]     c16202459dbebf45 deferred in ['S2_general', 'S3_reasoning', 'S4_longctx'] -> admitted in NEVER (still reserved)
+[ 44.204s]   rejection rate: plan assumed 18%, this run achieved 18.6% on supply (per-step selection pressure was 61.7%, floored at 50% by the 2.0x oversample - a different quantity)
+[ 44.204s] [PASS] rejection_rate_reconciled_with_supply: achieved 18.6% vs planned 18% on supply, |delta|=0.006 vs a 0.050 band
+[ 44.204s]   FINDING plan_fragility: at the measured rate, 1 further lane(s) breach the 4-epoch ceiling: ['reasoning'] (already infeasible at the plan rate: ['agentic', 'indic']) -> manifests/feasibility_at_observed_rejection.json
+[ 44.204s] [PASS] delivered_mixture_tracks_the_plan (total variation distance 0.0726 <= 0.15; stage-weighted target)
+[ 44.204s]     agentic    target=0.0203 delivered=0.0215 rel=0.058
+[ 44.204s]     code       target=0.2386 delivered=0.2742 rel=0.149
+[ 44.204s]     indic      target=0.1709 delivered=0.1290 rel=-0.245
+[ 44.204s]     longctx    target=0.0183 delivered=0.0376 rel=1.052
+[ 44.204s]     reasoning  target=0.0908 delivered=0.1075 rel=0.185
+[ 44.204s]     stem       target=0.1206 delivered=0.1129 rel=-0.064
+[ 44.204s]     web        target=0.3400 delivered=0.3172 rel=-0.067
+[ 44.211s] 
+[ 44.211s] ==============================================================================
+[ 44.211s]   13. Evidence bundle
+[ 44.211s] ==============================================================================
+[ 44.216s]   wrote /Users/vedapragna/Documents/AI/ERA5/S6/submission_artifacts/evidence.json
+[ 44.216s]   wrote /Users/vedapragna/Documents/AI/ERA5/S6/submission_artifacts/evidence.md
+[ 44.216s] 
+[ 44.216s] ==============================================================================
+[ 44.216s]   Result
+[ 44.216s] ==============================================================================
+[ 44.216s]   [PASS] tokenizer_integrity
+[ 44.216s]   [PASS] shard_immutability
+[ 44.216s]   [PASS] evaluation_firewall
+[ 44.216s]   [PASS] packing_correctness
+[ 44.216s]   [PASS] mixture_compliance
+[ 44.216s]   [PASS] opus_audit_trail
+[ 44.216s]   [PASS] crash_recovery
+[ 44.216s]   [PASS] exactly_once_across_world_size
+[ 44.216s]   [PASS] replay
+[ 44.216s]   [PASS] fork
+[ 44.216s]   [PASS] ledger_integrity
+[ 44.216s]   [PASS] learning_trace
+[ 44.216s]   [PASS] throughput
+[ 44.216s]   [PASS] negative_controls
+[ 44.216s]   [PASS] determinism
+[ 44.216s] {'n_requirements': 15, 'n_passed': 15, 'n_failed': 0, 'all_passed': True}
+[ 44.216s] [PASS] performance_measured packing_utilization=0.922841 useful_loss_bearing_tokens_per_sec=3760.67 (reconstructable from performance.json.steps_detail)
+[ 44.224s] [PASS] dashboard_regenerated (16908 bytes, built from this run's artifacts)
+[ 44.224s] [PASS] no_unbound_failure_in_the_log (0 [FAIL] line(s) outside the requirement bundle)
+[ 44.224s] performance measured; run complete

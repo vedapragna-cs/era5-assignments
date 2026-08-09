@@ -1,0 +1,651 @@
+{
+  "boundary": {
+    "at_boundary": {
+      "geometric_mean_ppl": 458.7745,
+      "hot_token_pct": 100.0,
+      "mean_loss": 6.128559,
+      "n_tokens": 37
+    },
+    "interpretation": "EOS perplexity should fall relative to non-boundary tokens as the model learns that documents end. A boundary perplexity that stays high means the model is not predicting the end of a document, so packed windows are teaching run-on context.",
+    "not_at_boundary": {
+      "geometric_mean_ppl": 470.2557,
+      "hot_token_pct": 100.0,
+      "mean_loss": 6.153277,
+      "n_tokens": 5344
+    },
+    "question": "Is the model learning the document boundary convention?"
+  },
+  "by_lane": {
+    "agentic": {
+      "geometric_mean_ppl": 477.0717,
+      "hot_token_pct": 100.0,
+      "mean_loss": 6.167667,
+      "n_tokens": 72
+    },
+    "code": {
+      "geometric_mean_ppl": 465.4639,
+      "hot_token_pct": 100.0,
+      "mean_loss": 6.143035,
+      "n_tokens": 1375
+    },
+    "indic": {
+      "geometric_mean_ppl": 505.4998,
+      "hot_token_pct": 100.0,
+      "mean_loss": 6.225548,
+      "n_tokens": 709
+    },
+    "longctx": {
+      "geometric_mean_ppl": 456.9865,
+      "hot_token_pct": 100.0,
+      "mean_loss": 6.124654,
+      "n_tokens": 217
+    },
+    "reasoning": {
+      "geometric_mean_ppl": 461.4196,
+      "hot_token_pct": 100.0,
+      "mean_loss": 6.134308,
+      "n_tokens": 603
+    },
+    "stem": {
+      "geometric_mean_ppl": 448.688,
+      "hot_token_pct": 100.0,
+      "mean_loss": 6.106328,
+      "n_tokens": 594
+    },
+    "web": {
+      "geometric_mean_ppl": 471.928,
+      "hot_token_pct": 100.0,
+      "mean_loss": 6.156826,
+      "n_tokens": 1811
+    }
+  },
+  "by_language": {
+    "en": {
+      "geometric_mean_ppl": 465.0353,
+      "hot_token_pct": 100.0,
+      "mean_loss": 6.142113,
+      "n_tokens": 4672
+    },
+    "hi": {
+      "geometric_mean_ppl": 501.5948,
+      "hot_token_pct": 100.0,
+      "mean_loss": 6.217793,
+      "n_tokens": 591
+    },
+    "te": {
+      "geometric_mean_ppl": 525.5201,
+      "hot_token_pct": 100.0,
+      "mean_loss": 6.264388,
+      "n_tokens": 118
+    }
+  },
+  "excess_loss": {
+    "by_lane": {
+      "agentic": {
+        "headroom": "behind_reference",
+        "mean_excess_loss": 0.203263,
+        "tokens_scored": 72
+      },
+      "code": {
+        "headroom": "behind_reference",
+        "mean_excess_loss": 0.193807,
+        "tokens_scored": 1375
+      },
+      "indic": {
+        "headroom": "matched",
+        "mean_excess_loss": 0.049748,
+        "tokens_scored": 709
+      },
+      "longctx": {
+        "headroom": "behind_reference",
+        "mean_excess_loss": 0.093847,
+        "tokens_scored": 217
+      },
+      "reasoning": {
+        "headroom": "behind_reference",
+        "mean_excess_loss": 0.084896,
+        "tokens_scored": 603
+      },
+      "stem": {
+        "headroom": "behind_reference",
+        "mean_excess_loss": 0.185185,
+        "tokens_scored": 594
+      },
+      "web": {
+        "headroom": "behind_reference",
+        "mean_excess_loss": 0.257182,
+        "tokens_scored": 1811
+      }
+    },
+    "doremi_note": "lanes_by_headroom_desc is the order DoReMi-style reweighting would raise. It is reported, not applied: changing lane weights from a 32-dim model on a 50-document corpus would be a claim this run cannot support.",
+    "interpretation": {
+      "already_learned": "low loss, matched - candidate for down-weighting",
+      "irreducible_hard": "high loss for BOTH models - aleatoric; collecting more buys nothing",
+      "learnable_hard": "high loss, reference finds it easier - worth gradient (RHO-1's selection signal)",
+      "saturating": "we are ahead of the reference - the lane is done"
+    },
+    "lanes_by_headroom_desc": [
+      "web",
+      "agentic",
+      "code",
+      "stem",
+      "longctx",
+      "reasoning",
+      "indic"
+    ],
+    "measured": true,
+    "quadrants": {
+      "already_learned": {
+        "fraction": 0.1188,
+        "tokens": 639
+      },
+      "irreducible_hard": {
+        "fraction": 0.4336,
+        "tokens": 2333
+      },
+      "learnable_hard": {
+        "fraction": 0.4083,
+        "tokens": 2197
+      },
+      "saturating": {
+        "fraction": 0.0394,
+        "tokens": 212
+      }
+    },
+    "quadrants_by_lane": {
+      "agentic": {
+        "already_learned": 7,
+        "irreducible_hard": 24,
+        "learnable_hard": 39,
+        "saturating": 2
+      },
+      "code": {
+        "already_learned": 190,
+        "irreducible_hard": 556,
+        "learnable_hard": 570,
+        "saturating": 59
+      },
+      "indic": {
+        "already_learned": 12,
+        "irreducible_hard": 383,
+        "learnable_hard": 310,
+        "saturating": 4
+      },
+      "longctx": {
+        "already_learned": 32,
+        "irreducible_hard": 104,
+        "learnable_hard": 61,
+        "saturating": 20
+      },
+      "reasoning": {
+        "already_learned": 89,
+        "irreducible_hard": 337,
+        "learnable_hard": 144,
+        "saturating": 33
+      },
+      "stem": {
+        "already_learned": 122,
+        "irreducible_hard": 233,
+        "learnable_hard": 198,
+        "saturating": 41
+      },
+      "web": {
+        "already_learned": 187,
+        "irreducible_hard": 696,
+        "learnable_hard": 875,
+        "saturating": 53
+      }
+    },
+    "tokens_scored": 5381
+  },
+  "generated_from": "learning ledger of this run",
+  "plan_change_recommendations": [
+    {
+      "current": "concat_chop",
+      "external_evidence": {
+        "reported": "+4.7% reading comprehension, +16.8% context following, +9.2% program synthesis, up to -58.3% closed-domain hallucination; packing overhead <=0.01% extra padding at billion-document scale",
+        "source": "Ding et al., Fewer Truncations Improve Language Modeling, ICML 2024 (arXiv:2404.10830)",
+        "why_our_overhead_is_larger": "bin packing gets more efficient as the instance grows, so the extra-sequence cost measured on this tiny corpus is an upper bound, not the production figure"
+      },
+      "measured_here": {
+        "best_fit_documents_truncated": 0,
+        "best_fit_utilization": 0.9566,
+        "concat_chop_documents_truncated": 74,
+        "concat_chop_utilization": 0.9783,
+        "extra_sequences": 1
+      },
+      "not_applied_because": "packing_policy is part of the mixture plan this system executes. Changing it here would mean the run no longer measures the plan as written.",
+      "recommended": "best_fit",
+      "target": "packing_policy[web]"
+    }
+  ],
+  "position_buckets": {
+    "buckets": {
+      "0": {
+        "geometric_mean_ppl": 474.5407,
+        "hot_token_pct": 100.0,
+        "mean_loss": 6.162347,
+        "n_tokens": 508
+      },
+      "1": {
+        "geometric_mean_ppl": 469.9659,
+        "hot_token_pct": 100.0,
+        "mean_loss": 6.15266,
+        "n_tokens": 544
+      },
+      "2": {
+        "geometric_mean_ppl": 475.3012,
+        "hot_token_pct": 100.0,
+        "mean_loss": 6.163949,
+        "n_tokens": 549
+      },
+      "3": {
+        "geometric_mean_ppl": 472.7328,
+        "hot_token_pct": 100.0,
+        "mean_loss": 6.15853,
+        "n_tokens": 540
+      },
+      "4": {
+        "geometric_mean_ppl": 464.5445,
+        "hot_token_pct": 100.0,
+        "mean_loss": 6.141057,
+        "n_tokens": 541
+      },
+      "5": {
+        "geometric_mean_ppl": 465.2119,
+        "hot_token_pct": 100.0,
+        "mean_loss": 6.142493,
+        "n_tokens": 556
+      },
+      "6": {
+        "geometric_mean_ppl": 470.1087,
+        "hot_token_pct": 100.0,
+        "mean_loss": 6.152964,
+        "n_tokens": 558
+      },
+      "7": {
+        "geometric_mean_ppl": 471.9158,
+        "hot_token_pct": 100.0,
+        "mean_loss": 6.156801,
+        "n_tokens": 527
+      },
+      "8": {
+        "geometric_mean_ppl": 472.9164,
+        "hot_token_pct": 100.0,
+        "mean_loss": 6.158919,
+        "n_tokens": 539
+      },
+      "9": {
+        "geometric_mean_ppl": 464.8498,
+        "hot_token_pct": 100.0,
+        "mean_loss": 6.141714,
+        "n_tokens": 519
+      }
+    },
+    "definition": "decile of the token's position within its own document",
+    "monotone_decreasing": false,
+    "n_buckets": 10,
+    "spread": 10.7567
+  },
+  "reference_model": {
+    "architecture": "identical to the trained model - excess loss must isolate DATA, so model class is held constant",
+    "caveat": "a single reference narrows the signal toward its own domain (RHO-1 s5); a lane the reference never saw scores high-excess for being unfamiliar rather than for being learnable. A per-lane reference is the scale answer and is not affordable on this corpus.",
+    "final_mean_loss_on_reference_domain": 5.751793,
+    "reference_domain": "golden_proxy",
+    "train_sequences": 5,
+    "train_steps": 40,
+    "weight_hash": "7b2682abc3b4831e"
+  },
+  "reuse_advisory": {
+    "cutoff": 1.2,
+    "measured": true,
+    "median_shard_ppl": 433.9796,
+    "read_with": "excess_loss - a high ratio means hard, and only excess loss says whether hard means learnable or irreducible",
+    "rule": "ratio = shard_ppl / median_shard_ppl; symmetric, so 1/cutoff on the easy side",
+    "shards": [
+      {
+        "action": "typical_keep_as_is",
+        "capability_lane": "agentic",
+        "epoch_ceiling_headroom": 0.0,
+        "exposures_this_run": 4,
+        "geometric_mean_ppl": 442.2124,
+        "ratio_to_median": 1.019,
+        "shard_id": "v5_agentic_train_000"
+      },
+      {
+        "action": "withheld_pending_spike_attribution",
+        "capability_lane": "code",
+        "epoch_ceiling_headroom": -23.0,
+        "exposures_this_run": 27,
+        "geometric_mean_ppl": 422.4127,
+        "ratio_to_median": 0.9733,
+        "shard_id": "v5_code_train_001"
+      },
+      {
+        "action": "withheld_pending_spike_attribution",
+        "capability_lane": "indic",
+        "epoch_ceiling_headroom": -18.0,
+        "exposures_this_run": 22,
+        "geometric_mean_ppl": 512.1127,
+        "ratio_to_median": 1.18,
+        "shard_id": "v5_indic_train_002"
+      },
+      {
+        "action": "withheld_pending_spike_attribution",
+        "capability_lane": "longctx",
+        "epoch_ceiling_headroom": -3.0,
+        "exposures_this_run": 7,
+        "geometric_mean_ppl": 448.4572,
+        "ratio_to_median": 1.0334,
+        "shard_id": "v5_longctx_train_003"
+      },
+      {
+        "action": "withheld_pending_spike_attribution",
+        "capability_lane": "reasoning",
+        "epoch_ceiling_headroom": -16.0,
+        "exposures_this_run": 20,
+        "geometric_mean_ppl": 411.2601,
+        "ratio_to_median": 0.9476,
+        "shard_id": "v5_reasoning_train_004"
+      },
+      {
+        "action": "withheld_pending_spike_attribution",
+        "capability_lane": "stem",
+        "epoch_ceiling_headroom": -17.0,
+        "exposures_this_run": 21,
+        "geometric_mean_ppl": 419.4271,
+        "ratio_to_median": 0.9665,
+        "shard_id": "v5_stem_train_005"
+      },
+      {
+        "action": "typical_keep_as_is",
+        "capability_lane": "web",
+        "epoch_ceiling_headroom": -18.0,
+        "exposures_this_run": 22,
+        "geometric_mean_ppl": 433.9796,
+        "ratio_to_median": 1.0,
+        "shard_id": "v5_web_train_006"
+      }
+    ]
+  },
+  "shard_cards": [
+    {
+      "best_phase": "mid",
+      "capability_lane": "agentic",
+      "max_pass_number": 1,
+      "phases": {
+        "early": {
+          "grad_norm": 0.210247,
+          "hot_pct": 100.0,
+          "loss_delta": 0.021684,
+          "mean_loss": 6.214523,
+          "n_exposures": 2
+        },
+        "mid": {
+          "grad_norm": 0.224807,
+          "hot_pct": 100.0,
+          "loss_delta": 0.050524,
+          "mean_loss": 6.120124,
+          "n_exposures": 2
+        }
+      },
+      "recommendation": {
+        "action": "keep_with_phase_guard",
+        "because": "productive but hard: 100.0% of tokens above ppl 20.0",
+        "best_phase": "mid",
+        "max_pass_number": 1,
+        "mean_hot_token_pct": 100.0
+      },
+      "shard_id": "v5_agentic_train_000",
+      "total_exposures": 4,
+      "usefulness_inverts_with_phase": false,
+      "worst_phase": "early"
+    },
+    {
+      "best_phase": "early",
+      "capability_lane": "code",
+      "max_pass_number": 17,
+      "phases": {
+        "early": {
+          "grad_norm": 0.203618,
+          "hot_pct": 100.0,
+          "loss_delta": 0.006864,
+          "mean_loss": 6.21591,
+          "n_exposures": 8
+        },
+        "mid": {
+          "grad_norm": 0.221714,
+          "hot_pct": 100.0,
+          "loss_delta": 0.006427,
+          "mean_loss": 6.124165,
+          "n_exposures": 19
+        }
+      },
+      "recommendation": {
+        "action": "keep_with_phase_guard",
+        "because": "productive but hard: 100.0% of tokens above ppl 20.0",
+        "best_phase": "early",
+        "max_pass_number": 17,
+        "mean_hot_token_pct": 100.0
+      },
+      "shard_id": "v5_code_train_001",
+      "total_exposures": 27,
+      "usefulness_inverts_with_phase": false,
+      "worst_phase": "mid"
+    },
+    {
+      "best_phase": "early",
+      "capability_lane": "indic",
+      "max_pass_number": 8,
+      "phases": {
+        "early": {
+          "grad_norm": 0.222086,
+          "hot_pct": 100.0,
+          "loss_delta": 0.002505,
+          "mean_loss": 6.22282,
+          "n_exposures": 8
+        },
+        "mid": {
+          "grad_norm": 0.228138,
+          "hot_pct": 100.0,
+          "loss_delta": -0.007833,
+          "mean_loss": 6.227641,
+          "n_exposures": 14
+        }
+      },
+      "recommendation": {
+        "action": "phase_guard",
+        "because": "usefulness inverts with phase: best at early, negative elsewhere",
+        "best_phase": "early",
+        "max_pass_number": 8,
+        "mean_hot_token_pct": 100.0
+      },
+      "shard_id": "v5_indic_train_002",
+      "total_exposures": 22,
+      "usefulness_inverts_with_phase": true,
+      "worst_phase": "mid"
+    },
+    {
+      "best_phase": "mid",
+      "capability_lane": "longctx",
+      "max_pass_number": 0,
+      "phases": {
+        "mid": {
+          "grad_norm": 0.227331,
+          "hot_pct": 100.0,
+          "loss_delta": 0.001583,
+          "mean_loss": 6.125975,
+          "n_exposures": 7
+        }
+      },
+      "recommendation": {
+        "action": "keep_with_phase_guard",
+        "because": "productive but hard: 100.0% of tokens above ppl 20.0",
+        "best_phase": "mid",
+        "max_pass_number": 0,
+        "mean_hot_token_pct": 100.0
+      },
+      "shard_id": "v5_longctx_train_003",
+      "total_exposures": 7,
+      "usefulness_inverts_with_phase": false,
+      "worst_phase": "mid"
+    },
+    {
+      "best_phase": "early",
+      "capability_lane": "reasoning",
+      "max_pass_number": 7,
+      "phases": {
+        "early": {
+          "grad_norm": 0.214313,
+          "hot_pct": 100.0,
+          "loss_delta": 0.009308,
+          "mean_loss": 6.222544,
+          "n_exposures": 4
+        },
+        "mid": {
+          "grad_norm": 0.239995,
+          "hot_pct": 100.0,
+          "loss_delta": 0.008899,
+          "mean_loss": 6.120376,
+          "n_exposures": 16
+        }
+      },
+      "recommendation": {
+        "action": "keep_with_phase_guard",
+        "because": "productive but hard: 100.0% of tokens above ppl 20.0",
+        "best_phase": "early",
+        "max_pass_number": 7,
+        "mean_hot_token_pct": 100.0
+      },
+      "shard_id": "v5_reasoning_train_004",
+      "total_exposures": 20,
+      "usefulness_inverts_with_phase": false,
+      "worst_phase": "mid"
+    },
+    {
+      "best_phase": "early",
+      "capability_lane": "stem",
+      "max_pass_number": 10,
+      "phases": {
+        "early": {
+          "grad_norm": 0.226975,
+          "hot_pct": 100.0,
+          "loss_delta": 0.013414,
+          "mean_loss": 6.201707,
+          "n_exposures": 3
+        },
+        "mid": {
+          "grad_norm": 0.223121,
+          "hot_pct": 100.0,
+          "loss_delta": 0.006795,
+          "mean_loss": 6.09795,
+          "n_exposures": 18
+        }
+      },
+      "recommendation": {
+        "action": "keep_with_phase_guard",
+        "because": "productive but hard: 100.0% of tokens above ppl 20.0",
+        "best_phase": "early",
+        "max_pass_number": 10,
+        "mean_hot_token_pct": 100.0
+      },
+      "shard_id": "v5_stem_train_005",
+      "total_exposures": 21,
+      "usefulness_inverts_with_phase": false,
+      "worst_phase": "mid"
+    },
+    {
+      "best_phase": "mid",
+      "capability_lane": "web",
+      "max_pass_number": 17,
+      "phases": {
+        "early": {
+          "grad_norm": 0.224374,
+          "hot_pct": 100.0,
+          "loss_delta": 0.005749,
+          "mean_loss": 6.204783,
+          "n_exposures": 10
+        },
+        "mid": {
+          "grad_norm": 0.218437,
+          "hot_pct": 100.0,
+          "loss_delta": 0.008483,
+          "mean_loss": 6.115318,
+          "n_exposures": 12
+        }
+      },
+      "recommendation": {
+        "action": "keep_with_phase_guard",
+        "because": "productive but hard: 100.0% of tokens above ppl 20.0",
+        "best_phase": "mid",
+        "max_pass_number": 17,
+        "mean_hot_token_pct": 100.0
+      },
+      "shard_id": "v5_web_train_006",
+      "total_exposures": 22,
+      "usefulness_inverts_with_phase": false,
+      "worst_phase": "early"
+    }
+  ],
+  "signal_quality": {
+    "depth": "default",
+    "lane_ppl_spread_ratio": 1.127,
+    "near_uniform": true,
+    "vocab_size": 512
+  },
+  "spike_attribution": {
+    "n_spikes": 1,
+    "policy": "a spike is a run event, never a shard property",
+    "unsafe_steps": [
+      28,
+      29,
+      30
+    ],
+    "verdicts_upheld_after_ablation": [],
+    "verdicts_withheld": [
+      "v5_code_train_001",
+      "v5_indic_train_002",
+      "v5_longctx_train_003",
+      "v5_reasoning_train_004",
+      "v5_stem_train_005"
+    ]
+  },
+  "storage_tiers": {
+    "aggregate": "the full run",
+    "full": "proxy/debug runs and suspicious shards",
+    "quantized": "selected intervals of a large run"
+  },
+  "token_trajectories": {
+    "actionable": {
+      "H_to_H": "irreducible: high loss that does not move - aleatoric, stop paying for it",
+      "H_to_L": "learnable-hard: the model is closing the gap - collect more like this",
+      "L_to_H": "regression: was learned and got worse - a seam or interference signal"
+    },
+    "caveat": "a trajectory needs repeated exposure. Lanes with large pools relative to their budget are drawn once and contribute no trajectory at all, so this report is biased toward small and protected lanes. Reported, not corrected: correcting it would mean over-sampling small lanes, which is not the plan.",
+    "classes": {
+      "H_to_H": {
+        "fraction": 0.7535,
+        "tokens": 905
+      },
+      "H_to_L": {
+        "fraction": 0.159,
+        "tokens": 191
+      },
+      "L_to_L": {
+        "fraction": 0.0874,
+        "tokens": 105
+      }
+    },
+    "high_loss_cut": 6.039383,
+    "mean_loss_delta": -0.068765,
+    "measured": true,
+    "rho1_reference_distribution": {
+      "H_to_H": 0.11,
+      "H_to_L": 0.26,
+      "L_to_H": 0.12,
+      "L_to_L": 0.51
+    },
+    "token_instances_seen_once": 1030,
+    "token_instances_with_a_trajectory": 1201
+  }
+}

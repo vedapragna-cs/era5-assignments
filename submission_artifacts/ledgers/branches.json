@@ -1,0 +1,42 @@
+{
+  "comparison": [
+    {
+      "differs": true,
+      "run_a": "d567c4693db66eb3c6708e55eaf2bbfc6a6b2820f0d19fdc2512712e70d32177",
+      "run_b": "22f6710e110c510d5e6af9f7386b0e9ad24d526e634f79da13bb2bae9cbed920",
+      "step": 12
+    },
+    {
+      "differs": true,
+      "run_a": "d1fc26604e0ee67194dcf0835cb4797dbfd727b76f2b369f0036be81128d32fa",
+      "run_b": "1e119ad41dd86109749bd8b58b8e27c54171276e9b742bf5ed80486ade5e895d",
+      "step": 13
+    },
+    {
+      "differs": true,
+      "run_a": "62e6b7423b02daf1ef22b2b45be8e1d2037a5d71e5f804f7f51f9f1565cc50ea",
+      "run_b": "94e98fbbb2ab82a4de1ae5c75b58dbcc83443b9002b357ce5f8ce9596e629318",
+      "step": 14
+    }
+  ],
+  "control_fork": {
+    "batches_identical_to_parent": [
+      true,
+      true
+    ],
+    "branch": "run-control",
+    "declared_change": null,
+    "meaning": "a fork with no declared change reproduces the parent stream; therefore run-b's divergence is caused by its declared change"
+  },
+  "fork": {
+    "checkpoint": "ckpt_00012",
+    "declared_change": {
+      "rationale": "reshuffle lane draw order to test order-sensitivity at fixed mixture",
+      "stream_seed": 20260807
+    },
+    "divergence_ledger_offset": 14,
+    "global_step": 12,
+    "new_branch": "run-b",
+    "parent_branch": "run-control"
+  }
+}

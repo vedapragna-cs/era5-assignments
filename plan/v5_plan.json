@@ -1,0 +1,119 @@
+{
+  "plan_id": "era-v5-mixture-v1",
+  "source": "S5/README.md and S5/CURRICULUM.md (this repository, branch hola)",
+  "note": "Production numbers from the S5 submission. The demo executes the same object with scale_divisor applied. Shares are stated exactly as S5 decided them; supply figures are S5's audited values, not the course inventory's.",
+  "run_tokens": 3000000000000,
+  "main_tokens": 2910000000000,
+  "anneal_tokens": 90000000000,
+  "epoch_ceiling": 4.0,
+  "epoch_ceiling_source": "arXiv:2305.16264 - up to 4 epochs of repeated data costs negligible loss",
+
+  "lanes": ["web", "code", "reasoning", "longctx", "indic", "stem", "agentic"],
+
+  "supply_tokens": {
+    "web": 4691000000000,
+    "code": 1103000000000,
+    "reasoning": 85100000000,
+    "longctx": 100000000000,
+    "indic": 157200000000,
+    "stem": 146000000000,
+    "agentic": 630000000
+  },
+  "supply_note": "S5 SUPPLY-AUDIT.md. Indic corrected 275.9B -> 157.2B (English split inside Sangraha verified tier; synthetic tier double-counted via transliteration). Reasoning: 78B of 85.1B is V4 AON lineage.",
+
+  "budget_share": {
+    "web": 0.34, "code": 0.24, "reasoning": 0.09, "longctx": 0.02,
+    "indic": 0.17, "stem": 0.12, "agentic": 0.02
+  },
+
+  "stages": [
+    {
+      "id": "S1_seed", "name": "Seed",
+      "token_start": 0, "token_end": 233000000000,
+      "sequence_length": 4096,
+      "difficulty_bands": ["B0", "B1"],
+      "mixture": {"web": 0.561, "code": 0.146, "reasoning": 0.020, "longctx": 0.002,
+                  "indic": 0.172, "stem": 0.090, "agentic": 0.010}
+    },
+    {
+      "id": "S2_general", "name": "General",
+      "token_start": 233000000000, "token_end": 1164000000000,
+      "sequence_length": 4096,
+      "difficulty_bands": ["B1", "B2"],
+      "mixture": {"web": 0.453, "code": 0.192, "reasoning": 0.048, "longctx": 0.004,
+                  "indic": 0.169, "stem": 0.118, "agentic": 0.015}
+    },
+    {
+      "id": "S3_reasoning", "name": "Reasoning",
+      "token_start": 1164000000000, "token_end": 2212000000000,
+      "sequence_length": 8192,
+      "difficulty_bands": ["B2", "B3", "B4"],
+      "mixture": {"web": 0.281, "code": 0.268, "reasoning": 0.125, "longctx": 0.009,
+                  "indic": 0.169, "stem": 0.128, "agentic": 0.020}
+    },
+    {
+      "id": "S4_longctx", "name": "Long-context",
+      "token_start": 2212000000000, "token_end": 2910000000000,
+      "sequence_length": 32768,
+      "difficulty_bands": ["B3", "B4"],
+      "mixture": {"web": 0.204, "code": 0.293, "reasoning": 0.117, "longctx": 0.063,
+                  "indic": 0.172, "stem": 0.120, "agentic": 0.030}
+    },
+    {
+      "id": "anneal", "name": "Anneal",
+      "token_start": 2910000000000, "token_end": 3000000000000,
+      "sequence_length": 32768,
+      "difficulty_bands": ["B5"],
+      "mixture": {"web": 0.08, "code": 0.20, "reasoning": 0.18, "longctx": 0.08,
+                  "indic": 0.28, "stem": 0.10, "agentic": 0.08}
+    }
+  ],
+
+  "protected_floors": {"indic": 0.12, "agentic": 0.02, "reasoning": 0.06},
+  "protected_floors_source": "S5 README section 1. OPUS measured to drive unprotected lanes to zero: Indic 0 tokens in 60/60 iterations, agentic 0 in 59/60. Floors are mechanism, not policy.",
+
+  "anneal_reserve": {
+    "indic_tier_a": 25200000000,
+    "agentic_long_trajectories": 360000000,
+    "reasoning_long_traces": 16200000000
+  },
+  "anneal_reserve_note": "Held back from the main run; spendable only in the anneal stage. S5 decision 2/3, tested by T3.",
+
+  "seams": [
+    {"from": "S1_seed", "to": "S2_general", "at": 233000000000, "band_tokens": 2000000000},
+    {"from": "S2_general", "to": "S3_reasoning", "at": 1164000000000, "band_tokens": 2000000000},
+    {"from": "S3_reasoning", "to": "S4_longctx", "at": 2212000000000, "band_tokens": 2000000000},
+    {"from": "S4_longctx", "to": "anneal", "at": 2910000000000, "band_tokens": 4000000000}
+  ],
+  "seam_rules": [
+    "Embeddings remain trainable across every seam (measured: 151x gradient spike frozen vs 8.0x unfrozen).",
+    "Blend every seam over at least 2B tokens (measured peak 2.8x, under the 3x stability threshold).",
+    "Final seam gets 4B: largest shift, and where a diverged run is most expensive to lose."
+  ],
+
+  "packing_policy": {
+    "web": "concat_chop",
+    "code": "greedy",
+    "stem": "best_fit",
+    "reasoning": "best_fit",
+    "indic": "best_fit",
+    "agentic": "structure_preserving",
+    "longctx": "long_context"
+  },
+  "packing_policy_note": "Agentic is structure-preserving because S5 requires tool-call ordering to survive; the cost is measured window utilization, reported in performance.json.",
+
+  "opus": {
+    "proxy_version": "opus_proxy_v5.3",
+    "accept_threshold": 0.05,
+    "rejection_rate_target": 0.18,
+    "note": "Threshold is on cosine alignment between candidate batch gradient and the golden proxy direction. Demand inflation is need = budget * share / (1 - rejection_rate)."
+  },
+
+  "agentic_loss_mask": {
+    "supervised_roles": ["assistant_plan", "tool_call", "final_answer"],
+    "context_roles": ["user", "tool_observation", "repo_file", "shell_output"],
+    "verifier_roles": ["verifier_outcome"],
+    "expected_yield": 0.53,
+    "source": "S5 BENCHMARK-MAP.md. Measured supervision yield on the reference trajectory: 356 supervised / 668 seen = 53%. A failed tool call IS supervised: recovery is the taught behaviour."
+  }
+}

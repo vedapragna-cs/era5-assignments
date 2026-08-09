@@ -1,0 +1,226 @@
+{
+  "capability_lane": "agentic",
+  "cleaning_pipeline_hash": "375f1762c583425243238238e41b7e340bc7b3d191df66d1c4781d1430633af3",
+  "content_hash": "c20a5760d4fbf503cd9a441e3b83adf9732cb2a12aa7f1f7e54fd50dfde6b9d9",
+  "dedup_clusters": [],
+  "dedup_status": "unique",
+  "difficulty_bands": [
+    "B3"
+  ],
+  "document_ids": [
+    "agent-0001",
+    "agent-0002"
+  ],
+  "eligible_stages": [
+    "S3_reasoning",
+    "S4_longctx"
+  ],
+  "eval_overlap_status": "clear",
+  "fertility_by_language": {
+    "en": 4.0756
+  },
+  "language_validated": true,
+  "languages": [
+    "en"
+  ],
+  "license_tier": "safe",
+  "parent_shard_ids": [],
+  "pii_kinds_found": [],
+  "pii_screen_status": "screened",
+  "provenance_tier": "audited",
+  "repeat_ngram_status": "screened",
+  "scripts": [
+    "Latn"
+  ],
+  "shard_id": "v5_agentic_train_000",
+  "source_ids": [
+    "openhands",
+    "swe_gym"
+  ],
+  "split": "train",
+  "stage_eligibility": {
+    "S1_seed": {
+      "band_permitted": false,
+      "documents_fitting_window": 0,
+      "documents_total": 2,
+      "eligible": false,
+      "longest_document_tokens": 267,
+      "stage_window_tokens": 16
+    },
+    "S2_general": {
+      "band_permitted": false,
+      "documents_fitting_window": 0,
+      "documents_total": 2,
+      "eligible": false,
+      "longest_document_tokens": 267,
+      "stage_window_tokens": 16
+    },
+    "S3_reasoning": {
+      "band_permitted": true,
+      "documents_fitting_window": 0,
+      "documents_total": 2,
+      "eligible": true,
+      "longest_document_tokens": 267,
+      "stage_window_tokens": 32
+    },
+    "S4_longctx": {
+      "band_permitted": true,
+      "documents_fitting_window": 0,
+      "documents_total": 2,
+      "eligible": true,
+      "longest_document_tokens": 267,
+      "stage_window_tokens": 128
+    },
+    "anneal": {
+      "band_permitted": false,
+      "documents_fitting_window": 0,
+      "documents_total": 2,
+      "eligible": false,
+      "longest_document_tokens": 267,
+      "stage_window_tokens": 128
+    }
+  },
+  "token_count": 489,
+  "token_spans": [
+    {
+      "doc_id": "agent-0001",
+      "end": 267,
+      "lane": "agentic",
+      "roles": [
+        {
+          "end": 26,
+          "role": "user",
+          "start": 0
+        },
+        {
+          "end": 62,
+          "role": "assistant_plan",
+          "start": 26
+        },
+        {
+          "end": 83,
+          "role": "tool_call",
+          "start": 62
+        },
+        {
+          "end": 113,
+          "role": "tool_observation",
+          "start": 83
+        },
+        {
+          "end": 141,
+          "role": "assistant_plan",
+          "start": 113
+        },
+        {
+          "end": 181,
+          "role": "tool_call",
+          "start": 141
+        },
+        {
+          "end": 192,
+          "role": "tool_observation",
+          "start": 181
+        },
+        {
+          "end": 214,
+          "role": "tool_call",
+          "start": 192
+        },
+        {
+          "end": 220,
+          "role": "tool_observation",
+          "start": 214
+        },
+        {
+          "end": 262,
+          "role": "final_answer",
+          "start": 220
+        },
+        {
+          "end": 266,
+          "role": "verifier_outcome",
+          "start": 262
+        },
+        {
+          "end": 267,
+          "role": "boundary",
+          "start": 266
+        }
+      ],
+      "span_id": "agent-0001:0-267",
+      "start": 0
+    },
+    {
+      "doc_id": "agent-0002",
+      "end": 489,
+      "lane": "agentic",
+      "roles": [
+        {
+          "end": 289,
+          "role": "user",
+          "start": 267
+        },
+        {
+          "end": 314,
+          "role": "assistant_plan",
+          "start": 289
+        },
+        {
+          "end": 331,
+          "role": "tool_call",
+          "start": 314
+        },
+        {
+          "end": 344,
+          "role": "tool_observation",
+          "start": 331
+        },
+        {
+          "end": 384,
+          "role": "assistant_plan",
+          "start": 344
+        },
+        {
+          "end": 391,
+          "role": "tool_call",
+          "start": 384
+        },
+        {
+          "end": 414,
+          "role": "tool_observation",
+          "start": 391
+        },
+        {
+          "end": 431,
+          "role": "tool_call",
+          "start": 414
+        },
+        {
+          "end": 443,
+          "role": "tool_observation",
+          "start": 431
+        },
+        {
+          "end": 484,
+          "role": "final_answer",
+          "start": 443
+        },
+        {
+          "end": 488,
+          "role": "verifier_outcome",
+          "start": 484
+        },
+        {
+          "end": 489,
+          "role": "boundary",
+          "start": 488
+        }
+      ],
+      "span_id": "agent-0002:267-489",
+      "start": 267
+    }
+  ],
+  "tokenizer_hash": "75b8661f606877ee2eb1398876fdc6f757ec30d6e989b481aa8f5ed0f53c6ec1",
+  "tokenizer_version": "v5-tok-1"
+}

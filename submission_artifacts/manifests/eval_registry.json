@@ -1,0 +1,85 @@
+{
+  "benchmark_ngrams_indexed": 27,
+  "gates": {
+    "canary": true,
+    "content_hash": true,
+    "derived": true,
+    "never_train": true,
+    "ngram_containment": true,
+    "overlap": true
+  },
+  "n_access_events": 42,
+  "n_registered": 5,
+  "n_rejections": 2,
+  "ngram_containment_n": 13,
+  "overlap_threshold": 0.12,
+  "registered": [
+    {
+      "benchmark_id": "GSM8K",
+      "canary": "CANARY-GSM-11b204",
+      "content_hash": "960d5eb8c84a2aacdc2e805716ef4b59e476a1abe042e69331037abc66279a08",
+      "doc_id": "eval-gsm-001",
+      "never_train": true,
+      "split": "test",
+      "version_tag": "2026-08"
+    },
+    {
+      "benchmark_id": "MILU",
+      "canary": "CANARY-MILU-7f3a9c",
+      "content_hash": "fb6222daa118c6105e68e1d59e96d4892f4041d997318a78c7a47ffb104edea7",
+      "doc_id": "eval-milu-001",
+      "never_train": true,
+      "split": "test",
+      "version_tag": "2026-08"
+    },
+    {
+      "benchmark_id": "SWE-bench-Verified",
+      "canary": "CANARY-SWE-55e1d8",
+      "content_hash": "da81bd03eeae572870785e89f8b4737d5db4f4f2e86386e93e521265af0b3d84",
+      "doc_id": "eval-swe-001",
+      "never_train": true,
+      "split": "test",
+      "version_tag": "2026-08"
+    },
+    {
+      "benchmark_id": "internal-val",
+      "canary": null,
+      "content_hash": "07a51c17e620e41096ac06bd4b87b62907ee045500ec93d7baf1fcd912c465d2",
+      "doc_id": "val-indic-001",
+      "never_train": false,
+      "split": "validation",
+      "version_tag": "2026-08"
+    },
+    {
+      "benchmark_id": "internal-val",
+      "canary": null,
+      "content_hash": "625d31273537150d148139d3190a16e1958fa69e79cdff5e4dae233af58d69e1",
+      "doc_id": "val-web-001",
+      "never_train": false,
+      "split": "validation",
+      "version_tag": "2026-08"
+    }
+  ],
+  "rejections": [
+    {
+      "allowed": false,
+      "doc_id": "web-0100",
+      "matched_benchmarks": [],
+      "max_overlap": 0.0,
+      "reasons": [
+        "benchmark-derived content"
+      ]
+    },
+    {
+      "allowed": false,
+      "doc_id": "web-0102",
+      "matched_benchmarks": [
+        "GSM8K"
+      ],
+      "max_overlap": 0.0806,
+      "reasons": [
+        "13-gram containment match: GSM8K"
+      ]
+    }
+  ]
+}

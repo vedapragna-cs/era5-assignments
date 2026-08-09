@@ -1,0 +1,193 @@
+{
+  "capability_lane": "stem",
+  "cleaning_pipeline_hash": "375f1762c583425243238238e41b7e340bc7b3d191df66d1c4781d1430633af3",
+  "content_hash": "5ddd4a791c40065fbea66e6c81a3f0f72704c7bf5eef84f36206f5b3c72403cd",
+  "dedup_clusters": [],
+  "dedup_status": "unique",
+  "difficulty_bands": [
+    "B1",
+    "B3",
+    "B4",
+    "B5"
+  ],
+  "document_ids": [
+    "stem-0001",
+    "stem-0002",
+    "stem-0003",
+    "stem-0010",
+    "stem-0011"
+  ],
+  "eligible_stages": [
+    "S1_seed",
+    "S2_general",
+    "S3_reasoning",
+    "S4_longctx",
+    "anneal"
+  ],
+  "eval_overlap_status": "clear",
+  "fertility_by_language": {
+    "en": 2.883
+  },
+  "language_validated": true,
+  "languages": [
+    "en"
+  ],
+  "license_tier": "safe",
+  "parent_shard_ids": [],
+  "pii_kinds_found": [],
+  "pii_screen_status": "screened",
+  "provenance_tier": "audited",
+  "repeat_ngram_status": "screened",
+  "scripts": [
+    "Latn"
+  ],
+  "shard_id": "v5_stem_train_005",
+  "source_ids": [
+    "pes2o",
+    "proof_pile_2",
+    "simple_science"
+  ],
+  "split": "train",
+  "stage_eligibility": {
+    "S1_seed": {
+      "band_permitted": true,
+      "documents_fitting_window": 0,
+      "documents_total": 5,
+      "eligible": true,
+      "longest_document_tokens": 134,
+      "stage_window_tokens": 16
+    },
+    "S2_general": {
+      "band_permitted": true,
+      "documents_fitting_window": 0,
+      "documents_total": 5,
+      "eligible": true,
+      "longest_document_tokens": 134,
+      "stage_window_tokens": 16
+    },
+    "S3_reasoning": {
+      "band_permitted": true,
+      "documents_fitting_window": 0,
+      "documents_total": 5,
+      "eligible": true,
+      "longest_document_tokens": 134,
+      "stage_window_tokens": 32
+    },
+    "S4_longctx": {
+      "band_permitted": true,
+      "documents_fitting_window": 4,
+      "documents_total": 5,
+      "eligible": true,
+      "longest_document_tokens": 134,
+      "stage_window_tokens": 128
+    },
+    "anneal": {
+      "band_permitted": true,
+      "documents_fitting_window": 4,
+      "documents_total": 5,
+      "eligible": true,
+      "longest_document_tokens": 134,
+      "stage_window_tokens": 128
+    }
+  },
+  "token_count": 549,
+  "token_spans": [
+    {
+      "doc_id": "stem-0001",
+      "end": 134,
+      "lane": "stem",
+      "roles": [
+        {
+          "end": 133,
+          "role": "text",
+          "start": 0
+        },
+        {
+          "end": 134,
+          "role": "boundary",
+          "start": 133
+        }
+      ],
+      "span_id": "stem-0001:0-134",
+      "start": 0
+    },
+    {
+      "doc_id": "stem-0002",
+      "end": 232,
+      "lane": "stem",
+      "roles": [
+        {
+          "end": 231,
+          "role": "text",
+          "start": 134
+        },
+        {
+          "end": 232,
+          "role": "boundary",
+          "start": 231
+        }
+      ],
+      "span_id": "stem-0002:134-232",
+      "start": 134
+    },
+    {
+      "doc_id": "stem-0003",
+      "end": 357,
+      "lane": "stem",
+      "roles": [
+        {
+          "end": 356,
+          "role": "text",
+          "start": 232
+        },
+        {
+          "end": 357,
+          "role": "boundary",
+          "start": 356
+        }
+      ],
+      "span_id": "stem-0003:232-357",
+      "start": 232
+    },
+    {
+      "doc_id": "stem-0010",
+      "end": 440,
+      "lane": "stem",
+      "roles": [
+        {
+          "end": 439,
+          "role": "text",
+          "start": 357
+        },
+        {
+          "end": 440,
+          "role": "boundary",
+          "start": 439
+        }
+      ],
+      "span_id": "stem-0010:357-440",
+      "start": 357
+    },
+    {
+      "doc_id": "stem-0011",
+      "end": 549,
+      "lane": "stem",
+      "roles": [
+        {
+          "end": 548,
+          "role": "text",
+          "start": 440
+        },
+        {
+          "end": 549,
+          "role": "boundary",
+          "start": 548
+        }
+      ],
+      "span_id": "stem-0011:440-549",
+      "start": 440
+    }
+  ],
+  "tokenizer_hash": "75b8661f606877ee2eb1398876fdc6f757ec30d6e989b481aa8f5ed0f53c6ec1",
+  "tokenizer_version": "v5-tok-1"
+}

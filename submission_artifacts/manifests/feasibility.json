@@ -1,0 +1,378 @@
+{
+  "ceiling_parameterisation": {
+    "quantity": "repetition_factor_r = demand / supply, per lane",
+    "weakest_for_us": "their hardest extrapolation case is Swahili and their weakest predictions are on quality-tiered mixtures - i.e. exactly the Indic lane.",
+    "why_per_lane": "arXiv:2605.12715 measures degradation as a function of each lane's OWN repetition factor, not a global epoch count. Scarcer lanes tolerate higher r (5x-smaller target -> r about 30; 5x-larger -> r < 7).",
+    "why_the_level_is_unchanged": "the same paper measures optimal r and optimal target weight both FALLING with model size (9.5% at 101M -> 1.9% at 539M) and states that extrapolation beyond about 900M is open. We plan ~30B. Re-shaping the ceiling is free; raising it is an extrapolation the evidence does not support, so the level stays at 4.0 (arXiv:2305.16264)."
+  },
+  "dedup_sensitivity": {
+    "basis": "S5 supply figures are pre-dedup (S5/SUPPLY-AUDIT.md s7 lists the dedup rates as still not obtained), so these are upper bounds on real supply",
+    "consequence": "lanes marked fragile or already_breached cannot be signed off until the dedup rate for their sources is measured. This is the cheapest unblocking measurement in the whole plan.",
+    "lanes": [
+      {
+        "lane": "agentic",
+        "max_tolerable_dedup_fraction": -30.6468,
+        "repetition_factor_r_at_published_supply": 126.587,
+        "status": "already_breached"
+      },
+      {
+        "lane": "indic",
+        "max_tolerable_dedup_fraction": -0.0081,
+        "repetition_factor_r_at_published_supply": 4.032,
+        "status": "already_breached"
+      },
+      {
+        "lane": "reasoning",
+        "max_tolerable_dedup_fraction": 0.0033,
+        "repetition_factor_r_at_published_supply": 3.987,
+        "status": "fragile"
+      },
+      {
+        "lane": "stem",
+        "max_tolerable_dedup_fraction": 0.253,
+        "repetition_factor_r_at_published_supply": 2.988,
+        "status": "robust"
+      },
+      {
+        "lane": "code",
+        "max_tolerable_dedup_fraction": 0.8021,
+        "repetition_factor_r_at_published_supply": 0.792,
+        "status": "robust"
+      },
+      {
+        "lane": "longctx",
+        "max_tolerable_dedup_fraction": 0.8025,
+        "repetition_factor_r_at_published_supply": 0.79,
+        "status": "robust"
+      },
+      {
+        "lane": "web",
+        "max_tolerable_dedup_fraction": 0.9352,
+        "repetition_factor_r_at_published_supply": 0.259,
+        "status": "robust"
+      }
+    ],
+    "rule": "d_max = 1 - demand / (supply * ceiling)"
+  },
+  "demand_rule": "need = stage_window * stage_share / (1 - rejection_rate), summed over stages",
+  "epoch_ceiling": 4.0,
+  "infeasible_lanes": [
+    "agentic",
+    "indic"
+  ],
+  "lanes": [
+    {
+      "ceiling_applied": 4.0,
+      "ceiling_source": "global_default",
+      "demand_tokens": 79750000000,
+      "epochs": 126.587,
+      "lane": "agentic",
+      "per_stage": [
+        {
+          "demand_tokens": 2841463415,
+          "share": 0.01,
+          "stage": "S1_seed",
+          "window_tokens": 233000000000
+        },
+        {
+          "demand_tokens": 17030487805,
+          "share": 0.015,
+          "stage": "S2_general",
+          "window_tokens": 931000000000
+        },
+        {
+          "demand_tokens": 25560975610,
+          "share": 0.02,
+          "stage": "S3_reasoning",
+          "window_tokens": 1048000000000
+        },
+        {
+          "demand_tokens": 25536585366,
+          "share": 0.03,
+          "stage": "S4_longctx",
+          "window_tokens": 698000000000
+        },
+        {
+          "demand_tokens": 8780487805,
+          "share": 0.08,
+          "stage": "anneal",
+          "window_tokens": 90000000000
+        }
+      ],
+      "protected_floor": 0.02,
+      "repetition_factor_r": 126.587,
+      "supply_tokens": 630000000,
+      "within_ceiling": false
+    },
+    {
+      "ceiling_applied": 4.0,
+      "ceiling_source": "global_default",
+      "demand_tokens": 873351219512,
+      "epochs": 0.792,
+      "lane": "code",
+      "per_stage": [
+        {
+          "demand_tokens": 41485365854,
+          "share": 0.146,
+          "stage": "S1_seed",
+          "window_tokens": 233000000000
+        },
+        {
+          "demand_tokens": 217990243902,
+          "share": 0.192,
+          "stage": "S2_general",
+          "window_tokens": 931000000000
+        },
+        {
+          "demand_tokens": 342517073171,
+          "share": 0.268,
+          "stage": "S3_reasoning",
+          "window_tokens": 1048000000000
+        },
+        {
+          "demand_tokens": 249407317073,
+          "share": 0.293,
+          "stage": "S4_longctx",
+          "window_tokens": 698000000000
+        },
+        {
+          "demand_tokens": 21951219512,
+          "share": 0.2,
+          "stage": "anneal",
+          "window_tokens": 90000000000
+        }
+      ],
+      "protected_floor": null,
+      "repetition_factor_r": 0.792,
+      "supply_tokens": 1103000000000,
+      "within_ceiling": true
+    },
+    {
+      "ceiling_applied": 4.0,
+      "ceiling_source": "global_default",
+      "demand_tokens": 633881707317,
+      "epochs": 4.032,
+      "lane": "indic",
+      "per_stage": [
+        {
+          "demand_tokens": 48873170732,
+          "share": 0.172,
+          "stage": "S1_seed",
+          "window_tokens": 233000000000
+        },
+        {
+          "demand_tokens": 191876829268,
+          "share": 0.169,
+          "stage": "S2_general",
+          "window_tokens": 931000000000
+        },
+        {
+          "demand_tokens": 215990243902,
+          "share": 0.169,
+          "stage": "S3_reasoning",
+          "window_tokens": 1048000000000
+        },
+        {
+          "demand_tokens": 146409756098,
+          "share": 0.172,
+          "stage": "S4_longctx",
+          "window_tokens": 698000000000
+        },
+        {
+          "demand_tokens": 30731707317,
+          "share": 0.28,
+          "stage": "anneal",
+          "window_tokens": 90000000000
+        }
+      ],
+      "protected_floor": 0.12,
+      "repetition_factor_r": 4.032,
+      "supply_tokens": 157200000000,
+      "within_ceiling": false
+    },
+    {
+      "ceiling_applied": 4.0,
+      "ceiling_source": "global_default",
+      "demand_tokens": 79019512195,
+      "epochs": 0.79,
+      "lane": "longctx",
+      "per_stage": [
+        {
+          "demand_tokens": 568292683,
+          "share": 0.002,
+          "stage": "S1_seed",
+          "window_tokens": 233000000000
+        },
+        {
+          "demand_tokens": 4541463415,
+          "share": 0.004,
+          "stage": "S2_general",
+          "window_tokens": 931000000000
+        },
+        {
+          "demand_tokens": 11502439024,
+          "share": 0.009,
+          "stage": "S3_reasoning",
+          "window_tokens": 1048000000000
+        },
+        {
+          "demand_tokens": 53626829268,
+          "share": 0.063,
+          "stage": "S4_longctx",
+          "window_tokens": 698000000000
+        },
+        {
+          "demand_tokens": 8780487805,
+          "share": 0.08,
+          "stage": "anneal",
+          "window_tokens": 90000000000
+        }
+      ],
+      "protected_floor": null,
+      "repetition_factor_r": 0.79,
+      "supply_tokens": 100000000000,
+      "within_ceiling": true
+    },
+    {
+      "ceiling_applied": 4.0,
+      "ceiling_source": "global_default",
+      "demand_tokens": 339285365854,
+      "epochs": 3.987,
+      "lane": "reasoning",
+      "per_stage": [
+        {
+          "demand_tokens": 5682926829,
+          "share": 0.02,
+          "stage": "S1_seed",
+          "window_tokens": 233000000000
+        },
+        {
+          "demand_tokens": 54497560976,
+          "share": 0.048,
+          "stage": "S2_general",
+          "window_tokens": 931000000000
+        },
+        {
+          "demand_tokens": 159756097561,
+          "share": 0.125,
+          "stage": "S3_reasoning",
+          "window_tokens": 1048000000000
+        },
+        {
+          "demand_tokens": 99592682927,
+          "share": 0.117,
+          "stage": "S4_longctx",
+          "window_tokens": 698000000000
+        },
+        {
+          "demand_tokens": 19756097561,
+          "share": 0.18,
+          "stage": "anneal",
+          "window_tokens": 90000000000
+        }
+      ],
+      "protected_floor": 0.06,
+      "repetition_factor_r": 3.987,
+      "supply_tokens": 85100000000,
+      "within_ceiling": true
+    },
+    {
+      "ceiling_applied": 4.0,
+      "ceiling_source": "global_default",
+      "demand_tokens": 436258536585,
+      "epochs": 2.988,
+      "lane": "stem",
+      "per_stage": [
+        {
+          "demand_tokens": 25573170732,
+          "share": 0.09,
+          "stage": "S1_seed",
+          "window_tokens": 233000000000
+        },
+        {
+          "demand_tokens": 133973170732,
+          "share": 0.118,
+          "stage": "S2_general",
+          "window_tokens": 931000000000
+        },
+        {
+          "demand_tokens": 163590243902,
+          "share": 0.128,
+          "stage": "S3_reasoning",
+          "window_tokens": 1048000000000
+        },
+        {
+          "demand_tokens": 102146341463,
+          "share": 0.12,
+          "stage": "S4_longctx",
+          "window_tokens": 698000000000
+        },
+        {
+          "demand_tokens": 10975609756,
+          "share": 0.1,
+          "stage": "anneal",
+          "window_tokens": 90000000000
+        }
+      ],
+      "protected_floor": null,
+      "repetition_factor_r": 2.988,
+      "supply_tokens": 146000000000,
+      "within_ceiling": true
+    },
+    {
+      "ceiling_applied": 4.0,
+      "ceiling_source": "global_default",
+      "demand_tokens": 1215287804878,
+      "epochs": 0.259,
+      "lane": "web",
+      "per_stage": [
+        {
+          "demand_tokens": 159406097561,
+          "share": 0.561,
+          "stage": "S1_seed",
+          "window_tokens": 233000000000
+        },
+        {
+          "demand_tokens": 514320731707,
+          "share": 0.453,
+          "stage": "S2_general",
+          "window_tokens": 931000000000
+        },
+        {
+          "demand_tokens": 359131707317,
+          "share": 0.281,
+          "stage": "S3_reasoning",
+          "window_tokens": 1048000000000
+        },
+        {
+          "demand_tokens": 173648780488,
+          "share": 0.204,
+          "stage": "S4_longctx",
+          "window_tokens": 698000000000
+        },
+        {
+          "demand_tokens": 8780487805,
+          "share": 0.08,
+          "stage": "anneal",
+          "window_tokens": 90000000000
+        }
+      ],
+      "protected_floor": null,
+      "repetition_factor_r": 0.259,
+      "supply_tokens": 4691000000000,
+      "within_ceiling": true
+    }
+  ],
+  "max_feasible_rejection_rate_per_lane": {
+    "agentic": 0.0,
+    "code": 0.8377,
+    "indic": 0.1734,
+    "longctx": 0.838,
+    "reasoning": 0.1827,
+    "stem": 0.3874,
+    "web": 0.9469
+  },
+  "per_lane_epoch_ceiling": {},
+  "rejection_rate": 0.18,
+  "scope": "production 3T, arithmetic only - no tokens trained"
+}

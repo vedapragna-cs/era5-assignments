@@ -1,12 +1,7 @@
-# The demo runs on these four. Nothing else is imported by run_demo.py.
-torch>=2.0
+# The demonstration imports exactly one third-party package.
+#
+# `python3 run_demo.py` needs only this; there is no network access, no dataset download and no
+# model download. Everything else is the standard library.
 numpy>=1.24
-tokenizers>=0.15
 
-# Tests only.
-pytest>=7.0
-
-# Optional: only needed for `run_demo.py --with-api`, which annotates OPUS-accepted
-# samples with a Claude quality rating. The demo is complete and passes every check
-# without it, and without an API key.
-# anthropic>=0.40
+# Python 3.10+ (the code uses `X | Y` type unions and structural pattern-free dataclass syntax).

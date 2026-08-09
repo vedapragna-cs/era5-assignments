@@ -1,1 +1,882 @@
-{"artifact_inventory":[{"bytes":6148,"path":".DS_Store"},{"bytes":7735,"path":"execution_log.json"},{"bytes":21176,"path":"performance.json"},{"bytes":7235,"path":"run.log"},{"bytes":1399,"path":"run_summary.json"},{"bytes":6148,"path":"checkpoints/.DS_Store"},{"bytes":6884,"path":"checkpoints/checkpoint_index.json"},{"bytes":602,"path":"checkpoints/index.json"},{"bytes":2201,"path":"checkpoints/step-000068/meta.json"},{"bytes":20743,"path":"checkpoints/step-000068/rng.json"},{"bytes":1790,"path":"checkpoints/step-000034/meta.json"},{"bytes":20743,"path":"checkpoints/step-000034/rng.json"},{"bytes":3028,"path":"checkpoints/step-000102/meta.json"},{"bytes":20743,"path":"checkpoints/step-000102/rng.json"},{"bytes":3112,"path":"ledgers/audit.json"},{"bytes":299969,"path":"ledgers/consumption_ledger.json"},{"bytes":846,"path":"ledgers/corpus.json"},{"bytes":5206,"path":"ledgers/crash_resume.json"},{"bytes":1015,"path":"ledgers/firewall.json"},{"bytes":1850,"path":"ledgers/fork.json"},{"bytes":653525,"path":"ledgers/learning_ledger.json"},{"bytes":3535,"path":"ledgers/masks.json"},{"bytes":64902,"path":"ledgers/mixture_compliance.json"},{"bytes":23565,"path":"ledgers/opus.json"},{"bytes":17526,"path":"ledgers/opus_trail.jsonl"},{"bytes":21615,"path":"ledgers/packing.json"},{"bytes":2762,"path":"ledgers/plan.json"},{"bytes":8804,"path":"ledgers/replay.json"},{"bytes":52310,"path":"ledgers/v6_shard_advisory.json"},{"bytes":60088,"path":"manifests/shard_index.json"},{"bytes":1835,"path":"manifests/tokenizer.json"},{"bytes":1385,"path":"manifests/shards/shard-agentic-train-0000-9c072d09b7.json"},{"bytes":1417,"path":"manifests/shards/shard-agentic-train-0001-32dc471330.json"},{"bytes":1446,"path":"manifests/shards/shard-agentic-train-0002-6fe5517463.json"},{"bytes":1454,"path":"manifests/shards/shard-agentic-train-0003-14654dc1cc.json"},{"bytes":1427,"path":"manifests/shards/shard-agentic-train-0004-f27151d7e1.json"},{"bytes":1404,"path":"manifests/shards/shard-code-test-0000-fab9644b1f.json"},{"bytes":1449,"path":"manifests/shards/shard-code-test-0001-65adc55299.json"},{"bytes":1396,"path":"manifests/shards/shard-code-test-0002-dcac4f9bbe.json"},{"bytes":1431,"path":"manifests/shards/shard-code-test-0003-dc23d7b6c6.json"},{"bytes":1433,"path":"manifests/shards/shard-code-train-0000-027cb8ff7b.json"},{"bytes":1522,"path":"manifests/shards/shard-code-train-0001-8cf15e18e2.json"},{"bytes":1618,"path":"manifests/shards/shard-code-train-0002-ad4a7eabf4.json"},{"bytes":1700,"path":"manifests/shards/shard-code-train-0003-2f5e474787.json"},{"bytes":1446,"path":"manifests/shards/shard-code-train-0004-438974dfaf.json"},{"bytes":1715,"path":"manifests/shards/shard-code-train-0005-3bdb125b04.json"},{"bytes":1729,"path":"manifests/shards/shard-code-train-0006-85a511ef7e.json"},{"bytes":1650,"path":"manifests/shards/shard-code-train-0007-84e40d2345.json"},{"bytes":1726,"path":"manifests/shards/shard-code-train-0008-b58c737d58.json"},{"bytes":1716,"path":"manifests/shards/shard-code-train-0009-bb9e5f9a22.json"},{"bytes":1717,"path":"manifests/shards/shard-code-train-0010-2c4cebe6d1.json"},{"bytes":1534,"path":"manifests/shards/shard-code-train-0011-dd0ce7db4d.json"},{"bytes":1713,"path":"manifests/shards/shard-code-train-0012-b6f2a8430e.json"},{"bytes":1713,"path":"manifests/shards/shard-code-train-0013-a0f5e7bd37.json"},{"bytes":1420,"path":"manifests/shards/shard-code-train-0014-15902271b2.json"},{"bytes":1736,"path":"manifests/shards/shard-code-train-0015-393cae1c02.json"},{"bytes":1421,"path":"manifests/shards/shard-code-validation-0000-52cb741664.json"},{"bytes":1421,"path":"manifests/shards/shard-code-validation-0001-1a2e2a2088.json"},{"bytes":1445,"path":"manifests/shards/shard-code-validation-0002-dc87b62f1f.json"},{"bytes":1415,"path":"manifests/shards/shard-code-validation-0003-861e7df094.json"},{"bytes":1414,"path":"manifests/shards/shard-general_web-test-0000-40c944e1ce.json"},{"bytes":1499,"path":"manifests/shards/shard-general_web-test-0001-83fdb3c8bb.json"},{"bytes":1599,"path":"manifests/shards/shard-general_web-test-0002-fe6dcf7c5e.json"},{"bytes":1430,"path":"manifests/shards/shard-general_web-test-0003-50db3e8066.json"},{"bytes":1441,"path":"manifests/shards/shard-general_web-test-0004-3d03fe2951.json"},{"bytes":1409,"path":"manifests/shards/shard-general_web-test-0005-d6aff84d30.json"},{"bytes":1864,"path":"manifests/shards/shard-general_web-train-0000-6a611af740.json"},{"bytes":1488,"path":"manifests/shards/shard-general_web-train-0001-8c9b9d6389.json"},{"bytes":1914,"path":"manifests/shards/shard-general_web-train-0002-86c394eb2f.json"},{"bytes":1842,"path":"manifests/shards/shard-general_web-train-0003-4c8a233ec6.json"},{"bytes":1841,"path":"manifests/shards/shard-general_web-train-0004-3b1363bca9.json"},{"bytes":1866,"path":"manifests/shards/shard-general_web-train-0005-9525f368ef.json"},{"bytes":1793,"path":"manifests/shards/shard-general_web-train-0006-725eab25a7.json"},{"bytes":1846,"path":"manifests/shards/shard-general_web-train-0007-fb570806c7.json"},{"bytes":1894,"path":"manifests/shards/shard-general_web-train-0008-15dfc0bbaf.json"},{"bytes":1857,"path":"manifests/shards/shard-general_web-train-0009-ab5c130fc5.json"},{"bytes":1871,"path":"manifests/shards/shard-general_web-train-0010-2cb788e7ba.json"},{"bytes":1408,"path":"manifests/shards/shard-general_web-train-0011-2755be0ebc.json"},{"bytes":1871,"path":"manifests/shards/shard-general_web-train-0012-08ddfd7700.json"},{"bytes":1895,"path":"manifests/shards/shard-general_web-train-0013-3ef61ec8c4.json"},{"bytes":1629,"path":"manifests/shards/shard-general_web-train-0014-3ab1e642cc.json"},{"bytes":1806,"path":"manifests/shards/shard-general_web-train-0015-c6116141c7.json"},{"bytes":1540,"path":"manifests/shards/shard-general_web-train-0016-d1bda2b5ff.json"},{"bytes":1436,"path":"manifests/shards/shard-general_web-validation-0000-847d371f5e.json"},{"bytes":1540,"path":"manifests/shards/shard-general_web-validation-0001-176ffe368e.json"},{"bytes":1531,"path":"manifests/shards/shard-general_web-validation-0002-f98d403917.json"},{"bytes":1465,"path":"manifests/shards/shard-general_web-validation-0003-8290503250.json"},{"bytes":1412,"path":"manifests/shards/shard-general_web-validation-0004-79676874f4.json"},{"bytes":1376,"path":"manifests/shards/shard-indic-test-0000-74614c99b4.json"},{"bytes":1480,"path":"manifests/shards/shard-indic-test-0001-72ba48277d.json"},{"bytes":1468,"path":"manifests/shards/shard-indic-test-0002-cd08c3b6b7.json"},{"bytes":1429,"path":"manifests/shards/shard-indic-test-0003-dc8f519f99.json"},{"bytes":1484,"path":"manifests/shards/shard-indic-test-0004-7e92784abc.json"},{"bytes":1632,"path":"manifests/shards/shard-indic-train-0000-c1395607ab.json"},{"bytes":1859,"path":"manifests/shards/shard-indic-train-0001-345cfbd44b.json"},{"bytes":1860,"path":"manifests/shards/shard-indic-train-0002-d073e546cd.json"},{"bytes":1649,"path":"manifests/shards/shard-indic-train-0003-3ea041311f.json"},{"bytes":1831,"path":"manifests/shards/shard-indic-train-0004-b73a86adab.json"},{"bytes":1864,"path":"manifests/shards/shard-indic-train-0005-5b056cf765.json"},{"bytes":1711,"path":"manifests/shards/shard-indic-train-0006-6121808a63.json"},{"bytes":1823,"path":"manifests/shards/shard-indic-train-0007-3f3a89100f.json"},{"bytes":1795,"path":"manifests/shards/shard-indic-train-0008-8341c216bc.json"},{"bytes":1690,"path":"manifests/shards/shard-indic-train-0009-958feb7b27.json"},{"bytes":1591,"path":"manifests/shards/shard-indic-train-0010-0563d3c5d7.json"},{"bytes":1418,"path":"manifests/shards/shard-indic-validation-0000-1eb7fe795d.json"},{"bytes":1431,"path":"manifests/shards/shard-indic-validation-0001-3b2085cbd3.json"},{"bytes":1420,"path":"manifests/shards/shard-indic-validation-0002-84cb9e57a5.json"},{"bytes":1406,"path":"manifests/shards/shard-indic-validation-0003-8c3397fff6.json"},{"bytes":1445,"path":"manifests/shards/shard-indic-validation-0004-b8cea8add5.json"},{"bytes":1400,"path":"manifests/shards/shard-indic-validation-0005-68bef7c8c8.json"},{"bytes":1393,"path":"manifests/shards/shard-long_context-test-0000-1a3f6b1d52.json"},{"bytes":1372,"path":"manifests/shards/shard-long_context-train-0000-670ed3c4ce.json"},{"bytes":1427,"path":"manifests/shards/shard-long_context-train-0001-952e583e2b.json"},{"bytes":1441,"path":"manifests/shards/shard-long_context-train-0002-019afa029c.json"},{"bytes":1498,"path":"manifests/shards/shard-long_context-train-0003-8663868563.json"},{"bytes":1404,"path":"manifests/shards/shard-long_context-train-0004-415114b074.json"},{"bytes":1401,"path":"manifests/shards/shard-long_context-train-0005-03059e0dd8.json"},{"bytes":1405,"path":"manifests/shards/shard-long_context-validation-0000-123b173bc1.json"},{"bytes":1419,"path":"manifests/shards/shard-reasoning-test-0000-9084fcc329.json"},{"bytes":1470,"path":"manifests/shards/shard-reasoning-test-0001-e49042195d.json"},{"bytes":1448,"path":"manifests/shards/shard-reasoning-test-0002-6f9e298217.json"},{"bytes":1454,"path":"manifests/shards/shard-reasoning-train-0000-fe7ce6a1d6.json"},{"bytes":1679,"path":"manifests/shards/shard-reasoning-train-0001-1d7a80a9e7.json"},{"bytes":1846,"path":"manifests/shards/shard-reasoning-train-0002-632a395553.json"},{"bytes":1577,"path":"manifests/shards/shard-reasoning-train-0003-21b8406688.json"},{"bytes":1954,"path":"manifests/shards/shard-reasoning-train-0004-031bb81539.json"},{"bytes":1652,"path":"manifests/shards/shard-reasoning-train-0005-66cb3e7fb7.json"},{"bytes":1857,"path":"manifests/shards/shard-reasoning-train-0006-0d82dc6674.json"},{"bytes":1768,"path":"manifests/shards/shard-reasoning-train-0007-44f8e926f7.json"},{"bytes":1737,"path":"manifests/shards/shard-reasoning-train-0008-b47fa7205d.json"},{"bytes":1413,"path":"manifests/shards/shard-reasoning-validation-0000-ed59350f14.json"},{"bytes":1426,"path":"manifests/shards/shard-reasoning-validation-0001-fcc3cb440a.json"},{"bytes":1462,"path":"manifests/shards/shard-reasoning-validation-0002-fe27c90927.json"},{"bytes":1507,"path":"manifests/shards/shard-reasoning-validation-0003-5af65892e0.json"},{"bytes":1460,"path":"manifests/shards/shard-reasoning-validation-0004-1b817d952f.json"},{"bytes":1364,"path":"manifests/shards/shard-stem-test-0000-c3492043fe.json"},{"bytes":1382,"path":"manifests/shards/shard-stem-test-0001-1b60d40511.json"},{"bytes":1405,"path":"manifests/shards/shard-stem-test-0002-34a3bd709d.json"},{"bytes":1376,"path":"manifests/shards/shard-stem-test-0003-18c070c774.json"},{"bytes":1405,"path":"manifests/shards/shard-stem-train-0000-66eef1e896.json"},{"bytes":1582,"path":"manifests/shards/shard-stem-train-0001-1243047c69.json"},{"bytes":1756,"path":"manifests/shards/shard-stem-train-0002-9bd353147b.json"},{"bytes":1600,"path":"manifests/shards/shard-stem-train-0003-43134aeb18.json"},{"bytes":1756,"path":"manifests/shards/shard-stem-train-0004-884982308f.json"},{"bytes":1756,"path":"manifests/shards/shard-stem-train-0005-c9bb3657f9.json"},{"bytes":1371,"path":"manifests/shards/shard-stem-train-0006-55ff8d56a0.json"},{"bytes":1765,"path":"manifests/shards/shard-stem-train-0007-562f5dd644.json"},{"bytes":1699,"path":"manifests/shards/shard-stem-train-0008-cd4a898d79.json"},{"bytes":1607,"path":"manifests/shards/shard-stem-train-0009-51926a3faf.json"},{"bytes":1394,"path":"manifests/shards/shard-stem-validation-0000-ac847e49c1.json"},{"bytes":1394,"path":"manifests/shards/shard-stem-validation-0001-5c641b7bd6.json"},{"bytes":1390,"path":"manifests/shards/shard-stem-validation-0002-0b4cedadb8.json"},{"bytes":1388,"path":"manifests/shards/shard-stem-validation-0003-8a67f3f180.json"}],"execution_log":{"all_passed":true,"events":44,"fail":0,"info":5,"pass":39,"required_events_missing":[],"required_events_present":13,"required_events_total":13,"wall_clock_s":74.23},"generated_by":"run_demo.py -> ledger/evidence.py","how_to_verify":"Every row's `result` is produced by evaluating `check_expression` against `pointer` inside `artifact`. Nothing is hardcoded: re-running run_demo.py regenerates the artifacts and re-evaluates every predicate against them. To check a row by hand, open the named artifact and resolve the pointer.","requirements":[{"artifact":"manifests/tokenizer.json","check_expression":"tokenizer hash recorded in manifest == hash in every shard manifest","details":{"shards_checked":122,"tokenizer_hash":"30086a83edffb39be1da083579927622501efac9e87ee566a78309e7f4f86dc6","vocab_size":1024},"evidence_label":"Manifest record","key":"tokenizer_integrity","observed_value":true,"pointer":"/hash_verified_against_every_shard","requirement":"Tokenizer integrity","result":"PASS"},{"artifact":"ledgers/audit.json","check_expression":"zero documents from validation/test splits appear in any loss-bearing batch of the consumption ledger","details":{"evaluation_leak/documents_from_non_train_splits_consumed":0,"evaluation_leak/non_train_shards_blocked":48},"evidence_label":"Blocked-shard event","key":"evaluation_firewall","observed_value":true,"pointer":"/evaluation_leak/clean","requirement":"Evaluation firewall","result":"PASS"},{"artifact":"ledgers/masks.json","check_expression":"verify_masks() returns zero problems for every sampled sequence: loss mask excludes padding, block-diagonal attention provably blocks cross-document attention, position ids follow the policy","details":{"samples_checked":12},"evidence_label":"Packed-batch report","key":"packing_correctness","observed_value":true,"pointer":"/all_clean","requirement":"Packing correctness","result":"PASS"},{"artifact":"ledgers/mixture_compliance.json","check_expression":"every lane's realised share is within tolerance of its planned share, every protected lane holds its floor or is supply-limited with the shortfall recorded, and no lane breaches the 4-epoch ceiling","details":{"epoch_ceiling_respected":true,"max_absolute_deviation":0.006788,"protected_floors_held":true},"evidence_label":"Planned versus actual shares","key":"mixture_compliance","observed_value":true,"pointer":"/within_tolerance","requirement":"Mixture compliance","result":"PASS"},{"artifact":"ledgers/opus.json","check_expression":"every candidate scored has a recorded decision with a reason code, and accept/reject/defer/protected-override all occur","details":{"decisions_recorded":64,"outcomes_present":["accept","defer","reject"],"protected_overrides":15},"evidence_label":"Candidate decision records","key":"opus_audit_trail","observed_value":true,"pointer":"/audit_trail_complete","requirement":"OPUS audit trail","result":"PASS"},{"artifact":"ledgers/crash_resume.json","check_expression":"the first batch produced after resume matches the uninterrupted run's batch at that step on id, span hash, content hash, document set, shard set and token count","details":{"next_batch_proof/expected_batch_id":"b000034-a6307c2219db","next_batch_proof/resumed_batch_id":"b000034-a6307c2219db","orphan_rows_repaired":4,"weights_bitwise_identical":true},"evidence_label":"Expected and resumed batch ids","key":"crash_recovery","observed_value":true,"pointer":"/next_batch_proof/no_batch_skipped_or_repeated","requirement":"Crash recovery","result":"PASS"},{"artifact":"ledgers/replay.json","check_expression":"batches regenerated from the ledger match the original on batch id, token spans and content hash","details":{"batch_ids_match":true,"hashes_match":true,"spans_match":true,"steps_matching":5,"steps_replayed":5},"evidence_label":"Original and replay hashes","key":"replay","observed_value":true,"pointer":"/all_match","requirement":"Replay","result":"PASS"},{"artifact":"ledgers/learning_ledger.json","check_expression":"every recorded sample loss resolves to a shard id and document ids present in the shard registry, and per-token loss is attributed by shard, document, lane, band and role","details":{"attribution_dimensions":["shard","document","lane","difficulty_band","role","stage","token"],"documents_scored":1183,"samples_recorded":1632},"evidence_label":"Loss linked to source data","key":"learning_trace","observed_value":true,"pointer":"/loss_linked_to_source","requirement":"Learning trace","result":"PASS"},{"artifact":"performance.json","check_expression":"perf token totals re-derive exactly from the consumption ledger, so the reported throughput is reconstructible rather than asserted","details":{"headline/loss_bearing_tokens_per_s":6831.7,"overall/packing_utilization":0.748233,"overall/supervision_yield":0.978993},"evidence_label":"Performance report","key":"throughput","observed_value":true,"pointer":"/ledger_cross_check/reconstructible","requirement":"Throughput","result":"PASS"},{"artifact":"manifests/shard_index.json","check_expression":"every shard built twice from identical inputs produces an identical id, manifest hash and payload hash","details":{"registry_hash":"d73b83e31f18bbbec73d13ea6174f3c298e4f99d13979fb30a57d9a01473d926","shards":122},"evidence_label":"Double-build manifest hashes","key":"shard_immutability","observed_value":true,"pointer":"/immutability_all_identical","requirement":"Shard immutability","result":"PASS"},{"artifact":"manifests/shard_index.json","check_expression":"every shard manifest carries all required fields; shards missing any are refused as untrainable rather than defaulted","details":{"trainable_shards":74,"untrainable_shards":48},"evidence_label":"Manifest record","key":"manifest_validation","observed_value":true,"pointer":"/all_manifests_complete","requirement":"Manifest validation","result":"PASS"},{"artifact":"ledgers/fork.json","check_expression":"two branches resumed from one checkpoint under different mixtures produce different consumption ledgers and different per-lane token counts","details":{"comparison/mean_loss_delta":0.192331,"comparison/per_lane_token_delta":{"code":-512,"general_web":-1536,"indic":2816,"reasoning":-256,"stem":-512}},"evidence_label":"Branch ledger hashes","key":"fork","observed_value":true,"pointer":"/branches_diverged","requirement":"Fork from earlier checkpoint","result":"PASS"},{"artifact":"checkpoints/checkpoint_index.json","check_expression":"every checkpoint records the consumption and learning ledger row counts at the instant it was written, and verifies its own integrity hash","details":{"all_verify":true,"checkpoints":3,"corruption_drill_all_detected":true},"evidence_label":"Checkpoint metadata","key":"checkpoint_ledger_offsets","observed_value":true,"pointer":"/all_carry_ledger_offsets","requirement":"Checkpoints tied to ledger offsets","result":"PASS"},{"artifact":"run_summary.json","check_expression":"corpus fingerprint, tokenizer hash, registry hash, schedule hash and consumption ledger hash are all recorded for the run","details":{"determinism/consumption_ledger_hash":"3a9a12cc1e0aa477d91fc33caeef98c8b3db4f1cb03335765138b60bf9adc628","determinism/corpus_fingerprint":"65d040c152125e0b0e898afdcb1520c74ffb78e9f8b4aa5456fc33e2a949bffa","determinism/registry_hash":"d73b83e31f18bbbec73d13ea6174f3c298e4f99d13979fb30a57d9a01473d926"},"evidence_label":"Run summary hashes","key":"determinism","observed_value":true,"pointer":"/determinism/all_hashes_recorded","requirement":"Reproducibility","result":"PASS"}],"run":{"budget_tokens":500000,"command":"python run_demo.py","environment":{"git_commit":"9e16ae7920ca7256b6e41fe33aa1286d076dbaa7","machine":"arm64","numpy":"2.0.2","platform":"macOS-26.5.1-arm64-arm-64bit","python":"3.9.10","pythonhashseed":"<unset>","torch":"2.8.0"},"final_loss":2.350111,"final_perplexity":10.4867,"git_commit":"9e16ae7920ca7256b6e41fe33aa1286d076dbaa7","initial_loss":6.942997,"model":{"d_ff":512,"d_model":128,"dropout":0.0,"max_seq_len":1024,"n_heads":4,"n_layers":4,"parameters":1053440,"tie_embeddings":true,"vocab_size":1024},"run_id":"era5-s6-demo","seed":20260801,"steps":102,"wall_clock_s":74.2},"schema":"era5-s6-evidence-v1","summary":{"all_passed":true,"log_events":44,"log_fail":0,"log_pass":39,"required_events_missing":[],"requirements_failed":0,"requirements_passed":14,"requirements_total":14}}
+{
+  "generated_by": "tds.evidence.EvidenceBundle - values computed from generated artifacts",
+  "meta": {
+    "global_batch": 8,
+    "plan_hash": "eb9092a959d085916bdae6a06431cd4ad2902f013ed60d2563a67b0c2e4c35f1",
+    "plan_id": "era-v5-mixture-v1",
+    "scale_divisor": 100000000,
+    "sequence_length": 128,
+    "steps": 30,
+    "steps_note": "batches committed on branch run-a. tr.step is not used here: a fork rewinds the step counter to its checkpoint, so the counter is not a run total.",
+    "tokenizer_hash": "75b8661f606877ee2eb1398876fdc6f757ec30d6e989b481aa8f5ed0f53c6ec1",
+    "tokenizer_version": "v5-tok-1",
+    "vocab_size": 512,
+    "world_size": 4
+  },
+  "requirements": [
+    {
+      "compared_values": {
+        "manifest_hashes_distinct": [
+          "75b8661f606877ee2eb1398876fdc6f757ec30d6e989b481aa8f5ed0f53c6ec1"
+        ],
+        "n_shards": 7,
+        "tokenizer_hash": "75b8661f606877ee2eb1398876fdc6f757ec30d6e989b481aa8f5ed0f53c6ec1"
+      },
+      "evidence_paths": [
+        "manifests/tokenizer.json",
+        "manifests/shards/"
+      ],
+      "key": "tokenizer_integrity",
+      "note": "every shard manifest carries the one frozen tokenizer hash",
+      "record_ids": [
+        "v5_agentic_train_000",
+        "v5_code_train_001",
+        "v5_indic_train_002",
+        "v5_longctx_train_003"
+      ],
+      "requirement": "Tokenizer integrity",
+      "result": "PASS"
+    },
+    {
+      "compared_values": {
+        "content_hash_recomputed_from_token_bytes": true,
+        "shards_verified": 7
+      },
+      "evidence_paths": [
+        "manifests/shards/"
+      ],
+      "key": "shard_immutability",
+      "note": "",
+      "record_ids": [
+        "v5_agentic_train_000",
+        "v5_code_train_001",
+        "v5_indic_train_002",
+        "v5_longctx_train_003"
+      ],
+      "requirement": "Shard immutability and content hashes",
+      "result": "PASS"
+    },
+    {
+      "compared_values": {
+        "blocked_candidates": [
+          "web-0100",
+          "web-0102"
+        ],
+        "eval_docs_in_training_samples": [],
+        "registered_eval_docs": 5,
+        "served_documents_overlapping_eval_content": {},
+        "served_documents_rescanned": 37
+      },
+      "evidence_paths": [
+        "manifests/eval_registry.json",
+        "manifests/eval_content_scan.json"
+      ],
+      "key": "evaluation_firewall",
+      "note": "blocked at admission, re-checked on every served batch, AND the served text re-scanned against the registry by an implementation that shares no code with the admission gate",
+      "record_ids": [
+        "web-0100",
+        "web-0102"
+      ],
+      "requirement": "Evaluation firewall",
+      "result": "PASS"
+    },
+    {
+      "compared_values": {
+        "agentic_supervision_yield": 0.6289,
+        "cross_document_attention_crossings_allowed": 0,
+        "cross_document_pairs_blocked_by_segment_mask": 31860,
+        "cross_document_supervised_positions": 0,
+        "isolation_control_leaks_without_the_mask": true,
+        "isolation_proved_by_perturbation": true,
+        "mask_errors": [],
+        "multi_document_windows": 13,
+        "packed_samples": 46,
+        "policies_measured": [
+          "best_fit",
+          "concat_chop",
+          "greedy",
+          "long_context",
+          "pad_only",
+          "structure_preserving"
+        ]
+      },
+      "evidence_paths": [
+        "performance.json"
+      ],
+      "key": "packing_correctness",
+      "note": "position ids reset at every document boundary",
+      "record_ids": [],
+      "requirement": "Packing correctness",
+      "result": "PASS"
+    },
+    {
+      "compared_values": {
+        "branch": "run-a",
+        "delivered_shares": {
+          "agentic": 0.0215,
+          "code": 0.2742,
+          "indic": 0.129,
+          "longctx": 0.0376,
+          "reasoning": 0.1075,
+          "stem": 0.1129,
+          "web": 0.3172
+        },
+        "delivered_vs_target_by_lane": {
+          "agentic": {
+            "abs_error": 0.0012,
+            "delivered": 0.0215,
+            "relative_error": 0.058,
+            "target": 0.0203
+          },
+          "code": {
+            "abs_error": 0.0356,
+            "delivered": 0.2742,
+            "relative_error": 0.149,
+            "target": 0.2386
+          },
+          "indic": {
+            "abs_error": 0.0419,
+            "delivered": 0.129,
+            "relative_error": -0.245,
+            "target": 0.1709
+          },
+          "longctx": {
+            "abs_error": 0.0193,
+            "delivered": 0.0376,
+            "relative_error": 1.052,
+            "target": 0.0183
+          },
+          "reasoning": {
+            "abs_error": 0.0168,
+            "delivered": 0.1075,
+            "relative_error": 0.185,
+            "target": 0.0908
+          },
+          "stem": {
+            "abs_error": 0.0077,
+            "delivered": 0.1129,
+            "relative_error": -0.064,
+            "target": 0.1206
+          },
+          "web": {
+            "abs_error": 0.0227,
+            "delivered": 0.3172,
+            "relative_error": -0.067,
+            "target": 0.34
+          }
+        },
+        "delivered_vs_target_tolerance": 0.15,
+        "delivered_vs_target_tvd": 0.0726,
+        "measured_from": "consumption ledger mixture_lanes on branch run-a, recomputed after all sections completed; not the plan and not a mid-run snapshot",
+        "planned_floors": {
+          "agentic": 0.02,
+          "indic": 0.12,
+          "reasoning": 0.06
+        }
+      },
+      "evidence_paths": [
+        "ledgers/consumption.jsonl"
+      ],
+      "key": "mixture_compliance",
+      "note": "",
+      "record_ids": [],
+      "requirement": "Mixture compliance and protected floors",
+      "result": "PASS"
+    },
+    {
+      "compared_values": {
+        "by_decision": {
+          "accepted": 177,
+          "deferred": 186,
+          "protected": 19,
+          "rejected": 176
+        },
+        "floor_override_decisions": 26,
+        "n_candidates": 512,
+        "observed_decision_kinds": [
+          "accepted",
+          "deferred",
+          "protected",
+          "rejected"
+        ],
+        "observed_rejection_rate": 0.6172,
+        "rejection_reasons": {
+          "below_proxy_threshold": 7,
+          "duplicate_in_step": 60,
+          "lane_quota_full": 80,
+          "protected_floor_override": 19,
+          "reserved_for_anneal": 46,
+          "stage_mismatch": 169
+        },
+        "required_decision_kinds": [
+          "accepted",
+          "rejected",
+          "deferred",
+          "protected"
+        ],
+        "reserve_deferrals": 46,
+        "reserve_deferrals_later_admitted": 1,
+        "reserve_deferred_documents": [
+          "1636719927e2461d",
+          "4d289a2bc9824596",
+          "742f893ff0b4bc80",
+          "83b31f3bbb7b784c",
+          "c16202459dbebf45"
+        ]
+      },
+      "evidence_paths": [
+        "ledgers/opus.jsonl",
+        "ledgers/opus_summary.json"
+      ],
+      "key": "opus_audit_trail",
+      "note": "",
+      "record_ids": [
+        "opus_000001",
+        "opus_000002",
+        "opus_000003",
+        "opus_000004"
+      ],
+      "requirement": "OPUS audit trail",
+      "result": "PASS"
+    },
+    {
+      "compared_values": {
+        "checkpoint": "ckpt_00024",
+        "expected_vs_regenerated": [
+          {
+            "global_step": 24,
+            "match": true,
+            "original_batch_hash": "9dd4fcdea6c237780c9ea61253eee79a608a2b42a4fb11cffa632a921ff2cab2",
+            "original_sample_ids": [
+              "8ec5bfbf2a99111d",
+              "f9a4b546e60612a1",
+              "a3658f715bd9462a",
+              "493523e89ac87112",
+              "fee622f1379106d6"
+            ],
+            "regenerated_batch_hash": "9dd4fcdea6c237780c9ea61253eee79a608a2b42a4fb11cffa632a921ff2cab2",
+            "regenerated_sample_ids": [
+              "8ec5bfbf2a99111d",
+              "f9a4b546e60612a1",
+              "a3658f715bd9462a",
+              "493523e89ac87112",
+              "fee622f1379106d6"
+            ]
+          },
+          {
+            "global_step": 25,
+            "match": true,
+            "original_batch_hash": "ce34c3a22cf60019611db4aee06627c1f27238325c723dd057510b678d93e5b7",
+            "original_sample_ids": [
+              "daaa9eb960182f99",
+              "9ac4b26421c0cf6f",
+              "a3658f715bd9462a",
+              "bbd872f9b99850a7",
+              "fee622f1379106d6"
+            ],
+            "regenerated_batch_hash": "ce34c3a22cf60019611db4aee06627c1f27238325c723dd057510b678d93e5b7",
+            "regenerated_sample_ids": [
+              "daaa9eb960182f99",
+              "9ac4b26421c0cf6f",
+              "a3658f715bd9462a",
+              "bbd872f9b99850a7",
+              "fee622f1379106d6"
+            ]
+          }
+        ],
+        "resumed_from_ledger_offset": 28,
+        "world_size_after": 8,
+        "world_size_before": 4
+      },
+      "evidence_paths": [
+        "ledgers/consumption.jsonl",
+        "checkpoints/ckpt_00024.json"
+      ],
+      "key": "crash_recovery",
+      "note": "",
+      "record_ids": [
+        "ckpt_00024"
+      ],
+      "requirement": "Crash recovery",
+      "result": "PASS"
+    },
+    {
+      "compared_values": {
+        "coverage_run_b": {
+          "batches_delivered": 12,
+          "duplicate_positions": 0,
+          "missing_positions": 0,
+          "missing_steps": [],
+          "rank_partition_note": "rank = global_index % world_size is a pure function of the index; that every position maps to exactly one rank is arithmetic, not a measurement, and is deliberately not presented as one",
+          "repeated_steps": [],
+          "step_numbers_strictly_increasing": true,
+          "world_size": 8
+        },
+        "first_divergence": null,
+        "method": "two independently produced traces compared element-wise; NOT a re-partition of one list, which cannot fail",
+        "order_identical": true,
+        "per_step_identical": true,
+        "positions_compared": 57,
+        "rule": "rank = global_sample_index % world_size, recomputed at load",
+        "world_size_after": 8,
+        "world_size_before": 4
+      },
+      "evidence_paths": [
+        "reports/exactly_once.json"
+      ],
+      "key": "exactly_once_across_world_size",
+      "note": "",
+      "record_ids": [],
+      "requirement": "Exactly-once delivery across a changed world size",
+      "result": "PASS"
+    },
+    {
+      "compared_values": {
+        "batch_hash_matches": [
+          true,
+          true,
+          true,
+          true
+        ],
+        "first_pair": {
+          "batch_hash_match": true,
+          "global_step": 2,
+          "original_batch_hash": "6832ff0de6e262232734408582ab1b6f775399cb2ee4fda938051722c1a76304",
+          "original_sample_ids": [
+            "a0a3f5af5ef56200",
+            "4046437bbc925037"
+          ],
+          "original_span_ids": [
+            "web-0011:871-946",
+            "indic-0001:0-144"
+          ],
+          "regenerated_from_checkpoint": "ckpt_00000",
+          "replay_batch_hash": "6832ff0de6e262232734408582ab1b6f775399cb2ee4fda938051722c1a76304",
+          "replay_sample_ids": [
+            "a0a3f5af5ef56200",
+            "4046437bbc925037"
+          ],
+          "replay_span_ids": [
+            "web-0011:871-946",
+            "indic-0001:0-144"
+          ],
+          "sample_ids_match": true,
+          "span_ids_match": true
+        },
+        "independent_degrees_of_freedom": "batch_hash and loss_mask_hash are functions of packed_sample_ids given the run's samples dict, so the three matches above are ONE measurement. The repack check below is the independent one.",
+        "interval": [
+          2,
+          6
+        ],
+        "n_batches": 4,
+        "repack_missing": [],
+        "repack_span_drift": [],
+        "replayed_samples_repacked_from_shards": 13,
+        "span_ids_match": [
+          true,
+          true,
+          true,
+          true
+        ]
+      },
+      "evidence_paths": [
+        "ledgers/consumption.jsonl"
+      ],
+      "key": "replay",
+      "note": "",
+      "record_ids": [],
+      "requirement": "Replay of a historical interval",
+      "result": "PASS"
+    },
+    {
+      "compared_values": {
+        "control_fork_no_change_reproduces_parent": true,
+        "declared_change": {
+          "rationale": "reshuffle lane draw order to test order-sensitivity at fixed mixture",
+          "stream_seed": 20260807
+        },
+        "diverged_steps": [
+          {
+            "differs": true,
+            "run_a": "d567c4693db66eb3c6708e55eaf2bbfc6a6b2820f0d19fdc2512712e70d32177",
+            "run_b": "22f6710e110c510d5e6af9f7386b0e9ad24d526e634f79da13bb2bae9cbed920",
+            "step": 12
+          },
+          {
+            "differs": true,
+            "run_a": "d1fc26604e0ee67194dcf0835cb4797dbfd727b76f2b369f0036be81128d32fa",
+            "run_b": "1e119ad41dd86109749bd8b58b8e27c54171276e9b742bf5ed80486ade5e895d",
+            "step": 13
+          },
+          {
+            "differs": true,
+            "run_a": "62e6b7423b02daf1ef22b2b45be8e1d2037a5d71e5f804f7f51f9f1565cc50ea",
+            "run_b": "94e98fbbb2ab82a4de1ae5c75b58dbcc83443b9002b357ce5f8ce9596e629318",
+            "step": 14
+          }
+        ],
+        "divergence_ledger_offset": 14,
+        "new_branch": "run-b",
+        "parent_branch": "run-control"
+      },
+      "evidence_paths": [
+        "ledgers/branches.json"
+      ],
+      "key": "fork",
+      "note": "",
+      "record_ids": [
+        "ckpt_00012"
+      ],
+      "requirement": "Fork from an earlier checkpoint",
+      "result": "PASS"
+    },
+    {
+      "compared_values": {
+        "chain_message": "chain intact across 55 entries",
+        "first_bad_index": null,
+        "n_entries": 56
+      },
+      "evidence_paths": [
+        "ledgers/consumption.jsonl"
+      ],
+      "key": "ledger_integrity",
+      "note": "",
+      "record_ids": [],
+      "requirement": "Consumption ledger is append-only and tamper-evident",
+      "result": "PASS"
+    },
+    {
+      "compared_values": {
+        "exposure_confounded_with_difficulty": false,
+        "lane_ppl_spread_ratio": 1.127,
+        "per_lane_geometric_mean_ppl": {
+          "agentic": 477.0717,
+          "code": 465.4639,
+          "indic": 505.4998,
+          "longctx": 456.9865,
+          "reasoning": 461.4196,
+          "stem": 448.688,
+          "web": 471.928
+        },
+        "position_bucket_spread": 10.7567,
+        "shard_exposures": 178,
+        "shards_with_report_cards": 7,
+        "signal_caveat": "at default depth the model is barely trained: per-lane perplexity sits near exp(ln V) = V, so lane ORDERING is not a finding. Structure is demonstrated; run --deep for a usable signal.",
+        "signal_is_near_uniform": true,
+        "tokens_traced": 5381,
+        "tokens_traced_per_lane": {
+          "agentic": 72,
+          "code": 1375,
+          "indic": 709,
+          "longctx": 217,
+          "reasoning": 603,
+          "stem": 594,
+          "web": 1811
+        }
+      },
+      "evidence_paths": [
+        "ledgers/learning_tokens.jsonl",
+        "ledgers/learning_shards.jsonl",
+        "reports/v6_recommendations.json"
+      ],
+      "key": "learning_trace",
+      "note": "",
+      "record_ids": [],
+      "requirement": "Learning trace: loss linked to source data",
+      "result": "PASS"
+    },
+    {
+      "compared_values": {
+        "candidate_preparation_share_of_step_time": 0.485837,
+        "packing_utilization": 0.922841,
+        "reconstruction": {
+          "note": "every input is summed from the per-step log in performance.json.steps_detail (`steps` is a count, not the array)",
+          "opus_scope": "prepared/accepted are scoped to branch run-a and to the steps in steps_detail - the same population as the throughput numbers",
+          "packing_utilization": "packed_tokens / raw_tokens",
+          "useful_loss_bearing_tokens_per_sec": "loss_bearing_tokens / wall_seconds"
+        },
+        "useful_fraction_of_raw": 0.902344,
+        "useful_loss_bearing_tokens_per_sec": 3760.67
+      },
+      "evidence_paths": [
+        "performance.json"
+      ],
+      "key": "throughput",
+      "note": "",
+      "record_ids": [],
+      "requirement": "Throughput and packing efficiency",
+      "result": "PASS"
+    },
+    {
+      "compared_values": {
+        "failed": [],
+        "n_controls": 30,
+        "n_passed": 30
+      },
+      "evidence_paths": [
+        "reports/negative_controls.json"
+      ],
+      "key": "negative_controls",
+      "note": "",
+      "record_ids": [],
+      "requirement": "Every invariant is falsifiable",
+      "result": "PASS"
+    },
+    {
+      "compared_values": {
+        "batch_stream_hash": "4014ce8fefffd6f2206ce9380c32b369d77eba1cb061001d90661067f85e3514",
+        "identical_by_field": {
+          "batch_stream_hash": true,
+          "final_loss": true,
+          "model_weight_hash": true,
+          "shard_content_hashes": true,
+          "tokenizer_hash": true
+        },
+        "scope": "data-stream determinism is claimed exactly. Model weight equality holds within one machine and thread count (float64, fixed reduction order) and is NOT claimed portable across hardware - BLAS reduction order varies. The ledger does not depend on model determinism."
+      },
+      "evidence_paths": [
+        "reports/experiments.json"
+      ],
+      "key": "determinism",
+      "note": "",
+      "record_ids": [],
+      "requirement": "Two runs produce identical artifacts",
+      "result": "PASS"
+    }
+  ],
+  "run_id": "v5-s6-20260806",
+  "sections": {
+    "E1 - mixed vs pure lane shards (instructor's open question)": {
+      "arms": {
+        "M_mixed": {
+          "across_stage_spread": 0.0654,
+          "auditable_from_ledger": false,
+          "indic_share_by_actual_document_content": 0.4426,
+          "indic_share_by_scheduler_lane_tag": 0.1639,
+          "opus": {
+            "accepted": 54,
+            "deferred": 28,
+            "protected": 7,
+            "rejected": 24
+          },
+          "per_stage_indic_share": {
+            "S1_seed": 0.2143,
+            "S2_general": 0.1489
+          }
+        },
+        "P_pure": {
+          "across_stage_spread": 0.1015,
+          "auditable_from_ledger": true,
+          "indic_share_by_actual_document_content": 0.2,
+          "indic_share_by_scheduler_lane_tag": 0.2,
+          "opus": {
+            "accepted": 40,
+            "deferred": 28,
+            "protected": 5,
+            "rejected": 38
+          },
+          "per_stage_indic_share": {
+            "S1_seed": 0.2857,
+            "S2_general": 0.1842
+          }
+        }
+      },
+      "decision": "pure-lane shards; protected lanes are injected post-selection as whole batches",
+      "experiment": "E1",
+      "finding": "In arm P the scheduler's lane tag and the actual document content agree exactly, so the delivered Indic share is auditable straight from the consumption ledger. In arm M they diverge: the ledger reports the CARRIER lane, so the protected lane's true delivery is invisible to every downstream audit that reads mixture_lanes. That is the decisive difference - not the share itself but whether the share can be measured at all. A floor you cannot audit is not a floor, and S5's own measurement of the course's always-on lane (stated 8%, delivered ~15%) is exactly what an unauditable floor looks like.",
+      "floor": 0.12,
+      "hypothesis_refuted": false,
+      "question": "mixed-lane vs pure-lane shards for delivering a protected floor",
+      "refutation_criterion": "refuted if arm M delivers the floor within +/-1pp AND its per-stage spread is no worse than arm P"
+    },
+    "E6 - Indic intra-lane difficulty ordering": {
+      "arms": {
+        "A_difficulty_ordered": {
+          "band_order_served": [
+            "B1",
+            "B1",
+            "B5",
+            "B1",
+            "B1",
+            "B2"
+          ],
+          "indic_geometric_mean_ppl": 510.2082,
+          "indic_mean_loss": 6.234819,
+          "indic_tokens_traced": 586
+        },
+        "B_flat_shuffle": {
+          "band_order_served": [
+            "B1",
+            "B5",
+            "B1",
+            "B1",
+            "B1",
+            "B2",
+            "B2",
+            "B1",
+            "B1"
+          ],
+          "indic_geometric_mean_ppl": 509.4621,
+          "indic_mean_loss": 6.233356,
+          "indic_tokens_traced": 949
+        }
+      },
+      "experiment": "E6",
+      "finding": "Reported as inconclusive rather than as support. This run trains a 32-dim model for a few dozen steps over a corpus of tens of documents; any loss difference at that scale is dominated by initialisation and draw order, not by curriculum. The mechanism is implemented and the band order served is recorded, so the experiment is ready to run at a scale where it could actually decide - but claiming a curriculum effect from this measurement would be exactly the kind of unbacked number S5 exists to avoid.",
+      "loss_advantage_of_ordering": -0.001463,
+      "question": "does ordering the protected Indic lane by difficulty beat a flat shuffle",
+      "verdict": "UNDER-POWERED AT DEMO SCALE"
+    },
+    "Length reserve (finding C1 - not in the plan)": {
+      "documents_held_back_per_stage": {
+        "S1_seed": 22,
+        "S2_general": 22,
+        "S3_reasoning": 21,
+        "S4_longctx": 0,
+        "anneal": 0
+      },
+      "draws_honoured": 284,
+      "draws_relaxed": 132,
+      "relaxation_meaning": "the lane had no short-enough document left; the scheduler served a long one rather than deadlock. Should be near zero in production.",
+      "relaxation_rate": 0.3173,
+      "rule": "a document that does not fit this stage's window but fits a later one is undrawable until a stage that can hold it",
+      "source": "session: 'you cannot train on a big code at the beginning ... you need to preserve that shard for future because in future you might train on a longer sequence' - stated in the session, absent from the plan",
+      "why_it_matters": "S5 budgets the long-context lane at 0.65 epochs assuming it arrives fresh at S4 (~2.2T tokens in, ~40 days). concat_chop at 4k would have consumed it. This is the anneal reserve's problem on the length axis: the anneal reserve protects quality, nothing protects length."
+    },
+    "OPUS decisions (summary)": {
+      "by_decision": {
+        "accepted": 177,
+        "deferred": 186,
+        "protected": 19,
+        "rejected": 176
+      },
+      "by_lane": {
+        "agentic": {
+          "deferred": 2,
+          "protected": 4,
+          "rejected": 1
+        },
+        "code": {
+          "accepted": 55,
+          "deferred": 40,
+          "rejected": 25
+        },
+        "indic": {
+          "accepted": 15,
+          "deferred": 32,
+          "protected": 10,
+          "rejected": 58
+        },
+        "longctx": {
+          "accepted": 9,
+          "rejected": 1
+        },
+        "reasoning": {
+          "accepted": 16,
+          "deferred": 37,
+          "protected": 5,
+          "rejected": 22
+        },
+        "stem": {
+          "accepted": 23,
+          "deferred": 19,
+          "rejected": 19
+        },
+        "web": {
+          "accepted": 59,
+          "deferred": 56,
+          "rejected": 50
+        }
+      },
+      "kept": 196,
+      "mechanism": "top-k over the step candidate pool, k = round(n * (1 - rejection_rate))",
+      "n_candidates": 512,
+      "n_reserve_deferrals": 46,
+      "note": "kept = accepted + protected. Protected batches are floor overrides OPUS would otherwise have discarded; folding them into 'accepted' would hide exactly how much work the floor is doing, which is the number S5 needs.",
+      "observed_rejection_rate": 0.6172,
+      "observed_supply_rejection_rate": 0.186,
+      "protected_floor_rescues_by_lane": {
+        "agentic": 4,
+        "indic": 10,
+        "reasoning": 5
+      },
+      "proxy_refresh_every_steps": 4,
+      "proxy_version": "opus_proxy_v5.3",
+      "rate_definitions": {
+        "observed_rejection_rate": "per-STEP selection pressure over the oversampled candidate pool; floor of 1 - 1/oversample",
+        "observed_supply_rejection_rate": "fraction of DISTINCT judged samples never admitted on any step; comparable to the plan's rejection_rate_target and the one that drives need = share / (1 - r)"
+      },
+      "rejection_rate_formula": "1 - (accepted + protected) / n_candidates, where n_candidates counts only decisions carrying a non-null opus_score. Deferrals (lane_quota_full, duplicate_in_step, batch_full) are scored and therefore count as not-kept; reserve deferrals are never scored and are excluded from both terms.",
+      "rejection_reasons": {
+        "below_proxy_threshold": 7,
+        "duplicate_in_step": 60,
+        "lane_quota_full": 80,
+        "protected_floor_override": 19,
+        "reserved_for_anneal": 46,
+        "stage_mismatch": 169
+      },
+      "reserve_deferred_sample_ids": [
+        "1636719927e2461d",
+        "4d289a2bc9824596",
+        "742f893ff0b4bc80",
+        "83b31f3bbb7b784c",
+        "c16202459dbebf45"
+      ],
+      "scope": "branch run-a",
+      "score_max": 0.615182,
+      "score_mean": 0.32544577,
+      "score_min": -1.0,
+      "target_rejection_rate": 0.18
+    },
+    "Packing policy comparison (E3)": {
+      "rows": [
+        {
+          "capacity_tokens": 5760,
+          "documents_seen": 37,
+          "documents_split_across_windows": 15,
+          "documents_truncated": 0,
+          "loss_bearing_fraction": 0.9205,
+          "loss_bearing_tokens": 5302,
+          "n_sequences": 45,
+          "pad_tokens": 250,
+          "policy": "best_fit",
+          "utilization": 0.9566
+        },
+        {
+          "capacity_tokens": 5632,
+          "documents_seen": 37,
+          "documents_split_across_windows": 31,
+          "documents_truncated": 74,
+          "loss_bearing_fraction": 0.9377,
+          "loss_bearing_tokens": 5281,
+          "n_sequences": 44,
+          "pad_tokens": 122,
+          "policy": "concat_chop",
+          "utilization": 0.9783
+        },
+        {
+          "capacity_tokens": 6144,
+          "documents_seen": 37,
+          "documents_split_across_windows": 15,
+          "documents_truncated": 0,
+          "loss_bearing_fraction": 0.863,
+          "loss_bearing_tokens": 5302,
+          "n_sequences": 48,
+          "pad_tokens": 634,
+          "policy": "greedy",
+          "utilization": 0.8968
+        },
+        {
+          "capacity_tokens": 7680,
+          "documents_seen": 37,
+          "documents_split_across_windows": 15,
+          "documents_truncated": 0,
+          "loss_bearing_fraction": 0.6904,
+          "loss_bearing_tokens": 5302,
+          "n_sequences": 60,
+          "pad_tokens": 2170,
+          "policy": "long_context",
+          "utilization": 0.7174
+        },
+        {
+          "capacity_tokens": 4736,
+          "documents_seen": 37,
+          "documents_split_across_windows": 0,
+          "documents_truncated": 15,
+          "loss_bearing_fraction": 0.7946,
+          "loss_bearing_tokens": 3763,
+          "n_sequences": 37,
+          "pad_tokens": 843,
+          "policy": "pad_only",
+          "utilization": 0.822
+        },
+        {
+          "capacity_tokens": 4224,
+          "documents_seen": 37,
+          "documents_split_across_windows": 0,
+          "documents_truncated": 15,
+          "loss_bearing_fraction": 0.8909,
+          "loss_bearing_tokens": 3763,
+          "n_sequences": 33,
+          "pad_tokens": 331,
+          "policy": "structure_preserving",
+          "utilization": 0.9216
+        }
+      ]
+    },
+    "Production feasibility at 3T (arithmetic only, no tokens trained)": {
+      "demand_rule": "need = stage_window * stage_share / (1 - rejection_rate), summed over stages",
+      "infeasible_lanes": [
+        "agentic",
+        "indic"
+      ],
+      "lanes": [
+        {
+          "demand_tokens": 79750000000,
+          "epochs": 126.587,
+          "lane": "agentic",
+          "supply_tokens": 630000000,
+          "within_ceiling": false
+        },
+        {
+          "demand_tokens": 873351219512,
+          "epochs": 0.792,
+          "lane": "code",
+          "supply_tokens": 1103000000000,
+          "within_ceiling": true
+        },
+        {
+          "demand_tokens": 633881707317,
+          "epochs": 4.032,
+          "lane": "indic",
+          "supply_tokens": 157200000000,
+          "within_ceiling": false
+        },
+        {
+          "demand_tokens": 79019512195,
+          "epochs": 0.79,
+          "lane": "longctx",
+          "supply_tokens": 100000000000,
+          "within_ceiling": true
+        },
+        {
+          "demand_tokens": 339285365854,
+          "epochs": 3.987,
+          "lane": "reasoning",
+          "supply_tokens": 85100000000,
+          "within_ceiling": true
+        },
+        {
+          "demand_tokens": 436258536585,
+          "epochs": 2.988,
+          "lane": "stem",
+          "supply_tokens": 146000000000,
+          "within_ceiling": true
+        },
+        {
+          "demand_tokens": 1215287804878,
+          "epochs": 0.259,
+          "lane": "web",
+          "supply_tokens": 4691000000000,
+          "within_ceiling": true
+        }
+      ],
+      "max_feasible_rejection_rate_per_lane": {
+        "agentic": 0.0,
+        "code": 0.8377,
+        "indic": 0.1734,
+        "longctx": 0.838,
+        "reasoning": 0.1827,
+        "stem": 0.3874,
+        "web": 0.9469
+      },
+      "rejection_rate": 0.18
+    }
+  },
+  "summary": {
+    "all_passed": true,
+    "n_failed": 0,
+    "n_passed": 15,
+    "n_requirements": 15
+  }
+}

@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ERA V5 · S6 data system · v5-s6-20260806</title>
+<style>
+:root{--bg:#fbfcfe;--fg:#101828;--mut:#667085;--line:#e4e7ec;--card:#fff;
+--c1:#0891b2;--c2:#7c3aed;--c3:#16a34a;--ok:#067647;--okb:#ecfdf3;--bad:#b42318;--badb:#fef3f2;
+--warn:#b54708;--warnb:#fffaeb}
+@media (prefers-color-scheme:dark){:root{--bg:#0d1117;--fg:#e6edf3;--mut:#8b949e;
+--line:#21262d;--card:#161b22;--okb:#0b2919;--badb:#2d1214;--warnb:#2b1d05;
+--ok:#3fb950;--bad:#f85149;--warn:#d29922}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);
+font:15px/1.55 ui-sans-serif,-apple-system,"Segoe UI",Inter,sans-serif;padding:28px 20px 60px}
+.wrap{max-width:1120px;margin:0 auto}
+h1{font-size:24px;margin:0 0 4px} h2{font-size:17px;margin:34px 0 10px}
+.sub{color:var(--mut);font-size:13px;margin-bottom:22px}
+.grid{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(168px,1fr))}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px 16px}
+.card b{display:block;font-size:22px;letter-spacing:-.02em}
+.card span{color:var(--mut);font-size:12px}
+.scroll{overflow-x:auto;border:1px solid var(--line);border-radius:10px;background:var(--card)}
+table{border-collapse:collapse;width:100%;font-size:13.5px;min-width:520px}
+th,td{text-align:left;padding:8px 12px;border-bottom:1px solid var(--line);vertical-align:middle}
+th{color:var(--mut);font-weight:600;font-size:12px;text-transform:uppercase;letter-spacing:.04em}
+tr:last-child td{border-bottom:0}
+td.num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+td.why{color:var(--mut);font-size:12.5px}
+code{font:12px ui-monospace,SFMono-Regular,Menlo,monospace;color:var(--mut)}
+.pill{display:inline-block;padding:2px 8px;border-radius:999px;font-size:11.5px;font-weight:600;
+white-space:nowrap}
+.pill.ok{background:var(--okb);color:var(--ok)}
+.pill.bad{background:var(--badb);color:var(--bad)}
+.pill.warn{background:var(--warnb);color:var(--warn)}
+.bar{background:var(--line);border-radius:999px;height:7px;min-width:90px}
+.bar span{display:block;height:7px;border-radius:999px}
+.chart{width:100%;height:auto;background:var(--card);border:1px solid var(--line);
+border-radius:10px;padding:6px}
+.line{fill:none;stroke:var(--c1);stroke-width:2}
+.ax{stroke:var(--line);stroke-width:1}
+.tick{fill:var(--mut);font-size:10px}
+.note{color:var(--mut);font-size:12.5px;margin:8px 0 0}
+</style></head><body><div class="wrap">
+
+<h1>Training data execution system</h1>
+<div class="sub">run <code>v5-s6-20260806</code> · plan <code>era-v5-mixture-v1</code>
+ · tokenizer <code>75b8661f606877ee</code> (vocab 512)
+ · 30 steps · global batch 8 × seq 128
+ · rendered from <code>submission_artifacts/</code>, no live data</div>
+
+<div class="grid">
+ <div class="card"><b>15/15</b><span>requirements pass</span></div>
+ <div class="card"><b>30/30</b><span>negative controls fire</span></div>
+ <div class="card"><b>92.3%</b><span>packing utilization</span></div>
+ <div class="card"><b>90.2%</b><span>useful of raw tokens</span></div>
+ <div class="card"><b>61.7%</b><span>OPUS rejection (target
+   18%)</span></div>
+ <div class="card"><b>44</b><span>batches committed</span></div>
+</div>
+
+<h2>Mean loss per optimizer step — branch run-a</h2>
+<svg viewBox="0 0 680 180" class="chart" role="img"
+      aria-label="mean loss per optimizer step, branch run-a">
+  <line x1="40" y1="30" x2="40" y2="150" class="ax"/>
+  <line x1="40" y1="150" x2="660" y2="150" class="ax"/>
+  <polyline points="40.0,30.0 61.4,35.2 82.8,41.6 104.1,40.2 125.5,46.1 146.9,50.6 168.3,53.6 189.7,60.2 211.0,64.5 232.4,67.3 253.8,72.5 275.2,79.3 296.6,78.0 317.9,72.5 339.3,81.1 360.7,94.5 382.1,102.0 403.4,103.6 424.8,100.2 446.2,111.9 467.6,125.9 489.0,111.3 510.3,120.9 531.7,95.9 553.1,133.9 574.5,114.6 595.9,125.4 617.2,150.0 638.6,127.2 660.0,132.2" class="line"/>
+  <text x="6" y="34" class="tick">6.2407</text>
+  <text x="6" y="154" class="tick">6.0616</text>
+  <text x="40" y="172" class="tick">step 0</text>
+  <text x="600" y="172" class="tick">step 29</text>
+</svg>
+<p class="note">Branch <code>run-b</code> is an intentional fork from an early checkpoint and is
+ charted separately in <code>ledgers/branches.json</code> — splicing it here would draw a curve that
+ never happened. Initial loss should sit at <code>ln(vocab)</code> for an untrained model.
+ ln(512) = 6.2383;
+ measured first step 6.2407 if present.</p>
+
+<h2>Delivered lane shares — measured from the ledger, not the plan (branch run-a)</h2>
+<div class="scroll"><table>
+<thead><tr><th>lane</th><th class="num">delivered</th><th>share</th><th>protected floor</th></tr></thead>
+<tbody><tr><td>agentic</td><td class='num'>2.04%</td><td><div class="bar"><span style="width:2.04%;background:var(--c1)"></span></div></td><td><span class="pill ok">floor 2% held</span></td></tr><tr><td>code</td><td class='num'>28.06%</td><td><div class="bar"><span style="width:28.06%;background:var(--c1)"></span></div></td><td></td></tr><tr><td>indic</td><td class='num'>12.76%</td><td><div class="bar"><span style="width:12.76%;background:var(--c1)"></span></div></td><td><span class="pill ok">floor 12% held</span></td></tr><tr><td>longctx</td><td class='num'>4.59%</td><td><div class="bar"><span style="width:4.59%;background:var(--c1)"></span></div></td><td></td></tr><tr><td>reasoning</td><td class='num'>10.71%</td><td><div class="bar"><span style="width:10.71%;background:var(--c1)"></span></div></td><td><span class="pill ok">floor 6% held</span></td></tr><tr><td>stem</td><td class='num'>11.73%</td><td><div class="bar"><span style="width:11.73%;background:var(--c1)"></span></div></td><td></td></tr><tr><td>web</td><td class='num'>30.10%</td><td><div class="bar"><span style="width:30.10%;background:var(--c1)"></span></div></td><td></td></tr></tbody></table></div>
+
+<h2>Production feasibility at 3T — arithmetic only, no tokens trained</h2>
+<div class="scroll"><table>
+<thead><tr><th>lane</th><th class="num">demand</th><th class="num">supply</th>
+<th class="num">epochs</th><th>verdict</th></tr></thead>
+<tbody><tr><td>agentic</td><td class='num'>79.8B</td><td class='num'>0.6B</td><td class='num'>126.59</td><td><span class='pill bad'>BREACH</span></td></tr><tr><td>code</td><td class='num'>873.4B</td><td class='num'>1,103.0B</td><td class='num'>0.79</td><td><span class='pill ok'>within ceiling</span></td></tr><tr><td>indic</td><td class='num'>633.9B</td><td class='num'>157.2B</td><td class='num'>4.03</td><td><span class='pill bad'>BREACH</span></td></tr><tr><td>longctx</td><td class='num'>79.0B</td><td class='num'>100.0B</td><td class='num'>0.79</td><td><span class='pill ok'>within ceiling</span></td></tr><tr><td>reasoning</td><td class='num'>339.3B</td><td class='num'>85.1B</td><td class='num'>3.99</td><td><span class='pill ok'>within ceiling</span></td></tr><tr><td>stem</td><td class='num'>436.3B</td><td class='num'>146.0B</td><td class='num'>2.99</td><td><span class='pill ok'>within ceiling</span></td></tr><tr><td>web</td><td class='num'>1,215.3B</td><td class='num'>4,691.0B</td><td class='num'>0.26</td><td><span class='pill ok'>within ceiling</span></td></tr></tbody></table></div>
+<p class="note">need = stage_window * stage_share / (1 - rejection_rate), summed over stages · ceiling 4.0 epochs ·
+ rejection 18% ·
+ infeasible: <b>agentic, indic</b></p>
+
+<h2>Perplexity by capability lane</h2>
+<div class="scroll"><table>
+<thead><tr><th>lane</th><th class="num">geo-mean ppl</th><th></th>
+<th class="num">hot tokens</th><th class="num">observed</th></tr></thead>
+<tbody><tr><td>indic</td><td class='num'>505.50</td><td><div class="bar"><span style="width:100.00%;background:var(--c2)"></span></div></td><td class='num'>100.0%</td><td class='num'>709</td></tr><tr><td>agentic</td><td class='num'>477.07</td><td><div class="bar"><span style="width:94.38%;background:var(--c2)"></span></div></td><td class='num'>100.0%</td><td class='num'>72</td></tr><tr><td>web</td><td class='num'>471.93</td><td><div class="bar"><span style="width:93.36%;background:var(--c2)"></span></div></td><td class='num'>100.0%</td><td class='num'>1,811</td></tr><tr><td>code</td><td class='num'>465.46</td><td><div class="bar"><span style="width:92.08%;background:var(--c2)"></span></div></td><td class='num'>100.0%</td><td class='num'>1,375</td></tr><tr><td>reasoning</td><td class='num'>461.42</td><td><div class="bar"><span style="width:91.28%;background:var(--c2)"></span></div></td><td class='num'>100.0%</td><td class='num'>603</td></tr><tr><td>longctx</td><td class='num'>456.99</td><td><div class="bar"><span style="width:90.40%;background:var(--c2)"></span></div></td><td class='num'>100.0%</td><td class='num'>217</td></tr><tr><td>stem</td><td class='num'>448.69</td><td><div class="bar"><span style="width:88.76%;background:var(--c2)"></span></div></td><td class='num'>100.0%</td><td class='num'>594</td></tr></tbody></table></div>
+
+<h2>V6 corpus feedback — generated from the learning ledger</h2>
+<div class="scroll"><table>
+<thead><tr><th>shard</th><th>lane</th><th>recommendation</th><th>because</th>
+<th class="num">best phase</th></tr></thead>
+<tbody><tr><td><code>v5_agentic_train_000</code></td><td>agentic</td><td><span class='pill warn'>keep_with_phase_guard</span></td><td class='why'>productive but hard: 100.0% of tokens above ppl 20.0</td><td class='num'>mid</td></tr><tr><td><code>v5_code_train_001</code></td><td>code</td><td><span class='pill warn'>keep_with_phase_guard</span></td><td class='why'>productive but hard: 100.0% of tokens above ppl 20.0</td><td class='num'>early</td></tr><tr><td><code>v5_indic_train_002</code></td><td>indic</td><td><span class='pill warn'>phase_guard</span></td><td class='why'>usefulness inverts with phase: best at early, negative elsewhere</td><td class='num'>early</td></tr><tr><td><code>v5_longctx_train_003</code></td><td>longctx</td><td><span class='pill warn'>keep_with_phase_guard</span></td><td class='why'>productive but hard: 100.0% of tokens above ppl 20.0</td><td class='num'>mid</td></tr><tr><td><code>v5_reasoning_train_004</code></td><td>reasoning</td><td><span class='pill warn'>keep_with_phase_guard</span></td><td class='why'>productive but hard: 100.0% of tokens above ppl 20.0</td><td class='num'>early</td></tr><tr><td><code>v5_stem_train_005</code></td><td>stem</td><td><span class='pill warn'>keep_with_phase_guard</span></td><td class='why'>productive but hard: 100.0% of tokens above ppl 20.0</td><td class='num'>early</td></tr><tr><td><code>v5_web_train_006</code></td><td>web</td><td><span class='pill warn'>keep_with_phase_guard</span></td><td class='why'>productive but hard: 100.0% of tokens above ppl 20.0</td><td class='num'>mid</td></tr></tbody></table></div>
+
+<h2>Packing policies (E3)</h2>
+<div class="scroll"><table>
+<thead><tr><th>policy</th><th class="num">seqs</th><th class="num">util</th><th></th>
+<th class="num">loss-bearing</th><th class="num">truncated</th></tr></thead>
+<tbody><tr><td>best_fit</td><td class='num'>45</td><td class='num'>95.7%</td><td><div class="bar"><span style="width:95.66%;background:var(--c3)"></span></div></td><td class='num'>92.0%</td><td class='num'>0</td></tr><tr><td>concat_chop</td><td class='num'>44</td><td class='num'>97.8%</td><td><div class="bar"><span style="width:97.83%;background:var(--c3)"></span></div></td><td class='num'>93.8%</td><td class='num'>74</td></tr><tr><td>greedy</td><td class='num'>48</td><td class='num'>89.7%</td><td><div class="bar"><span style="width:89.68%;background:var(--c3)"></span></div></td><td class='num'>86.3%</td><td class='num'>0</td></tr><tr><td>long_context</td><td class='num'>60</td><td class='num'>71.7%</td><td><div class="bar"><span style="width:71.74%;background:var(--c3)"></span></div></td><td class='num'>69.0%</td><td class='num'>0</td></tr><tr><td>pad_only</td><td class='num'>37</td><td class='num'>82.2%</td><td><div class="bar"><span style="width:82.20%;background:var(--c3)"></span></div></td><td class='num'>79.5%</td><td class='num'>15</td></tr><tr><td>structure_preserving</td><td class='num'>33</td><td class='num'>92.2%</td><td><div class="bar"><span style="width:92.16%;background:var(--c3)"></span></div></td><td class='num'>89.1%</td><td class='num'>15</td></tr></tbody></table></div>
+
+<h2>E1 — mixed vs pure lane shards (the session's open question)</h2>
+<div class="scroll"><table>
+<thead><tr><th>arm</th><th class="num">Indic by lane tag</th>
+<th class="num">by document content</th><th>audit</th></tr></thead>
+<tbody><tr><td>M_mixed</td><td class='num'>16.39%</td><td class='num'>44.26%</td><td><span class='pill bad'>NOT auditable</span></td></tr><tr><td>P_pure</td><td class='num'>20.00%</td><td class='num'>20.00%</td><td><span class='pill ok'>auditable</span></td></tr></tbody></table></div>
+<p class="note">In arm P the scheduler&#x27;s lane tag and the actual document content agree exactly, so the delivered Indic share is auditable straight from the consumption ledger. In arm M they diverge: the ledger reports the CARRIER lane, so the protected lane&#x27;s true delivery is invisible to every downstream audit that reads mixture_lanes. That is the decisive difference - not the share itself but whether the share can be measured at all. A floor you cannot audit is not a floor, and S5&#x27;s own measurement of the course&#x27;s always-on lane (stated 8%, delivered ~15%) is exactly what an unauditable floor looks like.</p>
+
+<h2>Exactly-once across a changed world size</h2>
+<p class="note">
+ uninterrupted ws=4 vs crash@7 resume ws=8 ·
+ 57 positions ·
+ order identical <b>True</b> ·
+ duplicate positions 0 ·
+ missing 0<br>two independently produced traces compared element-wise; NOT a re-partition of one list, which cannot fail</p>
+
+<h2>Ledger volume — why the full tier is a proxy/debug tier</h2>
+<p class="note">
+ full (extrapolated) 19,704,285 B ·
+ stored [quantized, 1-in-4]
+ 4,861,563 B ·
+ aggregate 3,777 B ·
+ 650.28 B/token →
+ <b>1.95 PB at 3T
+ loss-bearing tokens</b></p>
+
+<h2>Requirements</h2>
+<div class="scroll"><table>
+<thead><tr><th>requirement</th><th>result</th><th>evidence</th></tr></thead>
+<tbody><tr><td>Tokenizer integrity</td><td><span class='pill ok'>PASS</span></td><td><code>manifests/tokenizer.json, manifests/shards/</code></td></tr><tr><td>Shard immutability and content hashes</td><td><span class='pill ok'>PASS</span></td><td><code>manifests/shards/</code></td></tr><tr><td>Evaluation firewall</td><td><span class='pill ok'>PASS</span></td><td><code>manifests/eval_registry.json, manifests/eval_content_scan.json</code></td></tr><tr><td>Packing correctness</td><td><span class='pill ok'>PASS</span></td><td><code>performance.json</code></td></tr><tr><td>Mixture compliance and protected floors</td><td><span class='pill ok'>PASS</span></td><td><code>ledgers/consumption.jsonl</code></td></tr><tr><td>OPUS audit trail</td><td><span class='pill ok'>PASS</span></td><td><code>ledgers/opus.jsonl, ledgers/opus_summary.json</code></td></tr><tr><td>Crash recovery</td><td><span class='pill ok'>PASS</span></td><td><code>ledgers/consumption.jsonl, checkpoints/ckpt_00024.json</code></td></tr><tr><td>Exactly-once delivery across a changed world size</td><td><span class='pill ok'>PASS</span></td><td><code>reports/exactly_once.json</code></td></tr><tr><td>Replay of a historical interval</td><td><span class='pill ok'>PASS</span></td><td><code>ledgers/consumption.jsonl</code></td></tr><tr><td>Fork from an earlier checkpoint</td><td><span class='pill ok'>PASS</span></td><td><code>ledgers/branches.json</code></td></tr><tr><td>Consumption ledger is append-only and tamper-evident</td><td><span class='pill ok'>PASS</span></td><td><code>ledgers/consumption.jsonl</code></td></tr><tr><td>Learning trace: loss linked to source data</td><td><span class='pill ok'>PASS</span></td><td><code>ledgers/learning_tokens.jsonl, ledgers/learning_shards.jsonl, reports/v6_recommendations.json</code></td></tr><tr><td>Throughput and packing efficiency</td><td><span class='pill ok'>PASS</span></td><td><code>performance.json</code></td></tr><tr><td>Every invariant is falsifiable</td><td><span class='pill ok'>PASS</span></td><td><code>reports/negative_controls.json</code></td></tr><tr><td>Two runs produce identical artifacts</td><td><span class='pill ok'>PASS</span></td><td><code>reports/experiments.json</code></td></tr></tbody></table></div>
+
+<p class="note" style="margin-top:26px">
+Static rendering of generated artifacts. Not a service, no network, no live data — the session
+describes a four-server architecture (training, dashboard, data-ledger, benchmark) and explicitly
+excludes building it from this assignment, so this shows what such a dashboard would serve.
+Throughput figures are a CPU float64 toy: ratios transfer, absolute tokens/sec does not.</p>
+
+</div></body></html>

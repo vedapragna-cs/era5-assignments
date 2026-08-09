@@ -1,0 +1,25 @@
+{
+  "bytes_aggregate_only": 3777,
+  "bytes_full_extrapolated": 19704285,
+  "bytes_per_token_full": 650.28,
+  "bytes_stored_this_run": 4861563,
+  "compression_vs_full": {
+    "aggregate_only": 0.0001917,
+    "stored_tier": 0.24673
+  },
+  "extrapolation": {
+    "aggregate_tier_at_3T_tokens": "size is bounded by the number of distinct (shard, lane, language, bucket, stage) keys, not by token count - it does not grow with the run",
+    "full_tier_bytes_at_3T_tokens": 1950855000000000,
+    "full_tier_petabytes_at_3T_tokens": 1.95,
+    "note": "at this bytes-per-token, a run consuming 3e12 loss-bearing tokens would cost the figure below in the full tier. This is why the full tier is for proxy runs, debug runs and suspicious shards only."
+  },
+  "loss_bearing_tokens_observed": 30301,
+  "policy": {
+    "aggregate": "the full run",
+    "full": "proxy runs, debug runs, suspicious shards",
+    "quantized": "selected intervals of a large run"
+  },
+  "sample_every": 4,
+  "tier_used": "quantized",
+  "tokens_stored": 7589
+}
