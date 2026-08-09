@@ -30,6 +30,41 @@ SUPERVISED_ROLES = {"assistant_plan", "tool_call", "final_answer", "text"}
 CONTEXT_ROLES = {"user", "tool_observation", "repo_file", "shell_output"}
 VERIFIER_ROLES = {"verifier_outcome"}
 
+# Role has to survive packing, not just decide the loss mask and vanish.
+#
+# The mask answers "was this position trained on". It cannot answer "what KIND of text was it",
+# because supervised and context roles both collapse into it - `tool_call` and `text` are
+# indistinguishable 1s, `user` and `tool_observation` indistinguishable 0s. So a per-lane perplexity
+# is the finest attribution the ledger could make, and S5's open question is not about lanes: it
+# asks whether agentic data yields ~53% supervised tokens and whether the supervised part is
+# actually harder. That is a per-ROLE question.
+#
+# `role_codes` is therefore carried alongside `loss_mask` through every packing policy and lands on
+# each token observation. Codes rather than strings because it is one int8-sized value per position
+# over every packed window; index 0 is padding so an unset entry is never silently a real role.
+ROLE_NAMES = ("<pad>", "text", "user", "assistant_plan", "tool_call", "tool_observation",
+              "final_answer", "verifier_outcome", "repo_file", "shell_output", "boundary")
+PAD_ROLE = 0
+_ROLE_CODE = {name: i for i, name in enumerate(ROLE_NAMES)}
+
+
+def role_code(role: str) -> int:
+    """Strict: an unknown role raises rather than falling into an 'other' bucket.
+
+    A silent catch-all would let a corpus author add a role, get zero supervision for it, and see
+    nothing in any report. The loud failure is the cheaper one.
+    """
+    try:
+        return _ROLE_CODE[role]
+    except KeyError:
+        raise ValueError(
+            f"unknown segment role {role!r}; add it to ROLE_NAMES and classify it as "
+            "supervised/context/verifier") from None
+
+
+def role_name(code: int) -> str:
+    return ROLE_NAMES[code]
+
 
 @dataclass(frozen=True)
 class Segment:

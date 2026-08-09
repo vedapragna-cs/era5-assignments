@@ -14,6 +14,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import math
 import sys
 from pathlib import Path
 
@@ -165,6 +166,42 @@ def main(root: Path) -> int:
         d["sample_id"] for d in opus if d["decision"] in ("accepted", "protected")}
     leaked = served & rejected_only
     c("no_rejected_only_sample_was_ever_served", not leaked, f"{len(leaked)} leaked")
+
+    # ---------------------------------------------------------------- per-role attribution
+    # Recomputed from the shipped token records, not read from the evidence bundle's own table.
+    # Two independent things are checked and they fail differently: the per-role perplexities must
+    # reproduce (arithmetic), and no context role may carry loss (alignment). The second is the one
+    # that catches a role array shifted against its loss mask - the table would still sum correctly.
+    SUPERVISED = {"assistant_plan", "tool_call", "final_answer", "text", "boundary"}
+    tokrecs = [r for r in load_jsonl(root / "ledgers" / "learning_tokens.jsonl")
+               if r.get("branch_id", "run-a") == "run-a" and not r.get("superseded")]
+    by_role: dict[str, list[float]] = {}
+    for r in tokrecs:
+        by_role.setdefault(r["segment_role"], []).append(r["cross_entropy_loss"])
+    _lt = next(r for r in ev["requirements"] if r["key"] == "learning_trace")
+    stored_roles = _lt["compared_values"]["per_role_geometric_mean_ppl"]
+    recomputed = {k: round(math.exp(min(sum(v) / len(v), 30.0)), 4)
+                  for k, v in by_role.items()}
+    # Tolerance derived from the storage tier rather than picked to make the check pass. The
+    # `quantized` tier writes each loss rounded to 2 dp, so a geometric mean rebuilt from the file
+    # can sit up to exp(0.005)-1 = 0.5% away from the one computed on unrounded losses; the `full`
+    # tier writes 6 dp and the reconstruction is exact to well within 1e-4. Stating which tier
+    # produced the file is what makes the looser bound a fact about the artifact rather than a
+    # concession. A misaligned role array moves these perplexities by whole multiples (boundary
+    # sits near 38, text near 191), so neither bound is loose enough to hide one.
+    vol = json.loads((root / "reports" / "ledger_volume.json").read_text(encoding="utf-8"))
+    quantized = vol.get("tier_used") == "quantized"
+    tol = 0.005 if quantized else 1e-4          # relative
+    c("per_role_perplexity_recomputes_from_token_records",
+      set(recomputed) == set(stored_roles)
+      and all(abs(recomputed[k] - stored_roles[k]) <= stored_roles[k] * tol + 1e-4
+              for k in stored_roles),
+      f"{len(recomputed)} roles from the '{vol.get('tier_used')}' tier "
+      f"(tolerance {tol:.1%}), recomputed={recomputed}")
+    off_role = sorted({r for r in by_role if r not in SUPERVISED})
+    c("no_context_role_carries_training_loss", not off_role,
+      f"roles carrying loss that are not supervised: {off_role or 'none'} "
+      f"(a context role here means role_codes drifted against loss_mask)")
 
     # ---------------------------------------------------------------- firewall
     reg = json.loads((root / "manifests" / "eval_registry.json").read_text(encoding="utf-8"))

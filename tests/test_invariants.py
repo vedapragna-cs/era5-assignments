@@ -774,7 +774,7 @@ def test_learning_aggregates_count_one_live_branch_only():
             language="en", script="Latn", position_in_pack=0, position_in_doc=0,
             position_bucket=0, is_boundary=False, is_special=False, token_id=1, decoded="x",
             loss=loss, opus_decision_id=None, model_age_tokens=0, stage="S1_seed",
-            pass_number=1, branch_id=branch)
+            pass_number=1, role="text", branch_id=branch)
 
     ll = LearningLedger()
     ll.observe_tokens([obs("run-a", "web", 1.0), obs("run-a", "web", 1.0)])
@@ -833,12 +833,113 @@ def test_readme_figures_still_match_the_artifacts():
         (f"{mc['delivered_shares']['agentic'] * 100:.2f}%", "delivered agentic share"),
         (f"{nc['n_controls']} negative controls", "negative control count"),
     ]
-    # the excess-loss table, values AND order
+    # The excess-loss table, values AND order. The sign comes from the format, not from a literal
+    # `+`: that literal was written when every lane was above the reference, and it produced the
+    # impossible expectation "indic +-0.4278" the moment AdamW pushed six of the seven below it.
     for lane, rec in sorted(xl.items(), key=lambda kv: -kv[1]["mean_excess_loss"]):
-        want.append((f"{lane} +{rec['mean_excess_loss']:.4f}", f"excess loss {lane}"))
+        want.append((f"{lane} {rec['mean_excess_loss']:+.4f}", f"excess loss {lane}"))
 
     missing = [f"{d} -> expected {s!r}" for s, d in want if s not in readme]
     assert not missing, "README figures no longer match the artifacts:\n  " + "\n  ".join(missing)
+
+
+def test_role_codes_survive_every_packing_policy():
+    """Role must reach the packed window intact under all six policies, not just the simple ones.
+
+    The policies slice tokens and loss masks in six different ways - truncate, split across
+    windows, first-fit bin, best-fit bin, concatenate-and-chop, one-document-per-window. Each is a
+    separate opportunity to cut two of the three parallel arrays and leave the third at its old
+    offset, which would produce a by-role table that sums correctly and attributes wrongly.
+
+    Checked structurally rather than by eyeballing one policy's output: for every policy, every
+    loss-bearing position carries a supervised role, every pad position carries the pad role, and
+    the arrays are the same length.
+    """
+    from tds import packing as pk
+
+    shard = next(s for s in _built.admitted_shards if s.spans)
+    units = pk.units_from_shard(shard)
+    seen_roles = set()
+    for policy in pk.POLICIES:
+        seqs = pk.pack(units, 128, policy, shard.lane)
+        assert seqs, f"{policy} produced no sequences"
+        for sq in seqs:
+            ok, errs = pk.validate_masks(sq)
+            assert ok, f"{policy}: {errs[:2]}"
+            assert len(sq.role_codes) == len(sq.tokens) == len(sq.loss_mask)
+            for i, t in enumerate(sq.tokens):
+                if t == PAD:
+                    assert sq.role_codes[i] == pk.PAD_ROLE, \
+                        f"{policy}: pad at {i} carries role {sq.role_codes[i]}"
+            seen_roles.update(sq.role_codes)
+    # Non-vacuity: if every position were PAD_ROLE the loop above would pass while attributing
+    # nothing. At least one real role must have survived packing.
+    assert seen_roles - {pk.PAD_ROLE}, "no real role survived any packing policy"
+
+
+def test_optimizer_state_is_real_state_and_the_schedule_is_reproducible():
+    """AdamW's moments must change the update, and `lr_at` must reproduce the stored schedule.
+
+    Before this, `optimizer_state` in a checkpoint was `{"type": "sgd", "lr": 0.35}` and
+    `scheduler_state` was `{"policy": "constant"}` - both restatements of the config. No mutation
+    could invalidate either, so "resume restores the optimizer and scheduler" was a sentence with
+    no check under it.
+
+    Two properties, and the second is the one that makes the first meaningful:
+      1. two identical gradients applied from a fresh optimizer vs a warmed one give different
+         updates (the moments carry history);
+      2. dropping the moments leaves the WEIGHTS bit-identical, so a weight-hash comparison at the
+         restore instant cannot detect the loss.
+    """
+    import numpy as np
+    from tds.model import TinyLM
+
+    # The gradients must VARY across steps. With a constant gradient Adam's normalised step
+    # m_hat/sqrt(v_hat) converges to sign(g) whatever the history, and bias correction makes a
+    # fresh optimizer's very first step equal to it exactly - so a constant-gradient probe would
+    # report "the moments are not load-bearing" and be wrong about why. That is a property of
+    # Adam, not of this implementation, and it is why the drill uses a varying sequence.
+    rng = np.random.default_rng(7)
+    proto = TinyLM.init(32, d_model=8, d_hidden=8, n_heads=2, seed=1)
+
+    def grads(scale):
+        return {k: (rng.standard_normal(getattr(proto, k).shape) * scale)
+                for k in TinyLM.PARAMS}
+
+    warmed = TinyLM.init(32, d_model=8, d_hidden=8, n_heads=2, seed=1)
+    for i in range(5):
+        warmed.apply(grads(0.01 * (i + 1)), 1e-3)
+    warm_weights = {k: getattr(warmed, k).copy() for k in TinyLM.PARAMS}
+    g = grads(0.02)
+
+    # Same weights, same gradient, different moment history -> different update.
+    a = TinyLM.init(32, d_model=8, d_hidden=8, n_heads=2, seed=1)
+    b = TinyLM.init(32, d_model=8, d_hidden=8, n_heads=2, seed=1)
+    for k, v in warm_weights.items():
+        setattr(a, k, v.copy())
+        setattr(b, k, v.copy())
+    a.load_optimizer_state(warmed.optimizer_state())
+    b.reset_optimizer_state()
+    assert a.weight_hash == b.weight_hash, "the two probes must start from identical weights"
+    a.apply({k: v.copy() for k, v in g.items()}, 1e-3)
+    b.apply({k: v.copy() for k, v in g.items()}, 1e-3)
+    assert a.weight_hash != b.weight_hash, \
+        "dropping AdamW's moments left the next update unchanged - they are not load-bearing"
+
+    # The schedule is a pure function of (step, config), so the stored `lr_at_step` in every
+    # checkpoint must be exactly reproducible - which is why scheduler_state can be config+step.
+    rig = harness.make_rig(_plan, _built, run_id="test-sched", seed=20260806,
+                           global_batch=8, sequence_length=128, world_size=4)
+    tr = rig.trainer
+    ck = tr.save_checkpoint()
+    sch = ck["scheduler_state"]
+    assert sch["policy"] == "linear_warmup_cosine_decay", sch["policy"]
+    assert tr.lr_at(sch["step"]) == sch["lr_at_step"], "lr_at does not reproduce the stored value"
+    # warmup rises, and the tail never falls below the declared floor
+    warm = max(1, int(sch["total_steps"] * sch["warmup_ratio"]))
+    assert tr.lr_at(0) <= tr.lr_at(warm), "warmup does not increase the learning rate"
+    floor = sch["base_lr"] * sch["min_lr_ratio"]
+    assert tr.lr_at(sch["total_steps"]) >= floor - 1e-12, "cosine decay fell below its floor"
 
 
 def test_every_negative_control_fires():

@@ -5,9 +5,10 @@
 > An earlier, independent implementation of this assignment is preserved on the
 > [`v1-data-ledger`](https://github.com/vedapragna-cs/era-v5-s6-data-ledger/tree/v1-data-ledger)
 > branch. It reaches the same submission structure by a different route — a PyTorch
-> transformer, a larger corpus, and a tighter mixture allocator — but has far weaker
-> falsification: no independent verifier, no shipped token bytes, and four negative controls
-> against the thirty here. This branch is the submission.
+> transformer, a larger corpus (102 steps, 122 shards), and a tighter mixture allocator
+> (0.68 pp maximum lane deviation against 4.94 pp here). It has far weaker falsification,
+> though: no independent verifier, no shipped token bytes, and four negative controls
+> against the thirty-two here. This branch is the submission.
 
 Executes a 3T-token mixture plan and **proves what it executed**.
 
@@ -18,10 +19,10 @@ curriculum stages, protected floors, audited supply and anneal reserve that this
 (Those numbers came from our S5 mixture-planning work, but nothing here reads that directory.)
 
 ```bash
-python3 run_demo.py                  # ~60s, no network, no downloads
-python3 run_demo.py --deep           # ~10min, lanes separate in perplexity (see caveat below)
+python3 run_demo.py                  # ~35s, no network, no downloads
+python3 run_demo.py --deep           # ~40s, lanes separate in perplexity (see caveat below)
 python3 verify_evidence.py           # recompute every claim from artifacts alone
-python3 tests/test_invariants.py     # 51 invariant tests
+python3 tests/test_invariants.py     # 57 invariant tests
 python3 make_dashboard.py            # static dashboard.html from the artifacts
 python3 audit.py --step 7            # what trained this step
 python3 audit.py --interval 0 6      # which shards influenced this range
@@ -90,7 +91,7 @@ With a global batch of 8, the smallest expressible share is 12.5% — so a 2% ag
 12.5%, and three protected lanes lock 37.5% of every batch. Measured on the first build: **agentic
 delivered 18.9% against a 2% floor**. That is the same failure S5 measured in the course's own
 always-on lane (stated 8%, delivered ~15%). Floors are now deficit-based against cumulative
-delivery; agentic lands at **2.15%** against its 2% floor.
+delivery; agentic lands at **2.17%** against its 2% floor.
 
 **3. Admission gates documents, then seals shards.**
 A shard manifest reports the worst status among its members, so gating at shard level lets one
@@ -210,14 +211,22 @@ should collect. We train a reference on the golden proxy set (already firewalled
 it cannot leak), hold its architecture identical to the trained model so the difference isolates
 *data*, and record `excess_loss = loss − reference_loss` per token.
 
-Per lane it is DoReMi's reweighting signal. Measured headroom: web +0.2572, agentic +0.2033,
-code +0.1938, stem +0.1852, longctx +0.0938, reasoning +0.0849, **indic +0.0497 — the smallest of
-the seven**. Every lane is `behind_reference`, so this is a ranking of headroom, not a claim that
-any lane is saturated; indic having the least headroom is a weak independent corroboration of the
-exposure confound below, arrived at by a different route than the perplexity numbers. An earlier
-draft reported indic at +0.0001 and called it "matched" — that figure did not survive the audit
-round that rescoped these aggregates to one live branch, and the conclusion it carried was stronger
-than the measurement ever supported.
+Per lane it is DoReMi's reweighting signal. Measured: **agentic +0.1446** — the only lane still
+behind the reference — then indic -0.4278, longctx -0.5688, code -0.8070, stem -0.9468, web -1.1651,
+reasoning -1.5627.
+
+**This inverts what the same table said one revision ago, and the reason is the optimizer, not the
+data.** Under constant-LR SGD every lane came out positive (web +0.2572 down to indic +0.0497) and
+this README read that as "every lane is `behind_reference`, so this is a ranking of headroom". With
+AdamW the trained model overtakes the golden-set reference on six of seven lanes inside 30 steps,
+and only agentic stays behind. Two earlier readings are retracted outright: that indic has the least
+headroom of the seven (it now has the *most* of the six that are ahead), and the claim that this
+corroborated the exposure confound by an independent route — it was corroborating the optimizer.
+
+What survives is the mechanism and one result: excess loss separates *hard* from *hard in a way more
+training fixes*, and agentic is the single lane where a model trained on the full mixture still does
+worse than one trained on the proxy set alone. That is the lane V6 should collect more of, and it is
+now a statement about one lane rather than a ranking of seven near-identical numbers.
 
 **A loss spike is a run event, never a shard property** (`tds/spike.py`). The learning ledger marks a
 shard `harmful` when loss rises across the step that consumed it. A spike does exactly that — and
@@ -258,15 +267,48 @@ unblocking measurement in the plan.
 A checkpoint that fails to load is an inconvenience. A checkpoint that loads while subtly wrong is a
 silent disaster: the model resumes happily from the wrong position in the data stream and the loss
 curve will not tell you. So `restore()` verifies before loading and **raises** rather than warns, and
-six corruption flavours are induced and required to be caught:
+nine corruption flavours are induced and required to be caught:
 
 `weight_bit_flip`, `torn_write_truncated_weights`, `loader_cursor_moved`, `ledger_offset_moved`,
-`step_counter_moved`, `tokenizer_identity_swapped` — all six detected, and a separate control proves
-`restore()` actually refuses rather than logging.
+`step_counter_moved`, `tokenizer_identity_swapped`, `optimizer_moment_bit_flip`,
+`optimizer_step_counter_moved`, `optimizer_moments_dropped` — all nine detected, and a separate
+control proves `restore()` actually refuses rather than logging.
 
-Two hashes, because they fail differently: `model_weight_hash` covers the weights, `checkpoint_hash`
-covers step, branch, ledger offset, loader cursors and tokenizer/plan identity. The second is the
-dangerous one — a corrupted loader cursor leaves the model perfectly valid.
+Three hashes, because they fail differently. `model_weight_hash` covers the weights;
+`optimizer_hash` covers AdamW's moment buffers and step counter; `checkpoint_hash` covers step,
+branch, ledger offset, loader cursors and tokenizer/plan identity. A corrupted loader cursor leaves
+the model perfectly valid, and a dropped moment buffer leaves *both* the model and the cursor valid.
+
+### Optimizer state you can actually lose
+
+The last of those three is here because of a defect worth stating plainly. This system trained with
+constant-learning-rate SGD, and its checkpoints recorded `optimizer_state = {"type": "sgd",
+"lr": 0.35}` and `scheduler_state = {"policy": "constant"}`. Both are copies of the config. No
+mutation of either could change what the next step computed, so **"resume restores the optimizer"
+was a sentence with no check under it** — the same failure class as position ids that no arithmetic
+read, one layer further down.
+
+The optimizer is now AdamW (β=0.9/0.95, decoupled decay 0.01 exempting biases and both embedding
+tables) with linear warmup to 6% of the run and cosine decay to 10% of peak, and global-norm
+clipping at 1.0. Two moment buffers and a step counter are real state, so losing them is a real
+event, and the drill is built so that losing them is invisible to every check that existed before:
+restore twice from one checkpoint, drop the moments on the second, train three steps each. Measured
+— the weight hash immediately after both restores is **identical**, and after three steps the two
+trajectories **diverge**. A resume that forgets the optimizer passes every weight-hash comparison at
+the restore instant and quietly re-warms Adam's bias correction over the following steps.
+
+One finding from building the drill, because it is a property of Adam rather than of this code: with
+a *constant* gradient the normalised step `m̂/√v̂` converges to `sign(g)` regardless of history, and
+bias correction makes a fresh optimizer's first step equal to it exactly. A probe using a constant
+gradient therefore reports "the moments are not load-bearing" and is wrong about why. The test uses
+a varying gradient sequence and says so.
+
+Changing the optimizer moved every number measured from a forward pass. The SGD rates (0.35 default,
+1.2 deep) diverged outright under Adam — mean loss 14.3 nats against a uniform baseline of
+ln(512)=6.24 — because Adam's per-parameter step is ~`lr` whatever the gradient scale. Re-swept at
+default depth: 3e-3 → 5.951, 6e-3 → 5.703, 1e-2 → 5.668, 2e-2 → 5.491, 4e-2 → 6.020. The last
+reaches the sweep's lowest minimum (3.348) and then climbs back above 6, which is overshoot rather
+than learning, so **2e-2** is the default and `--deep` runs 5× the steps at half the rate.
 
 ## Throughput: the straggler a token counter cannot see
 
@@ -281,6 +323,52 @@ monitor counting tokens.
 Measured, not fixed, and the reason is recorded rather than glossed: a composition-aware partition
 stops rank assignment being a pure function of the global index, which is the exact property that
 makes resumption across a changed world size exact. Real design tension, not an oversight.
+
+## Loss attributed per role, not only per lane
+
+Every packed sequence carries a `role_codes` array beside its loss mask, and it lands on every token
+observation. The mask alone cannot support this: supervised and context roles both collapse into it,
+so `tool_call` and `text` are indistinguishable 1s and `user` and `tool_observation` indistinguishable
+0s. Lane was therefore the finest attribution the ledger could make — and the question S5 left open
+is not about lanes. It asks whether the *supervised part* of an agentic trajectory is the expensive
+part, which is a per-role question.
+
+Measured on run-a's surviving observations:
+
+| role | geometric-mean ppl | tokens |
+|---|---|---|
+| `boundary` (EOS) | 37.82 | 41 |
+| `tool_call` | 121.97 | 24 |
+| `text` | 190.78 | 5,215 |
+| `assistant_plan` | 336.32 | 48 |
+
+Only supervised roles can appear, and that is the check rather than a caveat: context roles are read
+by the model and never scored, so a context role carrying loss would mean the role array had drifted
+out of step with the mask it explains. Two things are asserted independently — the table's token
+total must equal the lane table's exactly (5,328 = 5,328), and `verify_evidence.py` recomputes every
+perplexity from the shipped token records and requires no context role among them. The negative
+control rolls `role_codes` by one position, which leaves every count and every length identical, and
+requires the validator to reject it.
+
+**At default depth these values do not answer the question.** `assistant_plan` at 48 tokens and
+`tool_call` at 24 are far too thin to rank against `text` at 5,215, and the model sits near the
+vocabulary floor anyway.
+
+`--deep` trains long enough for the ordering to mean something, and it points the way S5 assumed:
+
+| role | geometric-mean ppl | tokens | vs `text` |
+|---|---|---|---|
+| `boundary` (EOS) | 7.07 | 211 | 0.17x |
+| `text` | 41.35 | 26,187 | — |
+| `tool_call` | 70.76 | 114 | **1.71x** |
+| `assistant_plan` | 95.52 | 228 | **2.31x** |
+
+The two supervised agentic roles are the two hardest things the model is asked to emit, at roughly
+1.7x and 2.3x plain text — which is the direction S5's 53% supervision-yield argument assumed and
+had no measurement for. **Read it as a pointer, not a result.** 114 and 228 tokens are small
+samples, they come from one lane whose exposure is 1.3%, and the exposure confound above applies to
+roles exactly as it does to lanes. The deliverable here is a ledger that can be asked the question
+at all; answering it needs a run with real agentic volume.
 
 ## What did not work
 
@@ -315,25 +403,43 @@ Reported because a submission that only shows successes has not been audited.
 
 ## The learning ledger's numbers, and what they do not show
 
-At default depth the model is barely trained, so every lane's perplexity sits within 13% of the
-vocabulary floor `exp(ln V) = 512` and the ordering is noise. `--deep` separates them (3.04x spread),
-and the run reports which regime it is in rather than letting the reader assume.
+At default depth the model is barely trained, so every lane's perplexity sits near the vocabulary
+floor `exp(ln V) = 512` and the ordering is noise. `--deep` separates them properly — **36.8x
+spread** over 147 steps, mean loss falling from 6.241 to a minimum of 1.89 — and the run reports
+which regime it is in rather than letting the reader assume:
 
-**The deep signal is still confounded by exposure, and the run says so.** Traced-token share ranges
-from **agentic 1.3%** to **web 33.2%** — a 25x spread in how much each lane was trained on — and
-perplexity tracks it: the two most-exposed lanes, web (33.2%) and code (26.5%), have the two lowest
-perplexities (174 and 146), while agentic (1.3%) sits at 299. Lane perplexity here measures
-**training volume at least as much as intrinsic difficulty**. A difficulty comparison needs equal
-exposure or a per-token-seen normalisation, and this run does neither.
+| lane | traced tokens | share | geometric-mean ppl |
+|---|---|---|---|
+| `longctx` | 1,063 | 4.0% | 733.57 |
+| `agentic` | 342 | 1.3% | 86.43 |
+| `stem` | 2,964 | 11.1% | 69.65 |
+| `indic` | 3,336 | 12.5% | 65.58 |
+| `web` | 8,856 | 33.1% | 35.50 |
+| `code` | 7,136 | 26.7% | 27.40 |
+| `reasoning` | 3,043 | 11.4% | 19.91 |
 
-*An earlier version of this section made a stronger claim from the same measurement and it did not
-survive.* It reported Indic receiving **49%** of traced tokens and returning the **lowest**
-perplexity (138 against web's 435), and called that an inversion of the expectation. Both numbers
-were artefacts of a bug: protected lanes had static immunity rather than deficit-gated floors, so
-Indic over-delivered at roughly twice its target and its perplexity was reading its own
-over-exposure. With floors deficit-gated, Indic draws **12.4%** and has the **highest** perplexity
-of the seven (444) — the ordinary result, not an inversion. The confound is real; the dramatic
-version of it was a symptom of the floor defect. See `EXPERIMENT_LOG` E10 and E14.
+**Exposure and perplexity are still strongly related, and the run measures how strongly rather than
+asserting it.** Traced-token share spans 1.3% (agentic) to 33.1% (web) — a 25x range in how much
+each lane was trained on — and Spearman rank correlation between exposure and perplexity is
+**−0.714**: more exposure, lower perplexity. So lane perplexity here measures **training volume at
+least as much as intrinsic difficulty**, and a difficulty comparison would need equal exposure or a
+per-token-seen normalisation. This run does neither.
+
+What has changed with a real optimizer is that the automatic confound flag no longer trips. It fires
+when the most-exposed lane is also the lowest-perplexity one; web is the most exposed but
+`reasoning` (11.4%) now has the lowest perplexity, and `longctx` (4.0%) is worst by a factor of 8
+over the next lane. Those two are the informative departures from the exposure trend, and they are
+the shape you would expect: reasoning documents are short and formulaic, long-context ones are not.
+**One rank correlation over seven lanes is not evidence for that reading**, and it is offered as the
+next thing to test, not as a result.
+
+*Two earlier versions of this section made stronger claims from the same measurement and neither
+survived.* The first reported Indic receiving 49% of traced tokens and the lowest perplexity (138
+against web's 435), calling it an inversion of expectation; both numbers were artefacts of protected
+lanes having static immunity instead of deficit-gated floors. The second, after that fix, reported a
+3.04x spread with Indic highest at 444 — measured under constant-LR SGD, which barely trained the
+model, so the spread was mostly floor noise. Both are superseded by the table above. See
+`EXPERIMENT_LOG` E10, E14 and E15.
 
 We report the confound instead of fixing it, because fixing it means holding exposure equal across
 lanes — which would stop the run from executing S5's mixture. Distorting the schedule to produce a
@@ -386,8 +492,8 @@ tds/
   trainer.py             loop, checkpoint, crash, resume, replay, fork, audit
   exactly_once.py        the delivery-equivalence comparison
   experiments.py         E1, E6, determinism
-  controls.py            30 negative controls
-tests/test_invariants.py 54 tests
+  controls.py            32 negative controls
+tests/test_invariants.py 57 tests
 ```
 
 ## Auditing a run

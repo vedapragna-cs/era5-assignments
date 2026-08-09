@@ -62,7 +62,7 @@ class ReferenceModel:
 
     @classmethod
     def train(cls, golden: list[PackedSequence], vocab_size: int, *,
-              seed: int, steps: int = 40, lr: float = 0.5,
+              seed: int, steps: int = 40, lr: float = 5e-3,
               domain: str = "golden_proxy") -> "ReferenceModel":
         """Fit the reference on the reference domain, then freeze it.
 

@@ -61,6 +61,16 @@ from .canon import chash, derive_rng
 from .tokenizer import PAD
 
 
+# AdamW hyperparameters. Standard values (Loshchilov & Hutter arXiv:1711.05101; the betas are the
+# GPT-3/PaLM convention). `NO_DECAY` exempts biases and both embedding tables, the usual exclusion.
+ADAM_B1 = 0.9
+ADAM_B2 = 0.95
+ADAM_EPS = 1e-8
+ADAM_WEIGHT_DECAY = 0.01
+ADAM_CLIP = 1.0
+NO_DECAY = frozenset({"b1", "b2", "E", "P"})
+
+
 def softmax(x: np.ndarray) -> np.ndarray:
     x = x - x.max(axis=-1, keepdims=True)
     e = np.exp(x)
@@ -85,6 +95,14 @@ class TinyLM:
     b1: np.ndarray
     W2: np.ndarray
     b2: np.ndarray
+
+    # AdamW moment buffers and step counter. Not parameters and not part of `weight_hash` - they are
+    # optimizer state, hashed separately, and the split is deliberate: a resume that restores the
+    # weights but drops the moments produces an IDENTICAL `model_weight_hash` and a different
+    # trajectory. One hash cannot express both, so there are two.
+    _m: dict | None = None
+    _v: dict | None = None
+    _t: int = 0
 
     PARAMS = ("E", "P", "Wq", "Wk", "Wv", "Wo", "W1", "b1", "W2", "b2")
 
@@ -252,15 +270,85 @@ class TinyLM:
                             "W1": gW1, "b1": gb1, "W2": gW2, "b2": gb2}
 
     # -------------------------------------------------------------------- optimisation
-    def apply(self, grads: dict[str, np.ndarray], lr: float) -> float:
-        """SGD step. Returns the global gradient norm (recorded in the learning ledger)."""
-        total = 0.0
+    def apply(self, grads: dict[str, np.ndarray], lr: float, *,
+              clip: float = ADAM_CLIP, weight_decay: float = ADAM_WEIGHT_DECAY) -> dict:
+        """One AdamW step with global-norm clipping. Returns a record for the ledger.
+
+        Why not SGD, which this was
+        ---------------------------
+        The previous version was `w -= lr * g` at a constant learning rate, and the checkpoint
+        recorded `optimizer_state = {"type": "sgd", "lr": 0.35}` - a restatement of the config, not
+        state. "Resume restores the optimizer" was therefore unfalsifiable in the same way position
+        ids and the eval-leak predicate were: there was nothing that could be lost, so no mutation
+        could make the check fail.
+
+        AdamW has two moment buffers and a step counter. Discarding them across a resume does not
+        crash and does not show up in a weight hash taken at the restore instant - it costs the run
+        a bias-correction re-warmup that only appears in the following steps' updates. That is
+        precisely the class of resume bug a loss curve hides, and now it is a drill we can run
+        (`optimizer_moments_are_load_bearing` in controls, and E15).
+
+        Decoupled weight decay (Loshchilov & Hutter, arXiv:1711.05101): the decay term is applied to
+        the weights directly rather than added to the gradient, so it does not enter the moment
+        estimates. Biases and both embedding tables are exempt, which is the standard exclusion -
+        decaying a bias shrinks it toward zero for no regularisation benefit.
+        """
+        if self._m is None:
+            self._m = {k: np.zeros_like(getattr(self, k)) for k in self.PARAMS}
+            self._v = {k: np.zeros_like(getattr(self, k)) for k in self.PARAMS}
+
+        gnorm = float(np.sqrt(sum(float((g ** 2).sum()) for g in grads.values())))
+        # Clip on the GLOBAL norm across all tensors, not per tensor: per-tensor clipping silently
+        # changes the direction of the combined update, which is the thing being controlled.
+        scale = 1.0 if (clip <= 0 or gnorm <= clip) else clip / (gnorm + 1e-12)
+
+        self._t += 1
+        bc1 = 1.0 - ADAM_B1 ** self._t
+        bc2 = 1.0 - ADAM_B2 ** self._t
         for k, g in grads.items():
-            total += float((g ** 2).sum())
-        gnorm = float(np.sqrt(total))
-        for k, g in grads.items():
-            setattr(self, k, getattr(self, k) - lr * g)
-        return gnorm
+            g = g * scale
+            self._m[k] = ADAM_B1 * self._m[k] + (1.0 - ADAM_B1) * g
+            self._v[k] = ADAM_B2 * self._v[k] + (1.0 - ADAM_B2) * (g * g)
+            step = (self._m[k] / bc1) / (np.sqrt(self._v[k] / bc2) + ADAM_EPS)
+            w = getattr(self, k)
+            if weight_decay and k not in NO_DECAY:
+                w = w - lr * weight_decay * w
+            setattr(self, k, w - lr * step)
+        return {"grad_norm": gnorm, "clipped": scale < 1.0, "clip_scale": scale,
+                "lr": lr, "adam_step": self._t}
+
+    # ---- optimizer state: real state, therefore checkpointable and therefore losable ----
+    def optimizer_state(self) -> dict:
+        return {
+            "type": "adamw", "beta1": ADAM_B1, "beta2": ADAM_B2, "eps": ADAM_EPS,
+            "weight_decay": ADAM_WEIGHT_DECAY, "no_decay": sorted(NO_DECAY),
+            "grad_clip_global_norm": ADAM_CLIP,
+            "adam_step": self._t,
+            "exp_avg": None if self._m is None else {k: v.tolist() for k, v in self._m.items()},
+            "exp_avg_sq": None if self._v is None else {k: v.tolist() for k, v in self._v.items()},
+        }
+
+    def load_optimizer_state(self, st: dict | None) -> None:
+        if not st or st.get("exp_avg") is None:
+            self.reset_optimizer_state()
+            return
+        self._t = int(st.get("adam_step", 0))
+        self._m = {k: np.array(v, dtype=np.float64) for k, v in st["exp_avg"].items()}
+        self._v = {k: np.array(v, dtype=np.float64) for k, v in st["exp_avg_sq"].items()}
+
+    def reset_optimizer_state(self) -> None:
+        """What a resume that forgets the optimizer actually does. Used by the control."""
+        self._m = None
+        self._v = None
+        self._t = 0
+
+    @property
+    def optimizer_hash(self) -> str:
+        if self._m is None:
+            return chash({"adam_step": self._t, "moments": None})
+        return chash({"adam_step": self._t,
+                      "m": {k: np.round(v, 10).tolist() for k, v in self._m.items()},
+                      "v": {k: np.round(v, 10).tolist() for k, v in self._v.items()}})
 
     # -------------------------------------------------------------------- state
     def state(self) -> dict:

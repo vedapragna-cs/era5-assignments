@@ -36,9 +36,9 @@
     {
       "caught_by_verifier": true,
       "control": "checkpoint_integrity_detects_every_corruption_flavour",
-      "detail": "clean checkpoint verifies=True; caught weight_bit_flip=True, torn_write_truncated_weights=True, loader_cursor_moved=True, ledger_offset_moved=True, step_counter_moved=True, tokenizer_identity_swapped=True",
+      "detail": "clean checkpoint verifies=True; caught weight_bit_flip=True, torn_write_truncated_weights=True, loader_cursor_moved=True, ledger_offset_moved=True, step_counter_moved=True, tokenizer_identity_swapped=True, optimizer_moment_bit_flip=True, optimizer_step_counter_moved=True, optimizer_moments_dropped=True",
       "invariant": "a checkpoint that fails integrity never reaches the model",
-      "mutation": "induce 6 corruption flavours: weight_bit_flip, torn_write_truncated_weights, loader_cursor_moved, ledger_offset_moved, step_counter_moved, tokenizer_identity_swapped",
+      "mutation": "induce 9 corruption flavours: weight_bit_flip, torn_write_truncated_weights, loader_cursor_moved, ledger_offset_moved, step_counter_moved, tokenizer_identity_swapped, optimizer_moment_bit_flip, optimizer_step_counter_moved, optimizer_moments_dropped",
       "result": "PASS"
     },
     {
@@ -47,6 +47,14 @@
       "detail": "restore() raised AssertionError",
       "invariant": "integrity failure blocks the restore rather than being logged",
       "mutation": "move the loader cursor by one sample and call restore()",
+      "result": "PASS"
+    },
+    {
+      "caught_by_verifier": true,
+      "control": "optimizer_moments_are_load_bearing",
+      "detail": "restore reinstated the checkpoint's moments=True (stale 73a29e42 -> restored 11b21e48 vs checkpoint 11b21e48); weight hash at restore identical either way (90fbc980604a); after 3 steps kept=b2b70e0cda7f vs dropped=d91d1cea5bb0 (DIVERGED as required)",
+      "invariant": "restoring weights without AdamW's moment buffers changes the trajectory",
+      "mutation": "train past the checkpoint, restore twice, drop the moments on the second, train 3 each",
       "result": "PASS"
     },
     {
@@ -204,7 +212,7 @@
     {
       "caught_by_verifier": true,
       "control": "mask_validator_detects_loss_bearing_pad",
-      "detail": "clean=True, after mutation=False, errors=['pad token at 101 is loss-bearing']",
+      "detail": "clean=True, after mutation=False, errors=['pad token at 101 is loss-bearing', \"position 101 is loss-bearing but its role is '<pad>', which is not supervised\"]",
       "invariant": "padding is never loss-bearing",
       "mutation": "set loss_mask=1 on pad position 101 of a sample that has padding",
       "result": "PASS"
@@ -215,6 +223,14 @@
       "detail": "2 documents in the window; real mask allows 0 cross-document pairs; segment isolation blocks 3600 pairs a causal-only mask would have permitted",
       "invariant": "no token attends across a document boundary, and the mask is load-bearing",
       "mutation": "count pairs the real mask allows vs pairs a plain causal mask would have allowed",
+      "result": "PASS"
+    },
+    {
+      "caught_by_verifier": true,
+      "control": "role_codes_are_aligned_with_the_loss_mask",
+      "detail": "clean=True, after one-position roll=False, errors=[\"position 82 is loss-bearing but its role is 'tool_observation', which is not supervised\"]",
+      "invariant": "a loss-bearing position always carries a supervised role",
+      "mutation": "roll role_codes by one position, leaving every count and length unchanged",
       "result": "PASS"
     },
     {
@@ -243,10 +259,10 @@
     }
   ],
   "every_declared_control_ran": true,
-  "expected_controls_declared": 16,
+  "expected_controls_declared": 18,
   "expected_controls_missing": [],
   "meaning": "each control breaks one invariant and requires the verifier to reject it. A control that does not trigger a rejection means the corresponding check is vacuous, and is reported as a FAILURE.",
-  "n_controls": 30,
+  "n_controls": 32,
   "n_failed": 0,
-  "n_passed": 30
+  "n_passed": 32
 }

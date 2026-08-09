@@ -53,8 +53,8 @@
           "B1",
           "B2"
         ],
-        "indic_geometric_mean_ppl": 510.2082,
-        "indic_mean_loss": 6.234819,
+        "indic_geometric_mean_ppl": 502.9115,
+        "indic_mean_loss": 6.220414,
         "indic_tokens_traced": 586
       },
       "B_flat_shuffle": {
@@ -69,14 +69,14 @@
           "B1",
           "B1"
         ],
-        "indic_geometric_mean_ppl": 509.4621,
-        "indic_mean_loss": 6.233356,
+        "indic_geometric_mean_ppl": 502.153,
+        "indic_mean_loss": 6.218905,
         "indic_tokens_traced": 949
       }
     },
     "experiment": "E6",
     "finding": "Reported as inconclusive rather than as support. This run trains a 32-dim model for a few dozen steps over a corpus of tens of documents; any loss difference at that scale is dominated by initialisation and draw order, not by curriculum. The mechanism is implemented and the band order served is recorded, so the experiment is ready to run at a scale where it could actually decide - but claiming a curriculum effect from this measurement would be exactly the kind of unbacked number S5 exists to avoid.",
-    "loss_advantage_of_ordering": -0.001463,
+    "loss_advantage_of_ordering": -0.001509,
     "question": "does ordering the protected Indic lane by difficulty beat a flat shuffle",
     "verdict": "UNDER-POWERED AT DEMO SCALE"
   },
@@ -92,8 +92,8 @@
     "runs": [
       {
         "batch_stream_hash": "4014ce8fefffd6f2206ce9380c32b369d77eba1cb061001d90661067f85e3514",
-        "final_loss": 6.221475628339,
-        "model_weight_hash": "05cbad086443a0e2daba844f4962da4342c3977d6ef37e1d02c81205f2dcf804",
+        "final_loss": 6.208819171972,
+        "model_weight_hash": "34deb5cef31b0ca702df78a71627c86c7c6a523a3892aac922d240ca71078cc9",
         "shard_content_hashes": [
           "c20a5760d4fbf503cd9a441e3b83adf9732cb2a12aa7f1f7e54fd50dfde6b9d9",
           "6bd48a517e99cfcd8de66df1e45bcb577c9037ee9515577556e6e3197267b92b",
@@ -107,8 +107,8 @@
       },
       {
         "batch_stream_hash": "4014ce8fefffd6f2206ce9380c32b369d77eba1cb061001d90661067f85e3514",
-        "final_loss": 6.221475628339,
-        "model_weight_hash": "05cbad086443a0e2daba844f4962da4342c3977d6ef37e1d02c81205f2dcf804",
+        "final_loss": 6.208819171972,
+        "model_weight_hash": "34deb5cef31b0ca702df78a71627c86c7c6a523a3892aac922d240ca71078cc9",
         "shard_content_hashes": [
           "c20a5760d4fbf503cd9a441e3b83adf9732cb2a12aa7f1f7e54fd50dfde6b9d9",
           "6bd48a517e99cfcd8de66df1e45bcb577c9037ee9515577556e6e3197267b92b",

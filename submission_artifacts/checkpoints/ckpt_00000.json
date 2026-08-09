@@ -1,6 +1,6 @@
 {
   "branch_id": "run-a",
-  "checkpoint_hash": "da6fe66cadd1a6429d8b2ac19498e58e7afcd9e7598dc85210da630ff42145e0",
+  "checkpoint_hash": "1b14db8903a1496577593ed2ad29e652d5dc09ff962f8e63720ae12d09933554",
   "checkpoint_id": "ckpt_00000",
   "dataloader_state": {
     "delivered": {
@@ -74803,9 +74803,23 @@
     ]
   },
   "model_weight_hash": "46b6bb33e06880d2f6abc5c6324724c7b6adaab7532eeb27b2af259eb912400b",
+  "optimizer_hash": "5671c637012231fcae8df685dc39b98f15150fca063d4563a819afb8869ec2a6",
   "optimizer_state": {
-    "lr": 0.35,
-    "type": "sgd"
+    "adam_step": 0,
+    "beta1": 0.9,
+    "beta2": 0.95,
+    "eps": 1e-08,
+    "exp_avg": null,
+    "exp_avg_sq": null,
+    "grad_clip_global_norm": 1.0,
+    "no_decay": [
+      "E",
+      "P",
+      "b1",
+      "b2"
+    ],
+    "type": "adamw",
+    "weight_decay": 0.01
   },
   "opus_proxy_state": {
     "computed_at_step": -1,
@@ -74818,8 +74832,13 @@
     "run_seed": 20260806
   },
   "scheduler_state": {
-    "lr": 0.35,
-    "policy": "constant"
+    "base_lr": 0.02,
+    "lr_at_step": 0.02,
+    "min_lr_ratio": 0.1,
+    "policy": "linear_warmup_cosine_decay",
+    "step": 0,
+    "total_steps": 30,
+    "warmup_ratio": 0.06
   },
   "tokenizer_hash": "75b8661f606877ee2eb1398876fdc6f757ec30d6e989b481aa8f5ed0f53c6ec1"
 }

@@ -8,7 +8,7 @@
       "stem": 2,
       "web": 15
     },
-    "mean_loss_over_interval": 6.224879,
+    "mean_loss_over_interval": 5.981938,
     "n_batches": 6,
     "opus_decisions": 103,
     "shard_exposure_counts": {
@@ -23,14 +23,14 @@
     "step_to": 6
   },
   "step": {
-    "batch_hash": "8338e8ede35ae472f393481a625b0256a1698104e8642d68876cbb07a597d0fd",
+    "batch_hash": "0ef9cb2b70639bb0d62044ef0591dbbe3d06584e3993cafd2749e929bcd36e2a",
     "branch_id": "run-a",
     "checkpoint_id": "ckpt_00000",
     "curriculum_stage": "S2_general",
     "found": true,
     "global_step": 3,
     "ledger_offset": 4,
-    "loss_mask_hash": "265322e63c68d683a202410aac9a9e684ab6a3419ab0287beb9e9ea333605188",
+    "loss_mask_hash": "8d0d11a40034b2e89b57ddf2bf51f3c62141e7ee4c4dc3add4536a812c68321d",
     "mixture_lanes": {
       "code": 2,
       "reasoning": 1,
@@ -59,12 +59,12 @@
     "packed_sample_ids": [
       "2b3f4ae9f897a5ee",
       "c71e897b8a23f6cb",
-      "44eb1eb4e8ff0f42",
       "150166e2db08e6dc",
+      "44eb1eb4e8ff0f42",
       "0ef08945b394efc0",
       "09c398aa8de75dd0",
-      "4d4d3e30577355cd",
-      "25bb924c89a0785c"
+      "25bb924c89a0785c",
+      "4d4d3e30577355cd"
     ],
     "reconstructed_documents": [
       "code-0001",
@@ -89,14 +89,14 @@
       "web-0002:175-339",
       "web-0003:339-502",
       "web-0001:0-175",
-      "web-0002:175-339",
       "web-0001:0-175",
+      "web-0002:175-339",
       "web-0004:502-636",
       "web-0005:636-716",
       "stem-0010:357-440",
+      "code-0001:0-101",
       "code-0010:533-578",
-      "code-0011:578-658",
-      "code-0001:0-101"
+      "code-0011:578-658"
     ]
   }
 }

@@ -31,7 +31,8 @@ from tds.model import TinyLM
 from tds.opus import Opus
 from tds.reference import ReferenceModel
 from tds import packing
-from tds.packing import (attention_crossings, blocked_cross_segment_pairs, validate_masks)
+from tds.packing import (attention_crossings, blocked_cross_segment_pairs, role_is_supervised,
+                         validate_masks)
 from tds.shards import HARD_FIELDS, verify_shard_integrity
 from tds.trainer import TrainConfig, Trainer
 
@@ -156,6 +157,8 @@ def main() -> int:
     ap.add_argument("--steps", type=int, default=STEPS)
     ap.add_argument("--seed", type=int, default=20260806)
     ap.add_argument("--quick", action="store_true", help="fewer steps, for CI")
+    ap.add_argument("--lr", type=float, default=None,
+                    help="override the AdamW peak learning rate (default: depth-dependent)")
     ap.add_argument("--deep", action="store_true",
                     help="longer run with more repetition so lanes separate in perplexity; "
                          "the graded invariants are identical, only the learning signal changes")
@@ -168,7 +171,19 @@ def main() -> int:
     # signal: at default depth the model is barely trained, so per-lane perplexity sits near
     # exp(ln V) = V and the lane ordering is not meaningful. Reported honestly either way.
     steps = 10 if args.quick else (args.steps * 5 if args.deep else args.steps)
-    lr = 1.2 if args.deep else 0.35
+    # AdamW peak learning rate. Two orders of magnitude below the SGD rates this replaced (0.35 /
+    # 1.2), and not by analogy: Adam divides the update by the gradient's own second moment, so the
+    # per-parameter step is ~lr whatever the gradient scale. At lr=0.35 every weight moved 4x its
+    # initialisation scale per step and the run diverged to a mean loss of 14.3 nats - more than
+    # twice the uniform baseline ln(512)=6.24.
+    #
+    # Swept at default depth (E15): 3e-3 -> final 5.951, 6e-3 -> 5.703, 1e-2 -> 5.668,
+    # 2e-2 -> 5.491, 4e-2 -> 6.020. The last one is the edge: it reaches the lowest minimum of the
+    # sweep (3.348) and then climbs back above 6, which is overshoot, not learning. 2e-2 is the
+    # best final loss that is still monotone, so that is the default. --deep runs 5x the steps at
+    # half the rate, because the cosine floor is a fraction of the peak and a longer run at the
+    # edge has more opportunities to leave it.
+    lr = args.lr if args.lr is not None else (1e-2 if args.deep else 2e-2)
 
     if OUT.exists():
         shutil.rmtree(OUT)
@@ -818,6 +833,28 @@ def main() -> int:
         log("    -> the model is barely trained at this depth, so per-lane perplexity sits near "
             "exp(ln V) = V and the lane ORDERING is not meaningful. The ledger's structure is "
             "demonstrated; its values are not a finding. Re-run with --deep for a usable signal.")
+    # Per-ROLE attribution. Lane is the coarsest cut the ledger could make and it cannot answer the
+    # question S5 actually left open - whether the supervised part of an agentic trajectory is the
+    # expensive part. Role codes ride the packed sequence next to the loss mask (D32), so the same
+    # token records that give per-lane loss now give per-role loss.
+    #
+    # Two properties make the table a check rather than a decoration, and both are asserted below:
+    # its token total must equal the loss-bearing token total exactly, and every role appearing in
+    # it must be a supervised role - a context role with a non-zero count would mean the role array
+    # is misaligned with the mask it explains.
+    role_agg = tr.learning.aggregate("role")
+    _role_tokens = sum(d["n_tokens"] for d in role_agg.values())
+    _unsupervised = sorted(r for r in role_agg if not role_is_supervised(r))
+    log("  perplexity by segment role (geometric mean, measured):")
+    for role, d in sorted(role_agg.items(), key=lambda kv: -kv[1]["n_tokens"]):
+        log(f"    {role:<18} ppl={d['geometric_mean_ppl']:9.2f} "
+            f"hot={d['hot_token_pct']:5.1f}% n={d['n_tokens']}")
+    _role_ok = (_role_tokens == sum(d["n_tokens"] for d in lane_agg.values())
+                and not _unsupervised)
+    log(f"  [{'PASS' if _role_ok else 'FAIL'}] loss_attributed_by_role "
+        f"({_role_tokens} role-attributed tokens vs "
+        f"{sum(d['n_tokens'] for d in lane_agg.values())} lane-attributed; "
+        f"unsupervised roles carrying loss: {_unsupervised or 'none'})")
     posrep = tr.learning.position_bucket_report()
     log(f"  position-bucket spread = {posrep['spread']} "
         f"(monotone_decreasing={posrep['monotone_decreasing']})")
@@ -914,6 +951,13 @@ def main() -> int:
                              "vocab_size": vocab, "near_uniform": near_uniform,
                              "depth": "deep" if args.deep else "default"}, "shard_cards": cards,
           "position_buckets": posrep, "boundary": bnd, "by_lane": lane_agg,
+          "by_role": role_agg,
+          "by_role_scope": (
+              "Loss attributed to the segment role of the token being PREDICTED, over run-a's "
+              "surviving observations only. Only supervised roles can appear: context roles "
+              "(user, tool_observation, repo_file, shell_output) are read by the model and never "
+              "scored, so they carry no loss to attribute. Their VOLUME is the supervision-yield "
+              "question and is reported in packing, not here."),
           "reference_model": ref.to_record(),
           "excess_loss": excess,
           "reuse_advisory": advisory,
@@ -1310,8 +1354,16 @@ def main() -> int:
         and {c["shard_id"] for c in cards} <= {sh.shard_id for sh in built.admitted_shards}
         # every traced token must name a shard that was actually admitted
         and {o.shard_id for o in tr.learning.effective_tokens()}
-            <= {sh.shard_id for sh in built.admitted_shards},
+            <= {sh.shard_id for sh in built.admitted_shards}
+        # Role attribution partitions exactly the same population as lane attribution. If it does
+        # not, the role array has drifted out of step with the loss mask it is supposed to explain
+        # and every per-role number is attributing loss to the wrong role.
+        and _role_ok,
         {"tokens_traced": n_tokens_traced, "shard_exposures": len(tr.learning.shard_exposures),
+         "per_role_geometric_mean_ppl": {k: v["geometric_mean_ppl"] for k, v in role_agg.items()},
+         "tokens_traced_per_role": {k: v["n_tokens"] for k, v in role_agg.items()},
+         "role_attribution_partitions_the_same_tokens_as_lane": _role_ok,
+         "unsupervised_roles_carrying_loss": _unsupervised,
          "shards_with_report_cards": len(cards),
          "per_lane_geometric_mean_ppl": {k: v["geometric_mean_ppl"] for k, v in lane_agg.items()},
          "position_bucket_spread": posrep["spread"],

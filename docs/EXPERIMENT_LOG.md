@@ -1344,3 +1344,114 @@ and sharper: **three of the fifteen defects were checks that had been made to lo
 stage had already made unsatisfiable, and three replay comparisons that were arithmetically one.
 None of these would survive the question *"what input makes this print FAIL?"* — and that question,
 asked of every check rather than of the ones that look suspicious, is cheaper than an audit round.
+
+---
+
+## E15 — Two gaps a sibling implementation still had on us (2026-08-09)
+
+*Decision recorded before implementation; results appended below.*
+
+The sibling implementation (`vedapragna-cs/era-v5-s6-data-ledger` at `32a0ab6` — its HEAD has since
+been replaced with a copy of ours) was claimed to remain ahead on three axes: realistic training
+path, per-role attribution, and throughput. Checked all three against both code bases.
+
+**Throughput: not supportable.** Both report the same window / real / loss-bearing decomposition —
+E12 records that we took it from them. They have a steady-state split excluding warm-up steps and a
+`6·N·T` FLOPs estimate that we lack; their in-report `verify_against_ledger` is the same
+reconstruction guarantee our `verify_evidence.py:127-142` provides from outside the report. We have
+loader share of step time, `rank_compute_skew` across ranks, a six-policy packing bake-off and
+`by_curriculum_stage`, which they lack. No blanket win either way.
+
+**The other two are real, and this entry closes them.**
+
+### Hypothesis
+
+**H15a (per-role).** Role is currently spent once — `packing.py:153` turns it into a 0/1 `sup` bit
+and discards it. `PackedSequence` has no role array and `TokenObservation` has none of its 20+ fields
+carrying one. Therefore no aggregate in the system can separate `tool_call` loss from
+`tool_observation` loss. Threading a per-position `role_codes` array through packing to the token
+ledger should produce a `by_role` table whose token total equals the loss-bearing token total
+exactly, and whose roles are all supervised roles.
+*Refuted if* the by_role token total disagrees with `loss_bearing_tokens`, or if any context role
+appears with a non-zero token count — either would mean the role array is misaligned with the mask
+it is supposed to explain.
+
+**H15b (optimizer).** `optimizer_state` in a checkpoint is currently the literal
+`{"type": "sgd", "lr": 0.35}` and `scheduler_state` is `{"policy": "constant"}`. There is no state,
+so "resume restores the optimizer" cannot fail and the claim is vacuous — the same defect class as
+D25 and D27, one layer down. Replacing SGD with AdamW (warmup + cosine, global-norm clipping) makes
+the moment buffers real state.
+*Refuted if* dropping the restored moment buffers leaves the post-resume trajectory unchanged — that
+would mean the buffers are not load-bearing and the drill still proves nothing.
+
+Cost accepted in advance: AdamW adds two 72,256-element buffers per checkpoint, and every number
+measured from a forward pass moves for the third time. Corrections table appended, per the rule that
+historical measurements are superseded rather than edited.
+
+### Results
+
+**H15a (per-role) — supported.** Role codes ride every packed sequence beside the loss mask, through
+all six packing policies, onto every token observation. Measured on run-a's surviving observations:
+5,328 role-attributed tokens against 5,328 lane-attributed, and zero context roles carrying loss.
+
+| depth | role | geometric-mean ppl | tokens |
+|---|---|---|---|
+| default | boundary / tool_call / text / assistant_plan | 37.82 / 121.97 / 190.78 / 336.32 | 41 / 24 / 5,215 / 48 |
+| `--deep` | boundary / text / tool_call / assistant_plan | 7.07 / 41.35 / 70.76 / 95.52 | 211 / 26,187 / 114 / 228 |
+
+At depth the two supervised agentic roles are the hardest things the model emits — `tool_call` 1.71x
+and `assistant_plan` 2.31x plain text. That is the direction S5's 53% supervision-yield argument
+assumed and had no measurement for. It is reported as a pointer, not a result: 114 and 228 tokens,
+one lane, 1.3% exposure, and the same exposure confound that applies to lanes applies to roles.
+
+**H15b (optimizer) — supported, and building the drill exposed a defect in the drill.** AdamW
+(β=0.9/0.95, decoupled decay 0.01, warmup 6% + cosine to 10% of peak, global-norm clip 1.0). The
+control trains past the checkpoint, restores twice, drops the moments on the second: weight hash at
+restore identical either way, trajectories diverge after three steps.
+
+*The first version of that control passed with `load_optimizer_state` deleted from `restore()`.* It
+restored immediately after saving, so the live buffers were already the checkpoint's and the
+comparison never involved the checkpoint's copy — it proved the moments matter, not that resume
+restores them. Fixed by training past the checkpoint first and asserting
+`model.optimizer_hash == ck["optimizer_hash"]`. The same lesson as C1/C2/C7: a control that never
+observes the state it claims to check will pass on a build that has deleted the mechanism.
+
+**Divergence, and the sweep that fixed it.** The SGD rates (0.35 / 1.2) diverged under Adam to a mean
+loss of 14.3 nats against a uniform baseline of ln(512) = 6.24, because Adam's per-parameter step is
+~lr whatever the gradient scale. Nothing in the pipeline gated on loss magnitude, so the run still
+reported 15/15. Swept at default depth: 3e-3 → 5.951, 6e-3 → 5.703, 1e-2 → 5.668, **2e-2 → 5.491**,
+4e-2 → 6.020 (lowest minimum of the sweep at 3.348, then climbing back above 6 — overshoot, not
+learning). Defaults: 2e-2, and 1e-2 at `--deep`.
+
+**A second finding from the test, and it is a property of Adam not of this code.** A probe using a
+*constant* gradient reports "the moments are not load-bearing" and is wrong: `m̂/√v̂` converges to
+`sign(g)` regardless of history, and bias correction makes a fresh optimizer's first step equal to it
+exactly. The test uses a varying gradient sequence and records why.
+
+### Mutation proofs
+
+| mutation | result |
+|---|---|
+| `units_from_shard` records `PAD_ROLE` instead of the real role | `loss_and_position_masks_valid` FAIL, `loss_attributed_by_role` FAIL (`unsupervised roles carrying loss: ['<pad>']`), controls 30/32 |
+| `restore()` stops calling `load_optimizer_state` | `optimizer_moments_are_load_bearing` FAIL, controls 30/32 |
+| `_observe` attributes loss to `role_codes[t-1]` (the context position) | `loss_attributed_by_role` FAIL (`['user']`), `verify_evidence` exit 1 on `no_context_role_carries_training_loss`. Token totals stayed 5,328 = 5,328 — the exact failure the alignment check exists for |
+
+### Corrections to previously logged figures
+
+**Supersedes the run-dependent figures in E14 and the post-attention correction; supersedes two
+conclusions.** Every quantity measured from a forward pass moved, because the optimizer changed.
+
+| quantity | previously logged | now | conclusion |
+|---|---|---|---|
+| excess loss by lane | all seven positive, web +0.2572 … indic +0.0497 | **agentic +0.1446 only positive**; indic −0.4278, longctx −0.5688, code −0.8070, stem −0.9468, web −1.1651, reasoning −1.5627 | **CHANGED.** "Every lane is behind_reference, so this ranks headroom" is retracted. The model now overtakes the golden-set reference on six of seven lanes; agentic is the only lane still behind. So is "indic has the least headroom of the seven" and the claim that this corroborated the exposure confound independently — it was corroborating the optimizer |
+| `--deep` lane ppl spread | 3.04x | **36.85x** | unchanged in kind, far stronger. 147 steps, mean loss 6.241 → min 1.89 |
+| `--deep` exposure confound flag | True (most-exposed lane also lowest ppl) | **False** | **CHANGED.** web is most exposed (33.1%) but `reasoning` (11.4%) now has the lowest ppl. The relationship survives as a rank correlation of **−0.714** and is now reported as that rather than as a binary flag |
+| `--deep` lane ordering | indic highest (444) | longctx highest (733.57), reasoning lowest (19.91) | superseded; the SGD ordering was mostly floor noise |
+| agentic delivered vs 2% floor | 2.15% | 2.17% | unchanged |
+| default-depth mean loss | ~6.2 (at the uniform floor) | 6.241 → 5.491, min 4.624 | the default run now trains measurably below the floor |
+| negative controls / verifier checks / tests | 30 / 19 / 55 | **32 / 21 / 57** | — |
+| checkpoint size | 4.1 MB | **8.4 MB** (`submission_artifacts/` 18 MB → 40 MB) | the cost of AdamW moments as checkpoint state, accepted in advance |
+
+Wall-clock also fell (default 87s → 26s, `--deep` 570s → 41s). **Not attributed.** The box is shared
+and the earlier figures were taken under different load; no mechanism for a 14x change has been
+established, so it is recorded as an observation and not claimed as a speedup.

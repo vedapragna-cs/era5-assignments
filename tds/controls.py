@@ -117,7 +117,8 @@ def run_all(built, plan: MixturePlan) -> list[ControlResult]:
     from .packing import attention_crossings as _ac, PackedSequence as _PS
 
     _probe = _PS(tokens=[1] * 6, loss_mask=[1] * 6, segment_ids=[0, 0, 0, 1, 1, 1],
-                 position_ids=[0, 1, 2, 0, 1, 2], members=[], span_ids=[], lane="x", policy="p")
+                 position_ids=[0, 1, 2, 0, 1, 2], role_codes=[1] * 6,
+                 members=[], span_ids=[], lane="x", policy="p")
     _before = _ac(_probe)
     # Capture the DESCRIPTOR, not the function. `TinyLM.attention_mask` on a staticmethod returns
     # the plain function, and assigning that back makes it an instance method - every later call
@@ -148,6 +149,10 @@ def run_all(built, plan: MixturePlan) -> list[ControlResult]:
     _rig = _harness.make_rig(plan, built, run_id="control-ckpt", seed=20260806,
                              global_batch=8, sequence_length=128, world_size=4)
     _tr = _rig.trainer
+    # Train one step BEFORE the drill checkpoint. A step-0 checkpoint has no AdamW moments yet, so
+    # the optimizer corruption flavour below would have nothing to corrupt and would silently
+    # degrade into a check on `None`.
+    _tr.train_step()
     _ck = _tr.save_checkpoint()
     _base_ok, _ = _Tr.verify_checkpoint(_ck)
 
@@ -161,6 +166,14 @@ def run_all(built, plan: MixturePlan) -> list[ControlResult]:
         "ledger_offset_moved": lambda c: c.update({"ledger_offset": c["ledger_offset"] + 1}),
         "step_counter_moved": lambda c: c.update({"global_step": c["global_step"] + 1}),
         "tokenizer_identity_swapped": lambda c: c.update({"tokenizer_hash": "0" * 64}),
+        # Optimizer flavours. These are the ones the pre-AdamW build could not express: with
+        # constant-LR SGD there was no moment buffer and no step counter, so a checkpoint carried
+        # nothing whose corruption would change the next update.
+        "optimizer_moment_bit_flip": lambda c: c["optimizer_state"]["exp_avg"]["E"][0].__setitem__(
+            0, c["optimizer_state"]["exp_avg"]["E"][0][0] + 1e-3),
+        "optimizer_step_counter_moved": lambda c: c["optimizer_state"].update(
+            {"adam_step": c["optimizer_state"]["adam_step"] + 1}),
+        "optimizer_moments_dropped": lambda c: c["optimizer_state"].update({"exp_avg": None}),
     }
     _caught = {}
     for _name, _break in _flavours.items():
@@ -195,6 +208,65 @@ def run_all(built, plan: MixturePlan) -> list[ControlResult]:
         "restore() raised AssertionError" if _refused else
         "restore() ACCEPTED a checkpoint whose loader cursor was moved - the run would have "
         "silently resumed from the wrong data position"))
+
+    # ------------------------------------------------- optimizer state is real state
+    # The claim "resume restores the optimizer" was unfalsifiable until the optimizer HAD state:
+    # `{"type": "sgd", "lr": 0.35}` is a copy of the config, and no mutation of it can change what
+    # the next step computes. AdamW's moment buffers can be lost, and the drill is built so that
+    # losing them is invisible to every check that existed before:
+    #
+    #   1. restore, then train N steps           -> reference trajectory
+    #   2. restore, DROP the moments, train N    -> must diverge
+    #   3. the weight hash immediately after both restores must be IDENTICAL
+    #
+    # (3) is the point. A resume that forgets the optimizer passes every weight-hash comparison at
+    # the restore instant and quietly re-warms Adam's bias correction over the following steps.
+    _rig3 = _harness.make_rig(plan, built, run_id="control-optim", seed=20260806,
+                              global_batch=8, sequence_length=128, world_size=4)
+    _t3 = _rig3.trainer
+    for _ in range(4):
+        _t3.train_step()
+    _ock = _t3.save_checkpoint()
+    _ock_id = _ock["checkpoint_id"]
+
+    # Train PAST the checkpoint first, so the in-memory moments are stale relative to it. Without
+    # this the "restored" arm is really the "never lost them" arm: an earlier version of this
+    # control passed even with `load_optimizer_state` deleted from `restore()`, because restore left
+    # the live buffers untouched and the comparison never involved the checkpoint's copy at all.
+    for _ in range(3):
+        _t3.train_step()
+    _stale_opt = _t3.model.optimizer_hash
+
+    _t3.restore(_ock_id)
+    _hash_at_restore_kept = _t3.model.weight_hash
+    # The direct claim: restore put the CHECKPOINT'S moments back, not whatever was in memory.
+    _restored_opt = _t3.model.optimizer_hash
+    _opt_restored = (_restored_opt == _ock["optimizer_hash"]
+                     and _stale_opt != _ock["optimizer_hash"])
+    for _ in range(3):
+        _t3.train_step()
+    _kept = _t3.model.weight_hash
+
+    _t3.restore(_ock_id)
+    _hash_at_restore_dropped = _t3.model.weight_hash
+    _t3.model.reset_optimizer_state()          # exactly what a resume that forgets them does
+    for _ in range(3):
+        _t3.train_step()
+    _dropped = _t3.model.weight_hash
+
+    out.append(ControlResult(
+        "optimizer_moments_are_load_bearing",
+        "restoring weights without AdamW's moment buffers changes the trajectory",
+        "train past the checkpoint, restore twice, drop the moments on the second, train 3 each",
+        _opt_restored and (_hash_at_restore_kept == _hash_at_restore_dropped)
+        and (_kept != _dropped),
+        f"restore reinstated the checkpoint's moments={_opt_restored} "
+        f"(stale {_stale_opt[:8]} -> restored {_restored_opt[:8]} vs checkpoint "
+        f"{_ock['optimizer_hash'][:8]}); weight hash at restore identical either way "
+        f"({_hash_at_restore_kept[:12]}); after 3 steps kept={_kept[:12]} vs "
+        f"dropped={_dropped[:12]} "
+        + ("(DIVERGED as required)" if _kept != _dropped else
+           "(IDENTICAL - the moments are not load-bearing and the checkpoint claim is empty)")))
 
     # ------------------------------------------------- loss-spike detection and attribution
     from . import spike as _spike
@@ -419,6 +491,7 @@ def run_all(built, plan: MixturePlan) -> list[ControlResult]:
         broken_seq = PackedSequence(
             tokens=list(seq.tokens), loss_mask=list(seq.loss_mask),
             segment_ids=list(seq.segment_ids), position_ids=list(seq.position_ids),
+            role_codes=list(seq.role_codes),
             members=list(seq.members), span_ids=list(seq.span_ids), lane=seq.lane,
             policy=seq.policy)
         # Pick a sample that actually CONTAINS padding. The previous version took the first sample
@@ -437,6 +510,7 @@ def run_all(built, plan: MixturePlan) -> list[ControlResult]:
             broken_seq = PackedSequence(
                 tokens=list(padded.tokens), loss_mask=list(padded.loss_mask),
                 segment_ids=list(padded.segment_ids), position_ids=list(padded.position_ids),
+                role_codes=list(padded.role_codes),
                 members=list(padded.members), span_ids=list(padded.span_ids), lane=padded.lane,
                 policy=padded.policy)
             ok_before, _ = validate_masks(broken_seq)
@@ -468,6 +542,35 @@ def run_all(built, plan: MixturePlan) -> list[ControlResult]:
                 f"{n_segs} documents in the window; real mask allows {allowed} cross-document "
                 f"pairs; segment isolation blocks {blocked} pairs a causal-only mask would have "
                 f"permitted"))
+
+        # Role attribution: is the role array actually aligned with the mask it explains, or does
+        # it merely have the right length? Shifting it by one position leaves every count identical
+        # and every per-role perplexity plausible, so a table that only sums correctly proves
+        # nothing. The validator must reject the shifted array.
+        roled = next((s for s in built.samples.values()
+                      if any(s.loss_mask) and len(set(s.role_codes)) > 1), None)
+        if roled is None:
+            out.append(ControlResult(
+                "role_codes_are_aligned_with_the_loss_mask",
+                "a loss-bearing position always carries a supervised role",
+                "roll role_codes by one position",
+                False, "NO SAMPLE HAS BOTH LOSS-BEARING POSITIONS AND MORE THAN ONE ROLE - the "
+                       "control could not run, reported as a failure rather than skipped"))
+        else:
+            shifted = PackedSequence(
+                tokens=list(roled.tokens), loss_mask=list(roled.loss_mask),
+                segment_ids=list(roled.segment_ids), position_ids=list(roled.position_ids),
+                role_codes=list(roled.role_codes[1:]) + [roled.role_codes[0]],
+                members=list(roled.members), span_ids=list(roled.span_ids), lane=roled.lane,
+                policy=roled.policy)
+            ok_r, _ = validate_masks(roled)
+            ok_s, errs_s = validate_masks(shifted)
+            out.append(ControlResult(
+                "role_codes_are_aligned_with_the_loss_mask",
+                "a loss-bearing position always carries a supervised role",
+                "roll role_codes by one position, leaving every count and length unchanged",
+                ok_r and not ok_s,
+                f"clean={ok_r}, after one-position roll={ok_s}, errors={errs_s[:1]}"))
 
     # ---------------------------------------------------------------- protected floor
     # Two properties, and the second is what an earlier version of effective_mixture got wrong:
@@ -528,6 +631,8 @@ EXPECTED_CONTROLS = {
     "exactly_once_coverage_detects_duplicate_and_missing_batches",
     "checkpoint_integrity_detects_every_corruption_flavour",
     "restore_refuses_a_corrupt_checkpoint",
+    "optimizer_moments_are_load_bearing",
+    "role_codes_are_aligned_with_the_loss_mask",
     "spike_detector_fires_only_on_a_real_jump",
     "spike_never_becomes_a_shard_verdict",
     "ablation_can_restore_a_withheld_verdict",

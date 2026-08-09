@@ -25,7 +25,8 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 
 from .canon import chash
-from .corpus import CONTEXT_ROLES, SUPERVISED_ROLES, VERIFIER_ROLES
+from .corpus import (CONTEXT_ROLES, PAD_ROLE, SUPERVISED_ROLES, VERIFIER_ROLES,
+                     role_code, role_name)
 from .shards import Shard, TokenSpan
 from .tokenizer import EOS, PAD
 
@@ -38,6 +39,7 @@ class PackedSequence:
     loss_mask: list[int]
     segment_ids: list[int]
     position_ids: list[int]
+    role_codes: list[int]              # per position, index into corpus.ROLE_NAMES; 0 = padding
     members: list[str]                 # doc ids, in order
     span_ids: list[str]
     lane: str
@@ -69,13 +71,26 @@ class PackedSequence:
     def loss_mask_hash(self) -> str:
         return chash(self.loss_mask)
 
+    @property
+    def role_hash(self) -> str:
+        """Tamper-evidence for the role annotation, deliberately NOT folded into `sample_id`.
+
+        `sample_id` hashes what the model consumes - tokens, loss mask, segment ids, position ids -
+        and every one of those four enters the arithmetic in `forward_backward`. Role codes do not:
+        they are an annotation that explains the mask rather than an input that changes the loss.
+        Folding a non-input into the input identity would be the mirror of the D25 mistake, so the
+        annotation gets its own hash and the batch hashes stay a function of the batch.
+        """
+        return chash(self.role_codes)
+
     def to_record(self) -> dict:
         return {"sample_id": self.sample_id, "lane": self.lane, "policy": self.policy,
                 "length": self.length, "n_pad": self.n_pad,
                 "n_loss_bearing": self.n_loss_bearing,
                 "utilization": round(self.utilization, 4),
                 "members": self.members, "span_ids": self.span_ids,
-                "truncated": self.truncated, "loss_mask_hash": self.loss_mask_hash}
+                "truncated": self.truncated, "loss_mask_hash": self.loss_mask_hash,
+                "role_hash": self.role_hash}
 
 
 def role_is_supervised(role: str) -> bool:
@@ -98,16 +113,31 @@ def role_is_supervised(role: str) -> bool:
 
 @dataclass
 class DocUnit:
-    """One document's tokens plus its per-token loss mask, ready to place in a window."""
+    """One document's tokens plus its per-token loss mask and role codes, ready for a window."""
     doc_id: str
     span_id: str
     lane: str
     tokens: list[int]
     loss_mask: list[int]
+    role_codes: list[int]
+
+    def __post_init__(self) -> None:
+        # Every policy below slices tokens, mask and roles in parallel. A slice applied to two of
+        # the three is the exact failure this array exists to make visible, so it is caught here
+        # rather than surfacing as a plausible-looking by-role table that is off by an offset.
+        if not (len(self.tokens) == len(self.loss_mask) == len(self.role_codes)):
+            raise AssertionError(
+                f"DocUnit {self.doc_id}: tokens/loss_mask/role_codes lengths disagree "
+                f"({len(self.tokens)}/{len(self.loss_mask)}/{len(self.role_codes)})")
 
     @property
     def length(self) -> int:
         return len(self.tokens)
+
+    def slice(self, lo: int, hi: int) -> "DocUnit":
+        """One place where the three parallel arrays are cut together."""
+        return DocUnit(self.doc_id, self.span_id, self.lane,
+                       self.tokens[lo:hi], self.loss_mask[lo:hi], self.role_codes[lo:hi])
 
 
 # Trainer-side repeated-n-gram safeguard, the second of OLMo 2's two interventions
@@ -149,12 +179,20 @@ def units_from_shard(shard: Shard) -> list[DocUnit]:
     for span in shard.spans:
         toks = shard.tokens[span.start:span.end]
         mask = [0] * len(toks)
+        # PAD_ROLE, not a default real role: a position the span's role table never covers must show
+        # up as unattributed rather than silently counting as `text`.
+        roles = [PAD_ROLE] * len(toks)
         for role, s, e in span.roles:
             sup = 1 if role_is_supervised(role) else 0
+            code = role_code(role)
             for i in range(s - span.start, min(e - span.start, len(mask))):
                 mask[i] = sup
+                roles[i] = code
+        # The n-gram safeguard zeroes the mask but leaves roles alone: the tokens are still, say,
+        # `tool_observation` - they are simply no longer trained on. Keeping the role lets the
+        # by-role table show masked-out volume instead of hiding it.
         mask, _ = mask_repeated_ngrams(toks, mask)
-        units.append(DocUnit(span.doc_id, span.span_id, span.lane, toks, mask))
+        units.append(DocUnit(span.doc_id, span.span_id, span.lane, toks, mask, roles))
     return units
 
 
@@ -166,14 +204,20 @@ def units_from_shard(shard: Shard) -> list[DocUnit]:
 # "Never fired" and "never wired up" are separated by the control, not by a log line.
 
 
-def _finish(tokens, masks, segs, members, span_ids, lane, policy, ctx, truncated) -> PackedSequence:
+def _finish(tokens, masks, segs, roles, members, span_ids, lane, policy, ctx,
+            truncated) -> PackedSequence:
     """Pad to the window and build position ids that reset at every segment boundary."""
     pad_n = ctx - len(tokens)
     if pad_n < 0:
         raise AssertionError(f"packed sequence exceeds context: {len(tokens)} > {ctx}")
+    if not (len(tokens) == len(masks) == len(segs) == len(roles)):
+        raise AssertionError(
+            f"packer produced parallel arrays of unequal length: tokens={len(tokens)} "
+            f"masks={len(masks)} segs={len(segs)} roles={len(roles)}")
     tokens = tokens + [PAD] * pad_n
     masks = masks + [0] * pad_n          # padding is NEVER loss-bearing
     segs = segs + [-1] * pad_n           # padding belongs to no segment
+    roles = roles + [PAD_ROLE] * pad_n   # padding has no role
     # A position may only be supervised if its predecessor is in the SAME document: predicting the
     # first token of document N+1 from the last token of document N is cross-document supervision,
     # and it is a different failure from cross-document attention. Measured before this: 14 of 5138
@@ -187,7 +231,8 @@ def _finish(tokens, masks, segs, members, span_ids, lane, policy, ctx, truncated
         counter = 0 if s != last else counter + 1
         positions.append(counter)
         last = s
-    return PackedSequence(tokens, masks, segs, positions, members, span_ids, lane, policy, truncated)
+    return PackedSequence(tokens, masks, segs, positions, roles, members, span_ids, lane, policy,
+                          truncated)
 
 
 def pack(units: list[DocUnit], context_length: int, policy: str, lane: str) -> list[PackedSequence]:
@@ -198,10 +243,10 @@ def pack(units: list[DocUnit], context_length: int, policy: str, lane: str) -> l
 
     if policy == "pad_only":
         for u in units:
-            t, m = u.tokens[:ctx], u.loss_mask[:ctx]
+            cut = u.slice(0, ctx)
             trunc = [u.doc_id] if u.length > ctx else []
-            out.append(_finish(list(t), list(m), [0] * len(t), [u.doc_id], [u.span_id],
-                               lane, policy, ctx, trunc))
+            out.append(_finish(cut.tokens, cut.loss_mask, [0] * cut.length, cut.role_codes,
+                               [u.doc_id], [u.span_id], lane, policy, ctx, trunc))
         return out
 
     if policy == "long_context":
@@ -209,11 +254,11 @@ def pack(units: list[DocUnit], context_length: int, policy: str, lane: str) -> l
         # windows rather than discarded - long-context data is the scarcest thing we have.
         for u in units:
             for off in range(0, max(1, u.length), ctx):
-                t, m = u.tokens[off:off + ctx], u.loss_mask[off:off + ctx]
-                if not t:
+                cut = u.slice(off, off + ctx)
+                if not cut.tokens:
                     break
-                out.append(_finish(list(t), list(m), [0] * len(t), [u.doc_id], [u.span_id],
-                                   lane, policy, ctx, []))
+                out.append(_finish(cut.tokens, cut.loss_mask, [0] * cut.length, cut.role_codes,
+                                   [u.doc_id], [u.span_id], lane, policy, ctx, []))
         return out
 
     if policy == "structure_preserving":
@@ -233,34 +278,35 @@ def pack(units: list[DocUnit], context_length: int, policy: str, lane: str) -> l
         used: list[int] = []
         trunc_ids: list[list[str]] = []
         for u in units:
-            t, m = list(u.tokens[:ctx]), list(u.loss_mask[:ctx])
+            unit = u.slice(0, ctx)
             cut = [u.span_id] if u.length > ctx else []
-            unit = DocUnit(u.doc_id, u.span_id, u.lane, t, m)
             placed = False
             for i, cap in enumerate(used):
-                if cap + len(t) <= ctx:
+                if cap + unit.length <= ctx:
                     bins[i].append(unit)
-                    used[i] += len(t)
+                    used[i] += unit.length
                     trunc_ids[i].extend(cut)
                     placed = True
                     break
             if not placed:
                 bins.append([unit])
-                used.append(len(t))
+                used.append(unit.length)
                 trunc_ids.append(list(cut))
         for b, tr in zip(bins, trunc_ids):
             tokens: list[int] = []
             masks: list[int] = []
             segs: list[int] = []
+            roles: list[int] = []
             members: list[str] = []
             span_ids: list[str] = []
             for seg, u in enumerate(b):
                 tokens.extend(u.tokens)
                 masks.extend(u.loss_mask)
+                roles.extend(u.role_codes)
                 segs.extend([seg] * len(u.tokens))
                 members.append(u.doc_id)
                 span_ids.append(u.span_id)
-            out.append(_finish(tokens, masks, segs, members, span_ids, lane, policy, ctx,
+            out.append(_finish(tokens, masks, segs, roles, members, span_ids, lane, policy, ctx,
                                sorted(set(tr))))
         return out
 
@@ -269,16 +315,19 @@ def pack(units: list[DocUnit], context_length: int, policy: str, lane: str) -> l
         # boundaries; segment ids keep the halves from attending to their neighbours.
         stream_t: list[int] = []
         stream_m: list[int] = []
+        stream_r: list[int] = []
         stream_owner: list[str] = []
         stream_span: list[str] = []
         for u in units:
             stream_t.extend(u.tokens)
             stream_m.extend(u.loss_mask)
+            stream_r.extend(u.role_codes)
             stream_owner.extend([u.doc_id] * u.length)
             stream_span.extend([u.span_id] * u.length)
         for off in range(0, len(stream_t), ctx):
             t = stream_t[off:off + ctx]
             m = stream_m[off:off + ctx]
+            r = stream_r[off:off + ctx]
             owners = stream_owner[off:off + ctx]
             spans = stream_span[off:off + ctx]
             segs, members, span_ids, seg = [], [], [], -1
@@ -298,8 +347,8 @@ def pack(units: list[DocUnit], context_length: int, policy: str, lane: str) -> l
                 trunc.append(owners[0])
             if off + ctx < len(stream_owner) and stream_owner[off + ctx] == owners[-1]:
                 trunc.append(owners[-1])
-            out.append(_finish(list(t), list(m), segs, members, span_ids, lane, policy, ctx,
-                               sorted(set(trunc))))
+            out.append(_finish(list(t), list(m), segs, list(r), members, span_ids, lane, policy,
+                               ctx, sorted(set(trunc))))
         return out
 
     # ---- bin-packing policies -------------------------------------------------------------
@@ -316,9 +365,8 @@ def pack(units: list[DocUnit], context_length: int, policy: str, lane: str) -> l
         if u.length > ctx:
             # too long for any window: give it its own windows rather than dropping it
             for off in range(0, u.length, ctx):
-                bins.append([DocUnit(u.doc_id, u.span_id, u.lane,
-                                     u.tokens[off:off + ctx], u.loss_mask[off:off + ctx])])
-                used.append(len(bins[-1][0].tokens))
+                bins.append([u.slice(off, off + ctx)])
+                used.append(bins[-1][0].length)
             continue
         target = None
         if first_fit:
@@ -343,16 +391,18 @@ def pack(units: list[DocUnit], context_length: int, policy: str, lane: str) -> l
         tokens: list[int] = []
         masks: list[int] = []
         segs: list[int] = []
+        roles: list[int] = []
         members: list[str] = []
         span_ids: list[str] = []
         for seg, u in enumerate(b):
             tokens.extend(u.tokens)
             masks.extend(u.loss_mask)
+            roles.extend(u.role_codes)
             segs.extend([seg] * u.length)
             members.append(u.doc_id)
             span_ids.append(u.span_id)
         assert len(tokens) <= ctx, "bin overfilled - packing invariant violated"
-        out.append(_finish(tokens, masks, segs, members, span_ids, lane, policy, ctx, []))
+        out.append(_finish(tokens, masks, segs, roles, members, span_ids, lane, policy, ctx, []))
     return out
 
 
@@ -364,7 +414,8 @@ def validate_masks(seq: PackedSequence) -> tuple[bool, list[str]]:
     """Structural invariants every packed sequence must satisfy."""
     errs: list[str] = []
     n = len(seq.tokens)
-    if not (len(seq.loss_mask) == len(seq.segment_ids) == len(seq.position_ids) == n):
+    if not (len(seq.loss_mask) == len(seq.segment_ids) == len(seq.position_ids)
+            == len(seq.role_codes) == n):
         errs.append("parallel arrays have different lengths")
         return False, errs
     for i, t in enumerate(seq.tokens):
@@ -372,6 +423,17 @@ def validate_masks(seq: PackedSequence) -> tuple[bool, list[str]]:
             errs.append(f"pad token at {i} is loss-bearing")
         if t == PAD and seq.segment_ids[i] != -1:
             errs.append(f"pad token at {i} belongs to segment {seq.segment_ids[i]}")
+        if t == PAD and seq.role_codes[i] != PAD_ROLE:
+            errs.append(f"pad token at {i} carries role {role_name(seq.role_codes[i])}")
+    # Role and mask must agree, because the mask is DERIVED from the role. This is what makes the
+    # by-role table falsifiable rather than decorative: shift the role array by one position and a
+    # supervised span lines up against a context role, and this fires. Without it the table would
+    # still print, still sum correctly, and still be attributing loss to the wrong role.
+    for i, code in enumerate(seq.role_codes):
+        if seq.loss_mask[i] and not role_is_supervised(role_name(code)):
+            errs.append(f"position {i} is loss-bearing but its role is "
+                        f"{role_name(code)!r}, which is not supervised")
+            break
     # position ids must restart at every segment change and increase by one within a segment
     last_seg, expect = None, 0
     for i, s in enumerate(seq.segment_ids):

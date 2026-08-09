@@ -27,6 +27,7 @@ from pathlib import Path
 import numpy as np
 
 from .canon import chash
+from .corpus import role_name
 from .firewall import Firewall
 from .learning import LearningLedger, TokenObservation, N_POSITION_BUCKETS, phase_of
 from .ledger import BatchRecord, ConsumptionLedger, DATALOADER_VERSION, batch_hash
@@ -49,7 +50,16 @@ class TrainConfig:
     sequence_length: int = 128
     world_size: int = 4
     micro_batch: int = 2
-    lr: float = 0.35
+    # AdamW's step size, two orders of magnitude below the old SGD constant: Adam normalises by the
+    # gradient's own second moment, so the raw-gradient scale the SGD rate compensated for is
+    # already divided out.
+    lr: float = 3e-3
+    # Linear warmup then cosine decay to `min_lr_ratio * lr`. `total_steps` is the plan's horizon,
+    # not the demo's step count, so the shape of the schedule is a property of the run being
+    # executed rather than of how far the demo happens to get.
+    warmup_ratio: float = 0.06
+    min_lr_ratio: float = 0.1
+    total_steps: int = 0                # 0 -> filled in from the plan at construction
     checkpoint_every: int = 5
     learning_tier: str = "full"
     token_trace_sample_every: int = 1
@@ -97,6 +107,28 @@ class Trainer:
 
     def __post_init__(self) -> None:
         self._proxy = self.model.proxy_direction(self.cfg.seed)
+        if not self.cfg.total_steps:
+            # The plan's horizon, not the demo's loop bound. A schedule sized to however many steps
+            # the demo happens to run would decay to its floor inside the demo and describe a
+            # different run from the one the plan specifies.
+            per_step = max(1, self.cfg.global_batch * self.cfg.sequence_length)
+            self.cfg.total_steps = max(1, math.ceil(self.plan.run_tokens / per_step))
+
+    # ================================================================= schedule
+    def lr_at(self, step: int) -> float:
+        """Linear warmup to `lr`, then cosine decay to `min_lr_ratio * lr`.
+
+        A pure function of (step, config), which is why `scheduler_state` in a checkpoint can be the
+        config plus the step rather than a captured curve: restoring the step restores the schedule
+        exactly, and a test asserts that by recomputing it.
+        """
+        warm = max(1, int(self.cfg.total_steps * self.cfg.warmup_ratio))
+        if step < warm:
+            return self.cfg.lr * (step + 1) / warm
+        prog = (step - warm) / max(1, self.cfg.total_steps - warm)
+        prog = min(1.0, max(0.0, prog))
+        floor = self.cfg.lr * self.cfg.min_lr_ratio
+        return floor + 0.5 * (self.cfg.lr - floor) * (1.0 + math.cos(math.pi * prog))
 
     # ================================================================= planning + selection
     def _select(self, candidates: list[PlannedSample]) -> tuple[list[PlannedSample], list[str]]:
@@ -194,9 +226,11 @@ class Trainer:
 
         n_micro = max(1, math.ceil(len(accepted) / self.cfg.micro_batch))
         gnorm = 0.0
+        opt_rec: dict = {}
         if grads_acc is not None:
             grads_acc = {k: v / n_micro for k, v in grads_acc.items()}
-            gnorm = self.model.apply(grads_acc, self.cfg.lr)
+            opt_rec = self.model.apply(grads_acc, self.lr_at(self.step))
+            gnorm = opt_rec["grad_norm"]
 
         mean_loss = total_loss / total_pos if total_pos else float("nan")
 
@@ -247,7 +281,10 @@ class Trainer:
                               "mean_loss": mean_loss, "grad_norm": gnorm,
                               "seconds": seconds, "loader_seconds": loader_seconds,
                               "n_tokens": n_tokens, "n_loss_bearing": n_loss, "n_pad": n_pad,
-                              "stage": stage.id})
+                              "stage": stage.id,
+                              "lr": opt_rec.get("lr", 0.0),
+                              "grad_clipped": bool(opt_rec.get("clipped", False)),
+                              "adam_step": opt_rec.get("adam_step", 0)})
         self.step += 1
         return StepResult(self.step - 1, accepted, rec, mean_loss, gnorm, seconds,
                           loader_seconds, n_tokens, n_loss, n_pad)
@@ -301,6 +338,12 @@ class Trainer:
                 opus_decision_id=did_by_sample.get(ps.sample_id),
                 model_age_tokens=self.model_age_tokens, stage=stage_id,
                 pass_number=ps.pass_number,
+                # Role of the token being PREDICTED (index t), not of the context position i that
+                # predicted it. The loss recorded here is the cost of emitting token t, so it
+                # belongs to t's role - attributing it to i would smear every span's loss one
+                # position back and put the first token of each supervised span in the context
+                # role that precedes it.
+                role=role_name(seq.role_codes[t]),
                 branch_id=self.branch_id,
                 reference_loss=ref_loss,
                 excess_loss=None if ref_loss is None else float(per_pos[i]) - ref_loss,
@@ -318,7 +361,11 @@ class Trainer:
             "branch_id": self.branch_id,
             "model_state": self.model.state(),
             "model_weight_hash": self.model.weight_hash,
-            "optimizer_state": {"type": "sgd", "lr": self.cfg.lr},
+            # Real optimizer state: AdamW's two moment buffers and its step counter. This used to be
+            # `{"type": "sgd", "lr": 0.35}` - a copy of the config, which no mutation could
+            # invalidate, so "the optimizer is restored" was a sentence rather than a check.
+            "optimizer_state": self.model.optimizer_state(),
+            "optimizer_hash": self.model.optimizer_hash,
             # The OPUS golden direction is SELECTOR state, not a cache of convenience: the accepted
             # stream is a function of it, so a checkpoint without it cannot regenerate the stream.
             # Clearing it on restore (the first fix) made resume/replay diverge whenever the
@@ -329,7 +376,14 @@ class Trainer:
                 "direction": ({k: v.tolist() for k, v in self.opus._proxy_cache.items()}
                               if self.opus._proxy_cache else None),
             },
-            "scheduler_state": {"policy": "constant", "lr": self.cfg.lr},
+            "scheduler_state": {
+                "policy": "linear_warmup_cosine_decay", "base_lr": self.cfg.lr,
+                "warmup_ratio": self.cfg.warmup_ratio, "min_lr_ratio": self.cfg.min_lr_ratio,
+                "total_steps": self.cfg.total_steps, "step": self.step,
+                # The realised value, so a reader can check the schedule without re-deriving it,
+                # and a test can assert `lr_at(step)` reproduces exactly this number.
+                "lr_at_step": self.lr_at(self.step),
+            },
             "rng_policy": {"kind": "derived", "run_seed": self.cfg.seed,
                            "note": "no stateful global RNG; every draw derives from "
                                    "(seed, step, purpose)"},
@@ -343,11 +397,19 @@ class Trainer:
             "tokenizer_hash": self.tokenizer.hash,
             "plan_hash": chash(self.plan.raw),
         }
-        state["checkpoint_hash"] = chash({k: v for k, v in state.items() if k != "model_state"})
+        # Three hashes over three populations, matching the three ways a checkpoint fails. The bulk
+        # numeric blobs each get their own (`model_weight_hash`, `optimizer_hash`) and are excluded
+        # here so that a torn optimizer blob trips ONLY `optimizer_hash` - a checkpoint that loads
+        # cleanly and then trains differently is a distinct failure from one that will not load.
+        state["checkpoint_hash"] = chash({k: v for k, v in state.items()
+                                          if k not in ("model_state", "optimizer_state")})
         self.checkpoints[cid] = state
         self.last_checkpoint_id = cid
         self.ledger.bind_checkpoint(cid, self.step, self.branch_id, {
-            "model_state": "saved", "optimizer_state": "saved", "scheduler_state": "saved",
+            "model_state": "saved",
+            "optimizer_state": f"adamw_moments+step@{state['optimizer_state']['adam_step']}",
+            "optimizer_hash": state["optimizer_hash"],
+            "scheduler_state": state["scheduler_state"]["policy"],
             "rng_state": "derived_policy_no_capture_needed",
             "dataloader_state": f"pool_cursors+global_index@{self.global_index}",
             "model_weight_hash": state["model_weight_hash"],
@@ -372,7 +434,8 @@ class Trainer:
         """
         reasons = []
         recomputed_meta = chash({k: v for k, v in st.items()
-                                 if k not in ("model_state", "checkpoint_hash")})
+                                 if k not in ("model_state", "optimizer_state",
+                                              "checkpoint_hash")})
         if recomputed_meta != st.get("checkpoint_hash"):
             reasons.append("checkpoint_hash mismatch (step/branch/offset/cursors/identity)")
         try:
@@ -382,6 +445,15 @@ class Trainer:
                 reasons.append("model_weight_hash mismatch (weights)")
         except Exception as exc:                       # torn / truncated / malformed weight blob
             reasons.append(f"model_state unreadable: {type(exc).__name__}")
+        # Optimizer state verified separately, and its absence is a failure rather than a shrug:
+        # a checkpoint with no moments restores to a model that silently re-warms bias correction.
+        try:
+            probe = TinyLM.init(1, seed=0)
+            probe.load_optimizer_state(st.get("optimizer_state"))
+            if probe.optimizer_hash != st.get("optimizer_hash"):
+                reasons.append("optimizer_hash mismatch (AdamW moments / step counter)")
+        except Exception as exc:
+            reasons.append(f"optimizer_state unreadable: {type(exc).__name__}")
         return (not reasons), reasons
 
     def restore(self, cid: str, *, world_size: int | None = None, branch: str | None = None) -> dict:
@@ -393,6 +465,11 @@ class Trainer:
         if not ok:
             raise AssertionError(f"refusing to restore corrupt checkpoint {cid}: {'; '.join(why)}")
         self.model.load_state(st["model_state"])
+        # Weights alone are not the training state. Restoring them and dropping AdamW's moments
+        # leaves `model_weight_hash` identical at the restore instant and changes every subsequent
+        # update, which is the resume bug no loss curve reveals - see the
+        # `optimizer_moments_are_load_bearing` control.
+        self.model.load_optimizer_state(st.get("optimizer_state"))
         # Restore the selector's proxy alongside the weights it was computed from. Falling back to
         # a clear when a checkpoint predates this field keeps old checkpoints loadable.
         _px = st.get("opus_proxy_state")
@@ -427,6 +504,7 @@ class Trainer:
         checkpoint FILE on disk, which is the claim being made.
         """
         before = self.model.weight_hash
+        opt_before = self.model.optimizer_hash
         self.ledger.record_crash(self.step, self.branch_id, self.last_checkpoint_id, reason)
         if not destroy_state:
             # Used only by the exactly-once harness, whose job is to produce a second delivery
@@ -438,6 +516,7 @@ class Trainer:
                 f"(stream-only: in-memory state deliberately retained for trace comparison)")
             return {"step": self.step, "ledger_offset": self.ledger.offset, "reason": reason,
                     "weight_hash_before": before, "weight_hash_after": before,
+                    "optimizer_hash_before": opt_before, "optimizer_hash_after": opt_before,
                     "in_memory_checkpoints_cleared": False}
         self.model = TinyLM.init(self.model.vocab_size, d_model=self.model.d_model,
                                  d_hidden=self.model.d_hidden, n_heads=self.model.n_heads,
@@ -447,12 +526,18 @@ class Trainer:
         self.checkpoints = {}
         self.opus.reset_proxy_cache()      # a restarted process cannot have this
         self.planner.set_cursors({ln: 0 for ln in self.planner.pools})
+        # A fresh TinyLM carries no moment buffers and step counter 0, so the crash destroys the
+        # optimizer as well as the weights. Recorded explicitly: it is the half of the training
+        # state that the pre-AdamW build did not have and therefore could not lose.
         self.events.append(
             f"[INFO] crash_simulated at step={self.step} reason={reason} "
             f"(weights destroyed {before[:12]}->{self.model.weight_hash[:12]}, "
+            f"optimizer moments destroyed {opt_before[:12]}->{self.model.optimizer_hash[:12]}, "
             f"in-memory checkpoints cleared, pool cursors zeroed)")
         return {"step": self.step, "ledger_offset": self.ledger.offset, "reason": reason,
                 "weight_hash_before": before, "weight_hash_after": self.model.weight_hash,
+                "optimizer_hash_before": opt_before,
+                "optimizer_hash_after": self.model.optimizer_hash,
                 "in_memory_checkpoints_cleared": True}
 
     def load_checkpoint_file(self, path) -> dict:

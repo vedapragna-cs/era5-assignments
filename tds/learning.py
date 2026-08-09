@@ -50,6 +50,11 @@ class TokenObservation:
     model_age_tokens: int
     stage: str
     pass_number: int
+    # The segment role this token came from (`tool_call`, `tool_observation`, `text`, ...). Lane is
+    # the coarsest thing the ledger could attribute loss to and it cannot answer S5's question,
+    # which is about which PART of an agentic trajectory is expensive. Required rather than
+    # defaulted: a silently-empty role would produce a by-role table that looks complete.
+    role: str
     # Which branch produced this observation, and whether the batch was later superseded. Without
     # these the ledger silently folds fork, control-fork, replay and ablation branches - and the
     # pre-crash batches the consumption ledger correctly supersedes - into every aggregate. Measured
@@ -78,7 +83,7 @@ class TokenObservation:
             "token_perplexity": round(self.ppl, 2 if quantize else 4),
             "opus_decision_id": self.opus_decision_id,
             "model_age_tokens": self.model_age_tokens, "curriculum_stage": self.stage,
-            "repeated_pass_number": self.pass_number,
+            "repeated_pass_number": self.pass_number, "segment_role": self.role,
             "branch_id": self.branch_id, "superseded": self.superseded,
             "reference_loss": None if self.reference_loss is None
                               else round(self.reference_loss, 2 if quantize else 6),
@@ -118,7 +123,7 @@ class LearningLedger:
             br = self._agg.setdefault(o.branch_id, {})
             for key in (("shard", o.shard_id), ("lane", o.lane), ("language", o.language),
                         ("bucket", str(o.position_bucket)), ("stage", o.stage),
-                        ("boundary", str(o.is_boundary))):
+                        ("boundary", str(o.is_boundary)), ("role", o.role)):
                 d = br.setdefault(key[0], {}).setdefault(key[1],
                                                          {"n": 0, "sum_loss": 0.0, "hot": 0})
                 d["n"] += 1
@@ -128,7 +133,8 @@ class LearningLedger:
 
     _DIMS = {"shard": lambda o: o.shard_id, "lane": lambda o: o.lane,
              "language": lambda o: o.language, "bucket": lambda o: str(o.position_bucket),
-             "stage": lambda o: o.stage, "boundary": lambda o: str(o.is_boundary)}
+             "stage": lambda o: o.stage, "boundary": lambda o: str(o.is_boundary),
+             "role": lambda o: o.role}
 
     def aggregate(self, dim: str, branch: str = "run-a") -> dict[str, dict]:
         """Per-dimension aggregates over ONE branch's surviving observations.
