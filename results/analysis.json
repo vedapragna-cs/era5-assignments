@@ -1,0 +1,246 @@
+{
+  "codec": {
+    "n_bytes": 256,
+    "positions": 32,
+    "dim": 8192,
+    "normalize_input": true,
+    "pad_byte": 0
+  },
+  "vocab_size": 16384,
+  "byte_tables": {
+    "vocab_size": 16384,
+    "tokens_truncated": 12,
+    "tokens_with_empty_surface": 0,
+    "tokens_containing_null_byte": 1,
+    "mean_bytes_per_token": 5.4827880859375,
+    "max_bytes_per_token": 32,
+    "table_bytes": 4325376,
+    "dense_table_bytes_would_be": 536870912
+  },
+  "concentration": {
+    "candidates": 8000,
+    "probes": 400,
+    "mean_cosine_to_nearest_other": 0.760331,
+    "max_cosine_to_nearest_other": 0.984251,
+    "mean_gap_best_to_second": 0.069238,
+    "median_gap_best_to_second": 0.052277,
+    "fraction_with_gap_below_0.01": 0.29
+  },
+  "robustness": [
+    {
+      "sigma": 0.0,
+      "nearest_neighbour_exact": 1.0,
+      "per_position_argmax_exact": 1.0
+    },
+    {
+      "sigma": 0.01,
+      "nearest_neighbour_exact": 1.0,
+      "per_position_argmax_exact": 1.0
+    },
+    {
+      "sigma": 0.02,
+      "nearest_neighbour_exact": 1.0,
+      "per_position_argmax_exact": 1.0
+    },
+    {
+      "sigma": 0.05,
+      "nearest_neighbour_exact": 1.0,
+      "per_position_argmax_exact": 0.1889
+    },
+    {
+      "sigma": 0.1,
+      "nearest_neighbour_exact": 0.9911,
+      "per_position_argmax_exact": 0.0
+    },
+    {
+      "sigma": 0.2,
+      "nearest_neighbour_exact": 0.5667,
+      "per_position_argmax_exact": 0.0
+    },
+    {
+      "sigma": 0.3,
+      "nearest_neighbour_exact": 0.1689,
+      "per_position_argmax_exact": 0.0
+    },
+    {
+      "sigma": 0.5,
+      "nearest_neighbour_exact": 0.0156,
+      "per_position_argmax_exact": 0.0
+    }
+  ],
+  "reachability": {
+    "probes": [
+      {
+        "string": "netwrok",
+        "bytes": 7,
+        "is_a_single_vocabulary_token": false,
+        "codec_round_trips": true,
+        "reachable_by_nearest_neighbour": false,
+        "reachable_by_per_position_argmax": true
+      },
+      {
+        "string": "kronekticus",
+        "bytes": 11,
+        "is_a_single_vocabulary_token": false,
+        "codec_round_trips": true,
+        "reachable_by_nearest_neighbour": false,
+        "reachable_by_per_position_argmax": true
+      },
+      {
+        "string": "recieve",
+        "bytes": 7,
+        "is_a_single_vocabulary_token": false,
+        "codec_round_trips": true,
+        "reachable_by_nearest_neighbour": false,
+        "reachable_by_per_position_argmax": true
+      },
+      {
+        "string": "teh",
+        "bytes": 3,
+        "is_a_single_vocabulary_token": false,
+        "codec_round_trips": true,
+        "reachable_by_nearest_neighbour": false,
+        "reachable_by_per_position_argmax": true
+      },
+      {
+        "string": "Kubernetes",
+        "bytes": 10,
+        "is_a_single_vocabulary_token": false,
+        "codec_round_trips": true,
+        "reachable_by_nearest_neighbour": false,
+        "reachable_by_per_position_argmax": true
+      },
+      {
+        "string": "Anthropic",
+        "bytes": 9,
+        "is_a_single_vocabulary_token": false,
+        "codec_round_trips": true,
+        "reachable_by_nearest_neighbour": false,
+        "reachable_by_per_position_argmax": true
+      },
+      {
+        "string": "Vedapragna",
+        "bytes": 10,
+        "is_a_single_vocabulary_token": false,
+        "codec_round_trips": true,
+        "reachable_by_nearest_neighbour": false,
+        "reachable_by_per_position_argmax": true
+      },
+      {
+        "string": "get_event_loop",
+        "bytes": 14,
+        "is_a_single_vocabulary_token": false,
+        "codec_round_trips": true,
+        "reachable_by_nearest_neighbour": false,
+        "reachable_by_per_position_argmax": true
+      },
+      {
+        "string": "__init__",
+        "bytes": 8,
+        "is_a_single_vocabulary_token": false,
+        "codec_round_trips": true,
+        "reachable_by_nearest_neighbour": false,
+        "reachable_by_per_position_argmax": true
+      },
+      {
+        "string": "AsyncIOMotorClient",
+        "bytes": 18,
+        "is_a_single_vocabulary_token": false,
+        "codec_round_trips": true,
+        "reachable_by_nearest_neighbour": false,
+        "reachable_by_per_position_argmax": true
+      },
+      {
+        "string": "caf\u00e9",
+        "bytes": 5,
+        "is_a_single_vocabulary_token": false,
+        "codec_round_trips": true,
+        "reachable_by_nearest_neighbour": false,
+        "reachable_by_per_position_argmax": true
+      },
+      {
+        "string": "\u65e5\u672c\u8a9e",
+        "bytes": 9,
+        "is_a_single_vocabulary_token": false,
+        "codec_round_trips": true,
+        "reachable_by_nearest_neighbour": false,
+        "reachable_by_per_position_argmax": true
+      },
+      {
+        "string": "\u0928\u092e\u0938\u094d\u0924\u0947",
+        "bytes": 18,
+        "is_a_single_vocabulary_token": false,
+        "codec_round_trips": true,
+        "reachable_by_nearest_neighbour": false,
+        "reachable_by_per_position_argmax": true
+      },
+      {
+        "string": "supercalifragilistic",
+        "bytes": 20,
+        "is_a_single_vocabulary_token": false,
+        "codec_round_trips": true,
+        "reachable_by_nearest_neighbour": false,
+        "reachable_by_per_position_argmax": true
+      },
+      {
+        "string": "qwxzjv",
+        "bytes": 6,
+        "is_a_single_vocabulary_token": false,
+        "codec_round_trips": true,
+        "reachable_by_nearest_neighbour": false,
+        "reachable_by_per_position_argmax": true
+      }
+    ],
+    "reachable_by_nearest_neighbour": 0,
+    "reachable_by_per_position_argmax": 15,
+    "n_probes": 15,
+    "nearest_neighbour_range": 16384,
+    "per_position_argmax_range_note": "every byte string of length <= 32 that is valid UTF-8"
+  },
+  "scaling": {
+    "d_model": 256,
+    "codec_dim": 8192,
+    "rows": [
+      {
+        "vocab_size": 16384,
+        "vocab_head": 4194304,
+        "kron_head": 2097152,
+        "kron_tied_head": 8192,
+        "dense_codec_table_bytes": 536870912,
+        "sparse_byte_table_bytes": 4325376
+      },
+      {
+        "vocab_size": 50257,
+        "vocab_head": 12865792,
+        "kron_head": 2097152,
+        "kron_tied_head": 8192,
+        "dense_codec_table_bytes": 1646821376,
+        "sparse_byte_table_bytes": 13267848
+      },
+      {
+        "vocab_size": 128000,
+        "vocab_head": 32768000,
+        "kron_head": 2097152,
+        "kron_tied_head": 8192,
+        "dense_codec_table_bytes": 4194304000,
+        "sparse_byte_table_bytes": 33792000
+      },
+      {
+        "vocab_size": 256000,
+        "vocab_head": 65536000,
+        "kron_head": 2097152,
+        "kron_tied_head": 8192,
+        "dense_codec_table_bytes": 8388608000,
+        "sparse_byte_table_bytes": 67584000
+      },
+      {
+        "vocab_size": 1000000,
+        "vocab_head": 256000000,
+        "kron_head": 2097152,
+        "kron_tied_head": 8192,
+        "dense_codec_table_bytes": 32768000000,
+        "sparse_byte_table_bytes": 264000000
+      }
+    ]
+  }
+}
