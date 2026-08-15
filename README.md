@@ -8,7 +8,7 @@ the output matrix entirely and unties model size from vocabulary size. This
 repository implements that, trains four models to test it, and reports what it
 costs.
 
-**[→ interactive page](docs/index.html)** · [`results/evidence.json`](results/evidence.json) · [`results/run.log`](results/run.log)
+**[→ interactive page](https://vedapragna-cs.github.io/era-v5-s7-invertible-kronecker/)** · [`results/evidence.json`](results/evidence.json) · [`results/run.log`](results/run.log)
 
 ### The result in four lines
 
