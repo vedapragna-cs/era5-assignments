@@ -1,0 +1,665 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>How attention works now - a chronological timeline</title>
+<meta name="description" content="Every attention mechanism from standard scaled dot-product to DroPE, in launch order, with honest trade-offs and a primary source for every date.">
+<style>
+:root{--bg:#fbfaf8;--fg:#1c1a17;--mut:#6b655c;--line:#e2ddd4;--card:#fff;--acc:#8a4b2a;
+--warn:#8a2a2a;--ok:#2a6b46;--code:#f2efe9;--shadow:0 1px 2px rgba(0,0,0,.05)}
+@media(prefers-color-scheme:dark){:root{--bg:#141311;--fg:#eae6df;--mut:#9b948a;--line:#2e2b27;
+--card:#1c1a18;--acc:#d99a6c;--warn:#e08585;--ok:#7fc9a0;--code:#242120;--shadow:none}}
+:root[data-theme=dark]{--bg:#141311;--fg:#eae6df;--mut:#9b948a;--line:#2e2b27;--card:#1c1a18;
+--acc:#d99a6c;--warn:#e08585;--ok:#7fc9a0;--code:#242120;--shadow:none}
+:root[data-theme=light]{--bg:#fbfaf8;--fg:#1c1a17;--mut:#6b655c;--line:#e2ddd4;--card:#fff;
+--acc:#8a4b2a;--warn:#8a2a2a;--ok:#2a6b46;--code:#f2efe9;--shadow:0 1px 2px rgba(0,0,0,.05)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);
+font:16px/1.62 ui-serif,Georgia,'Iowan Old Style',serif;-webkit-text-size-adjust:100%}
+.wrap{max-width:52rem;margin:0 auto;padding:2rem 1.15rem 6rem}
+h1{font-size:2rem;line-height:1.15;margin:.2em 0 .3em;letter-spacing:-.015em}
+h2{font-size:1.3rem;margin:2.6em 0 .5em;letter-spacing:-.01em}
+h3{font-size:1.05rem;margin:1.8em 0 .3em}
+p{margin:.7em 0}
+a{color:var(--acc)}
+code{font:.87em ui-monospace,SFMono-Regular,Menlo,monospace;background:var(--code);
+padding:.1em .32em;border-radius:3px}
+pre{background:var(--code);padding:.85rem 1rem;border-radius:6px;overflow-x:auto;
+font:.83rem/1.5 ui-monospace,SFMono-Regular,Menlo,monospace}
+.sub{color:var(--mut);font-size:1.02rem;margin-top:0}
+nav.top{display:flex;flex-wrap:wrap;gap:.5rem;margin:1.4rem 0 0;font-size:.87rem;
+font-family:system-ui,sans-serif}
+nav.top a{display:inline-block;padding:.32rem .7rem;border:1px solid var(--line);
+border-radius:99px;text-decoration:none;background:var(--card)}
+nav.top a[aria-current]{border-color:var(--acc);color:var(--acc);font-weight:600}
+.tw{overflow-x:auto;margin:1rem 0}
+table{border-collapse:collapse;width:100%;font-size:.87rem;
+font-family:system-ui,sans-serif}
+th,td{text-align:left;padding:.42rem .6rem;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-weight:600;color:var(--mut);font-size:.8rem;text-transform:uppercase;letter-spacing:.04em}
+.flow{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:1.1rem;
+margin:1.2rem 0;box-shadow:var(--shadow)}
+.flow pre{background:transparent;padding:0;font-size:.86rem;text-align:center}
+.era{font-family:system-ui,sans-serif;font-size:.78rem;letter-spacing:.14em;color:var(--mut);
+text-transform:uppercase;margin:3rem 0 .8rem;padding-bottom:.3rem;border-bottom:1px solid var(--line)}
+.card{background:var(--card);border:1px solid var(--line);border-left:3px solid var(--line);
+border-radius:7px;padding:1.1rem 1.2rem;margin:.9rem 0;box-shadow:var(--shadow)}
+.card.added{border-left-color:var(--acc)}
+.card h3{margin:0 0 .15rem;font-size:1.12rem}
+.meta{font-family:system-ui,sans-serif;font-size:.79rem;color:var(--mut);
+display:flex;flex-wrap:wrap;gap:.45rem;align-items:center;margin-bottom:.75rem}
+.date{font-weight:700;color:var(--fg);font-variant-numeric:tabular-nums}
+.tag{border:1px solid var(--line);border-radius:99px;padding:.05rem .5rem}
+.tag.add{border-color:var(--acc);color:var(--acc)}
+.tag.bounded{border-color:var(--warn);color:var(--warn)}
+.tag.ship{border-color:var(--ok);color:var(--ok)}
+.qa{margin:.55rem 0 0}
+.qa dt{font-family:system-ui,sans-serif;font-size:.72rem;text-transform:uppercase;
+letter-spacing:.07em;color:var(--mut);margin-top:.6rem}
+.qa dd{margin:.1rem 0 0}
+.qa dd.cost{color:var(--fg)}
+.src{font-family:system-ui,sans-serif;font-size:.76rem;color:var(--mut);margin-top:.8rem;
+padding-top:.6rem;border-top:1px dotted var(--line);overflow-wrap:anywhere}
+.note{font-size:.9rem;background:var(--code);border-radius:5px;padding:.6rem .8rem;margin-top:.8rem}
+.note b{color:var(--acc)}
+.f{border:1px solid var(--line);border-radius:7px;padding:1.1rem 1.2rem;margin:1.1rem 0;
+background:var(--card);box-shadow:var(--shadow)}
+.f h3{margin-top:0}
+.kind{font-family:system-ui,sans-serif;font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;
+color:var(--mut)}
+.caveat{font-size:.87rem;color:var(--mut);border-top:1px dotted var(--line);margin-top:.8rem;
+padding-top:.55rem}
+.sev{display:inline-block;font-family:system-ui,sans-serif;font-size:.7rem;letter-spacing:.06em;
+text-transform:uppercase;padding:.12rem .5rem;border-radius:99px;border:1px solid var(--line)}
+.sev.correction{border-color:var(--warn);color:var(--warn)}
+.sev.negative-control{border-color:var(--ok);color:var(--ok)}
+footer{margin-top:4rem;padding-top:1.2rem;border-top:1px solid var(--line);
+font-family:system-ui,sans-serif;font-size:.82rem;color:var(--mut)}
+#ctl{display:none}
+
+.viz{--s1:#2a78d6;--s2:#eb6834;--s3:#1baf7a;--vsurf:var(--card);--vink:var(--fg);--vmut:var(--mut);
+--vgrid:var(--line);margin:1.4rem 0}
+@media(prefers-color-scheme:dark){:root:where(:not([data-theme=light])) .viz{--s1:#3987e5;--s2:#d95926;--s3:#199e70}}
+:root[data-theme=dark] .viz{--s1:#3987e5;--s2:#d95926;--s3:#199e70}
+:root[data-theme=light] .viz{--s1:#2a78d6;--s2:#eb6834;--s3:#1baf7a}
+.viz svg{width:100%;height:auto;display:block;overflow:visible}
+.viz figcaption{font-family:system-ui,sans-serif;font-size:.82rem;color:var(--mut);
+margin-top:.6rem;line-height:1.5}
+.vzl{font-family:system-ui,sans-serif;font-size:.82rem;color:var(--mut);display:flex;
+flex-wrap:wrap;gap:1rem;align-items:center;margin:.2rem 0 .7rem}
+.vzl b{display:inline-flex;align-items:center;gap:.35rem;font-weight:400;white-space:nowrap}
+.vzl i{width:11px;height:11px;border-radius:50%;display:inline-block}
+.vzs{font:600 10.5px system-ui,sans-serif;fill:var(--vink)}
+.vzlane{font:600 10px system-ui,sans-serif;fill:var(--vmut);letter-spacing:.03em}
+.vzax{font:10px system-ui,sans-serif;fill:var(--vmut)}
+.viz .grid{stroke:var(--vgrid);stroke-width:1}
+.viz .dot{stroke:var(--vsurf);stroke-width:2}
+.viz .conn{stroke-width:2;stroke-linecap:round;opacity:.45}
+.viz g.m:hover .dot{stroke:var(--vink)}
+.vztable{margin-top:.7rem;font-family:system-ui,sans-serif;font-size:.8rem}
+.vztable summary{cursor:pointer;color:var(--acc)}
+</style></head>
+<body><div class="wrap">
+<nav class="top"><a href="index.html" aria-current=page>Timeline</a><a href="findings.html">What the timeline shows</a><a href="corrections.html">Corrections</a><a href="sources.html">Sources</a><a class="repo" href="https://github.com/vedapragna-cs/era-v5-s8-attention-timeline" rel="noopener">Code &amp; data on GitHub</a></nav>
+<h1>How attention works now</h1>
+<p class="sub">Every attention mechanism from ERA V5 Session 8, in the order it was launched &mdash;
+not the order it was taught, and not grouped by family. 34 mechanisms, covering all 17
+items on the required list plus 13 we added &mdash; 2 of which the session taught but the list omits. Each one is an answer to a
+problem that existed on its date, with what it buys, what it costs, and when you would pick it.</p>
+
+<h2>Start here: what everything else modifies</h2>
+<p>Nothing below makes sense without this. Scaled dot-product attention takes a query for the
+current token, scores it against the key of every token it is allowed to see, turns those scores
+into weights that sum to one, and returns the weighted sum of the values.</p>
+<div class="flow"><pre>Q &times; K&#8868;
+   &darr;
+ scores        one number per (query, key) pair &mdash; this matrix is the compute bill
+   &darr;
+ scale         divide by &radic;d&#8342;, or softmax saturates at high dimension
+   &darr;
+ mask          a token may not attend to its own future
+   &darr;
+ softmax       scores become weights that sum to 1
+   &darr;
+ &sum; wV         weighted sum of values &mdash; the output</pre></div>
+<p>It sends two separate bills, and the whole timeline is people paying one of them down.
+<strong>Compute</strong> is the score matrix: <code>n&times;n</code> per head per layer, so doubling
+the context quadruples it. <strong>Memory</strong> is the KV cache at decode time: every token you
+have already generated leaves its keys and values behind, reloaded for every new token, growing
+linearly with length <em>and</em> with the number of concurrent users. Sparsity and linear attention
+attack the first bill. MQA, GQA and MLA attack the second. Position encoding is a third problem
+entirely &mdash; and, as the timeline shows, it arrived on the same day as the architecture.</p>
+
+<h2>How to read the dates</h2>
+<p>Sorted by <strong>arXiv v1 submission date</strong> &mdash; when the idea became public, not when
+it was published in a venue and not when it became popular. Where a mechanism shipped in a
+well-known model at a materially different time, that <span class="tag ship">shipped</span> date is
+shown too. The gap between the two turns out to be the most interesting column on the page; see
+<a href="findings.html">what the timeline shows</a>. One mechanism &mdash; NTK-aware scaling &mdash;
+has no paper at all and its exact day could not be verified; it and 2 others are marked
+<span class="tag bounded">date bounded, not exact</span> rather than guessed.</p>
+<p>The assignment predicts what this timeline will show &mdash; &ldquo;exact global attention,
+cheaper decoding memory, better position handling, longer contexts, recurrent state returning,
+sparsity returning, compression becoming more aggressive.&rdquo; We treated that as a testable claim
+and checked it against the dates. Most of it holds in order; <a href="findings.html#Q2-9">one pair
+is inverted by 25 months</a>.</p>
+<h2>Coverage, stated as a count</h2>
+<p>The assignment names <strong>17</strong> mechanisms as the minimum. All 17 are here, mapped to the
+card that covers them. Three list items are covered by more than one card, because the item names a
+lineage rather than a single paper &mdash; item 13 is three papers and item 15 is two.</p>
+<div class="tw"><table><thead><tr><th>#</th><th>required</th><th>covered by</th></tr></thead>
+<tbody><tr><td>1</td><td>standard attention</td><td><a href="#standard">Scaled dot-product attention</a> <span style="color:var(--mut)">2017-06-12</span></td></tr><tr><td>2</td><td>absolute learned positions</td><td><a href="#learned-abs">Absolute learned position embeddings</a> <span style="color:var(--mut)">2016-11-07</span></td></tr><tr><td>3</td><td>sinusoidal</td><td><a href="#sinusoidal">Sinusoidal position encoding</a> <span style="color:var(--mut)">2017-06-12</span></td></tr><tr><td>4</td><td>RoPE</td><td><a href="#rope">RoPE (rotary position embedding)</a> <span style="color:var(--mut)">2021-04-20</span></td></tr><tr><td>5</td><td>ALiBi</td><td><a href="#alibi">ALiBi (attention with linear biases)</a> <span style="color:var(--mut)">2021-08-27</span></td></tr><tr><td>6</td><td>MQA</td><td><a href="#mqa">Multi-query attention (MQA)</a> <span style="color:var(--mut)">2019-11-06</span></td></tr><tr><td>7</td><td>GQA</td><td><a href="#gqa">Grouped-query attention (GQA)</a> <span style="color:var(--mut)">2023-05-22</span></td></tr><tr><td>8</td><td>sliding window</td><td><a href="#sliding-window">Sliding-window attention</a> <span style="color:var(--mut)">2020-04-10</span></td></tr><tr><td>9</td><td>attention sinks</td><td><a href="#attention-sinks">Attention sinks / StreamingLLM</a> <span style="color:var(--mut)">2023-09-29</span></td></tr><tr><td>10</td><td>NTK-aware scaling</td><td><a href="#ntk-aware">NTK-aware scaled RoPE</a> <span style="color:var(--mut)">2023-06-26</span></td></tr><tr><td>11</td><td>YaRN</td><td><a href="#yarn">YaRN</a> <span style="color:var(--mut)">2023-08-31</span></td></tr><tr><td>12</td><td>linear attention</td><td><a href="#linear-attention">Linear attention</a> <span style="color:var(--mut)">2020-06-29</span></td></tr><tr><td>13</td><td>the delta rule and Gated DeltaNet</td><td><a href="#delta-rule">The delta rule (fast-weight programmers)</a> <span style="color:var(--mut)">2021-02-22</span>, <a href="#deltanet-parallel">DeltaNet, parallelised</a> <span style="color:var(--mut)">2024-06-10</span>, <a href="#gated-deltanet">Gated DeltaNet</a> <span style="color:var(--mut)">2024-12-09</span></td></tr><tr><td>14</td><td>MLA</td><td><a href="#mla">Multi-head latent attention (MLA)</a> <span style="color:var(--mut)">2024-05-07</span></td></tr><tr><td>15</td><td>sparse and top-k attention</td><td><a href="#sparse-transformer">Sparse attention (strided / fixed patterns)</a> <span style="color:var(--mut)">2019-04-23</span>, <a href="#topk">Top-k / explicit sparse attention</a> <span style="color:var(--mut)">2019-12-25</span></td></tr><tr><td>16</td><td>DeepSeek's compressed sparse attention</td><td><a href="#nsa">Native Sparse Attention (NSA)</a> <span style="color:var(--mut)">2025-02-16</span>, <a href="#dsa">DeepSeek Sparse Attention (the lightning indexer)</a> <span style="color:var(--mut)">2025-09-29</span></td></tr><tr><td>17</td><td>DroPE</td><td><a href="#drope">DroPE (dropping positional embeddings)</a> <span style="color:var(--mut)">2025-12-13</span></td></tr></tbody></table></div>
+<p><strong>17 of 17 required items covered</strong>, across
+21 cards, plus <strong>13</strong> we added for
+34 in total. 2 of the additions are mechanisms the session
+<em>taught</em> that the minimum list does not name &mdash; see
+<a href="corrections.html">corrections</a>.</p>
+<figure class="viz"><div class="vzl"><b><i style="background:var(--s1)"></i>on the assignment&rsquo;s list</b><b><i style="background:var(--s2)"></i>added by us</b><b><svg width="34" height="11" style="overflow:visible"><line x1="2" y1="5.5" x2="32" y2="5.5" stroke="var(--vmut)" stroke-width="2" opacity=".5"/><circle cx="2" cy="5.5" r="4" fill="var(--vmut)"/><circle cx="32" cy="5.5" r="3.5" fill="var(--card)" stroke="var(--vmut)" stroke-width="2"/></svg> arXiv v1 → shipped in a known model</b></div><svg viewBox="0 0 1000 622" role="img" aria-labelledby="tlt tld"><title id="tlt">Attention mechanisms by launch date, 2014 to 2026</title><desc id="tld">34 mechanisms placed on a proportional time axis and grouped into seven family lanes. A line from a filled dot to a hollow dot shows the gap between the arXiv v1 date and the date the mechanism shipped in a well-known model. Those lines get shorter from left to right.</desc><line class="grid" x1="104.0" y1="22" x2="104.0" y2="608"/><text class="vzax" x="104.0" y="16" text-anchor="middle">2014</text><line class="grid" x1="171.8" y1="22" x2="171.8" y2="608"/><line class="grid" x1="239.6" y1="22" x2="239.6" y2="608"/><text class="vzax" x="239.6" y="16" text-anchor="middle">2016</text><line class="grid" x1="307.6" y1="22" x2="307.6" y2="608"/><line class="grid" x1="375.5" y1="22" x2="375.5" y2="608"/><text class="vzax" x="375.5" y="16" text-anchor="middle">2018</text><line class="grid" x1="443.3" y1="22" x2="443.3" y2="608"/><line class="grid" x1="511.1" y1="22" x2="511.1" y2="608"/><text class="vzax" x="511.1" y="16" text-anchor="middle">2020</text><line class="grid" x1="579.1" y1="22" x2="579.1" y2="608"/><line class="grid" x1="646.9" y1="22" x2="646.9" y2="608"/><text class="vzax" x="646.9" y="16" text-anchor="middle">2022</text><line class="grid" x1="714.7" y1="22" x2="714.7" y2="608"/><text class="vzax" x="714.7" y="16" text-anchor="middle">2023</text><line class="grid" x1="782.5" y1="22" x2="782.5" y2="608"/><text class="vzax" x="782.5" y="16" text-anchor="middle">2024</text><line class="grid" x1="850.6" y1="22" x2="850.6" y2="608"/><text class="vzax" x="850.6" y="16" text-anchor="middle">2025</text><line class="grid" x1="918.4" y1="22" x2="918.4" y2="608"/><text class="vzax" x="918.4" y="16" text-anchor="middle">2026</text><line class="grid" x1="986.2" y1="22" x2="986.2" y2="608"/><text class="vzax" x="986.2" y="16" text-anchor="middle">2027</text><line class="grid" x1="104" y1="84.0" x2="986" y2="84.0" opacity=".5"/><text class="vzlane" x="92" y="69.0" text-anchor="end">foundation</text><g class="m"><title>Additive attention (Bahdanau) — arXiv v1 2014-09-01</title><a href="#bahdanau"><circle class="dot" cx="149.1" cy="66.0" r="5" fill="var(--s2)"/><text class="vzs" x="149.1" y="52.0" text-anchor="middle">Bahdanau</text></a></g><g class="m"><title>Multiplicative / dot-product attention (Luong) — arXiv v1 2015-08-17</title><a href="#luong"><circle class="dot" cx="214.2" cy="66.0" r="5" fill="var(--s2)"/><text class="vzs" x="214.2" y="52.0" text-anchor="middle">Luong</text></a></g><g class="m"><title>Scaled dot-product attention — arXiv v1 2017-06-12</title><a href="#standard"><circle class="dot" cx="337.7" cy="66.0" r="5" fill="var(--s1)"/><text class="vzs" x="337.7" y="52.0" text-anchor="middle">standard</text></a></g><line class="grid" x1="104" y1="156.0" x2="986" y2="156.0" opacity=".5"/><text class="vzlane" x="92" y="141.0" text-anchor="end">position</text><g class="m"><title>Absolute learned position embeddings — arXiv v1 2016-11-07</title><a href="#learned-abs"><circle class="dot" cx="297.4" cy="138.0" r="5" fill="var(--s1)"/><text class="vzs" x="297.4" y="124.0" text-anchor="middle">learned abs</text></a></g><g class="m"><title>Sinusoidal position encoding — arXiv v1 2017-06-12</title><a href="#sinusoidal"><line x1="337.7" y1="115.0" x2="337.7" y2="132.0" stroke="var(--s1)" stroke-width="1" opacity=".5"/><circle class="dot" cx="337.7" cy="138.0" r="5" fill="var(--s1)"/><text class="vzs" x="337.7" y="112.0" text-anchor="middle">sinusoidal</text></a></g><line class="conn" x1="599.3" y1="138.0" x2="594.0" y2="138.0" stroke="var(--s1)"/><circle class="dot" cx="594.0" cy="138.0" r="4.5" fill="var(--vsurf)" stroke="var(--s1)"/><g class="m"><title>RoPE (rotary position embedding) — arXiv v1 2021-04-20, shipped 2021-03-22</title><a href="#rope"><circle class="dot" cx="599.3" cy="138.0" r="5" fill="var(--s1)"/><text class="vzs" x="599.3" y="124.0" text-anchor="middle">RoPE</text></a></g><line class="conn" x1="623.3" y1="138.0" x2="622.8" y2="138.0" stroke="var(--s1)"/><circle class="dot" cx="622.8" cy="138.0" r="4.5" fill="var(--vsurf)" stroke="var(--s1)"/><g class="m"><title>ALiBi (attention with linear biases) — arXiv v1 2021-08-27, shipped 2021-08-24</title><a href="#alibi"><line x1="623.3" y1="115.0" x2="623.3" y2="132.0" stroke="var(--s1)" stroke-width="1" opacity=".5"/><circle class="dot" cx="623.3" cy="138.0" r="5" fill="var(--s1)"/><text class="vzs" x="623.3" y="112.0" text-anchor="middle">ALiBi</text></a></g><g class="m"><title>xPos (length-extrapolatable Transformer) — arXiv v1 2022-12-20</title><a href="#xpos"><circle class="dot" cx="712.5" cy="138.0" r="5" fill="var(--s2)"/><text class="vzs" x="712.5" y="124.0" text-anchor="middle">xPos</text></a></g><line class="grid" x1="104" y1="228.0" x2="986" y2="228.0" opacity=".5"/><text class="vzlane" x="92" y="213.0" text-anchor="end">sparsity</text><g class="m"><title>Sparse attention (strided / fixed patterns) — arXiv v1 2019-04-23</title><a href="#sparse-transformer"><circle class="dot" cx="464.1" cy="210.0" r="5" fill="var(--s1)"/><text class="vzs" x="464.1" y="196.0" text-anchor="middle">sparse</text></a></g><g class="m"><title>Top-k / explicit sparse attention — arXiv v1 2019-12-25</title><a href="#topk"><circle class="dot" cx="509.8" cy="210.0" r="5" fill="var(--s1)"/><text class="vzs" x="509.8" y="196.0" text-anchor="middle">top-k</text></a></g><line class="conn" x1="529.7" y1="210.0" x2="527.8" y2="210.0" stroke="var(--s1)"/><circle class="dot" cx="527.8" cy="210.0" r="4.5" fill="var(--vsurf)" stroke="var(--s1)"/><g class="m"><title>Sliding-window attention — arXiv v1 2020-04-10, shipped 2020-03-31</title><a href="#sliding-window"><line x1="529.7" y1="187.0" x2="529.7" y2="204.0" stroke="var(--s1)" stroke-width="1" opacity=".5"/><circle class="dot" cx="529.7" cy="210.0" r="5" fill="var(--s1)"/><text class="vzs" x="529.7" y="184.0" text-anchor="middle">sliding</text></a></g><line class="conn" x1="765.1" y1="210.0" x2="765.1" y2="210.0" stroke="var(--s1)"/><circle class="dot" cx="765.1" cy="210.0" r="4.5" fill="var(--vsurf)" stroke="var(--s1)"/><g class="m"><title>Attention sinks / StreamingLLM — arXiv v1 2023-09-29, shipped 2023-09-29</title><a href="#attention-sinks"><circle class="dot" cx="765.1" cy="210.0" r="5" fill="var(--s1)"/><text class="vzs" x="765.1" y="196.0" text-anchor="middle">sinks</text></a></g><g class="m"><title>Differential Transformer — arXiv v1 2024-10-07</title><a href="#diff-transformer"><circle class="dot" cx="834.6" cy="210.0" r="5" fill="var(--s2)"/><text class="vzs" x="834.6" y="196.0" text-anchor="middle">Diff Tf</text></a></g><g class="m"><title>Native Sparse Attention (NSA) — arXiv v1 2025-02-16</title><a href="#nsa"><line x1="859.1" y1="187.0" x2="859.1" y2="204.0" stroke="var(--s1)" stroke-width="1" opacity=".5"/><circle class="dot" cx="859.1" cy="210.0" r="5" fill="var(--s1)"/><text class="vzs" x="859.1" y="184.0" text-anchor="middle">NSA</text></a></g><line class="conn" x1="900.9" y1="210.0" x2="900.9" y2="210.0" stroke="var(--s1)"/><circle class="dot" cx="900.9" cy="210.0" r="4.5" fill="var(--vsurf)" stroke="var(--s1)"/><g class="m"><title>DeepSeek Sparse Attention (the lightning indexer) — arXiv v1 2025-09-29, shipped 2025-09-29 (date bounded, not exact)</title><a href="#dsa"><circle class="dot" cx="900.9" cy="210.0" r="5" fill="var(--s1)"/><text class="vzs" x="900.9" y="196.0" text-anchor="middle">DSA</text></a></g><line class="grid" x1="104" y1="300.0" x2="986" y2="300.0" opacity=".5"/><text class="vzlane" x="92" y="285.0" text-anchor="end">KV cache</text><line class="conn" x1="500.7" y1="282.0" x2="709.2" y2="282.0" stroke="var(--s1)"/><circle class="dot" cx="709.2" cy="282.0" r="4.5" fill="var(--vsurf)" stroke="var(--s1)"/><g class="m"><title>Multi-query attention (MQA) — arXiv v1 2019-11-06, shipped 2022-12-02</title><a href="#mqa"><circle class="dot" cx="500.7" cy="282.0" r="5" fill="var(--s1)"/><text class="vzs" x="500.7" y="268.0" text-anchor="middle">MQA</text></a></g><line class="conn" x1="740.9" y1="282.0" x2="751.5" y2="282.0" stroke="var(--s1)"/><circle class="dot" cx="751.5" cy="282.0" r="4.5" fill="var(--vsurf)" stroke="var(--s1)"/><g class="m"><title>Grouped-query attention (GQA) — arXiv v1 2023-05-22, shipped 2023-07-18</title><a href="#gqa"><circle class="dot" cx="740.9" cy="282.0" r="5" fill="var(--s1)"/><text class="vzs" x="740.9" y="268.0" text-anchor="middle">GQA</text></a></g><line class="conn" x1="806.1" y1="282.0" x2="803.4" y2="282.0" stroke="var(--s1)"/><circle class="dot" cx="803.4" cy="282.0" r="4.5" fill="var(--vsurf)" stroke="var(--s1)"/><g class="m"><title>Multi-head latent attention (MLA) — arXiv v1 2024-05-07, shipped 2024-04-22</title><a href="#mla"><circle class="dot" cx="806.1" cy="282.0" r="5" fill="var(--s1)"/><text class="vzs" x="806.1" y="268.0" text-anchor="middle">MLA</text></a></g><line class="grid" x1="104" y1="372.0" x2="986" y2="372.0" opacity=".5"/><text class="vzlane" x="92" y="357.0" text-anchor="end">recurrent state</text><g class="m"><title>Segment-level recurrence (Transformer-XL) — arXiv v1 2019-01-09</title><a href="#transformer-xl"><circle class="dot" cx="444.8" cy="354.0" r="5" fill="var(--s2)"/><text class="vzs" x="444.8" y="340.0" text-anchor="middle">Tf-XL</text></a></g><g class="m"><title>Compressive memory — arXiv v1 2019-11-13</title><a href="#compressive-transformer"><circle class="dot" cx="502.0" cy="354.0" r="5" fill="var(--s2)"/><text class="vzs" x="502.0" y="340.0" text-anchor="middle">Compressive</text></a></g><g class="m"><title>Linear attention — arXiv v1 2020-06-29</title><a href="#linear-attention"><line x1="544.5" y1="331.0" x2="544.5" y2="348.0" stroke="var(--s1)" stroke-width="1" opacity=".5"/><circle class="dot" cx="544.5" cy="354.0" r="5" fill="var(--s1)"/><text class="vzs" x="544.5" y="328.0" text-anchor="middle">linear</text></a></g><g class="m"><title>The delta rule (fast-weight programmers) — arXiv v1 2021-02-22</title><a href="#delta-rule"><circle class="dot" cx="588.8" cy="354.0" r="5" fill="var(--s1)"/><text class="vzs" x="588.8" y="340.0" text-anchor="middle">delta rule</text></a></g><g class="m"><title>Recurrent memory tokens (RMT) — arXiv v1 2022-07-14</title><a href="#rmt"><circle class="dot" cx="683.0" cy="354.0" r="5" fill="var(--s2)"/><text class="vzs" x="683.0" y="340.0" text-anchor="middle">RMT</text></a></g><g class="m"><title>Mamba (selective state space) — arXiv v1 2023-12-01</title><a href="#mamba"><circle class="dot" cx="776.8" cy="354.0" r="5" fill="var(--s2)"/><text class="vzs" x="776.8" y="340.0" text-anchor="middle">Mamba</text></a></g><g class="m"><title>DeltaNet, parallelised — arXiv v1 2024-06-10</title><a href="#deltanet-parallel"><line x1="812.5" y1="331.0" x2="812.5" y2="348.0" stroke="var(--s1)" stroke-width="1" opacity=".5"/><circle class="dot" cx="812.5" cy="354.0" r="5" fill="var(--s1)"/><text class="vzs" x="812.5" y="328.0" text-anchor="middle">DeltaNet-P</text></a></g><g class="m"><title>Gated DeltaNet — arXiv v1 2024-12-09</title><a href="#gated-deltanet"><circle class="dot" cx="846.3" cy="354.0" r="5" fill="var(--s1)"/><text class="vzs" x="846.3" y="340.0" text-anchor="middle">Gated Delta</text></a></g><g class="m"><title>Memory Stream (cross-chunk state, LightningLM V4) — arXiv v1 2026-08-15 (date bounded, not exact)</title><a href="#memory-stream"><circle class="dot" cx="960.4" cy="354.0" r="5" fill="var(--s2)"/><text class="vzs" x="960.4" y="340.0" text-anchor="middle">Memory Stream</text></a></g><line class="grid" x1="104" y1="444.0" x2="986" y2="444.0" opacity=".5"/><text class="vzlane" x="92" y="429.0" text-anchor="end">composition</text><line class="conn" x1="793.5" y1="426.0" x2="798.7" y2="426.0" stroke="var(--s2)"/><circle class="dot" cx="798.7" cy="426.0" r="4.5" fill="var(--vsurf)" stroke="var(--s2)"/><g class="m"><title>Hybrid depth schedules (interleaved layer types) — arXiv v1 2024-02-29, shipped 2024-03-28</title><a href="#hybrid-schedule"><circle class="dot" cx="793.5" cy="426.0" r="5" fill="var(--s2)"/><text class="vzs" x="793.5" y="412.0" text-anchor="middle">hybrid sched</text></a></g><line class="grid" x1="104" y1="516.0" x2="986" y2="516.0" opacity=".5"/><text class="vzlane" x="92" y="501.0" text-anchor="end">context scaling</text><line class="conn" x1="747.4" y1="498.0" x2="747.4" y2="498.0" stroke="var(--s1)"/><circle class="dot" cx="747.4" cy="498.0" r="4.5" fill="var(--vsurf)" stroke="var(--s1)"/><g class="m"><title>NTK-aware scaled RoPE — arXiv v1 2023-06-26, shipped 2023-06-26 (date bounded, not exact)</title><a href="#ntk-aware"><circle class="dot" cx="747.4" cy="498.0" r="5" fill="var(--s1)"/><text class="vzs" x="747.4" y="484.0" text-anchor="middle">NTK-aware</text></a></g><g class="m"><title>Position Interpolation (PI) — arXiv v1 2023-06-27</title><a href="#position-interpolation"><line x1="747.6" y1="475.0" x2="747.6" y2="499.0" stroke="var(--s2)" stroke-width="1" opacity=".5"/><circle class="dot" cx="747.6" cy="505.0" r="5" fill="var(--s2)"/><text class="vzs" x="747.6" y="472.0" text-anchor="middle">PI</text></a></g><line class="conn" x1="759.7" y1="498.0" x2="759.7" y2="498.0" stroke="var(--s1)"/><circle class="dot" cx="759.7" cy="498.0" r="4.5" fill="var(--vsurf)" stroke="var(--s1)"/><g class="m"><title>YaRN — arXiv v1 2023-08-31, shipped 2023-08-31</title><a href="#yarn"><line x1="759.7" y1="463.0" x2="759.7" y2="492.0" stroke="var(--s1)" stroke-width="1" opacity=".5"/><circle class="dot" cx="759.7" cy="498.0" r="5" fill="var(--s1)"/><text class="vzs" x="759.7" y="460.0" text-anchor="middle">YaRN</text></a></g><g class="m"><title>DroPE (dropping positional embeddings) — arXiv v1 2025-12-13</title><a href="#drope"><circle class="dot" cx="914.8" cy="498.0" r="5" fill="var(--s1)"/><text class="vzs" x="914.8" y="484.0" text-anchor="middle">DroPE</text></a></g><line class="grid" x1="104" y1="588.0" x2="986" y2="588.0" opacity=".5"/><text class="vzlane" x="92" y="573.0" text-anchor="end">systems</text><line class="conn" x1="674.0" y1="570.0" x2="672.6" y2="570.0" stroke="var(--s2)"/><circle class="dot" cx="672.6" cy="570.0" r="4.5" fill="var(--vsurf)" stroke="var(--s2)"/><g class="m"><title>FlashAttention — arXiv v1 2022-05-27, shipped 2022-05-19</title><a href="#flashattention"><circle class="dot" cx="674.0" cy="570.0" r="5" fill="var(--s2)"/><text class="vzs" x="674.0" y="556.0" text-anchor="middle">FlashAttn</text></a></g><g class="m"><title>Ring Attention — arXiv v1 2023-10-03</title><a href="#ring-attention"><circle class="dot" cx="765.8" cy="570.0" r="5" fill="var(--s2)"/><text class="vzs" x="765.8" y="556.0" text-anchor="middle">Ring</text></a></g></svg><figcaption>Position on the axis is the real date, so the spacing is the story. Family is the lane, not the colour. The connectors are the gap between a paper and its first well-known deployment &mdash; read them left to right and watch them shorten. Every dot links to its card below.</figcaption></figure>
+<div id="ctl" style="gap:.6rem;align-items:center;font-family:system-ui,sans-serif;font-size:.85rem;margin:1.2rem 0">
+<label for="fam">Filter:</label>
+<select id="fam"><option value="all">all 34 mechanisms</option>
+<option value="added">the 13 we added</option>
+<option value="foundation">foundation</option><option value="position">position</option><option value="sparsity">sparsity</option><option value="cache">KV cache</option><option value="recurrent">recurrent state</option><option value="composition">composition</option><option value="scaling">context scaling</option><option value="systems">systems</option></select>
+<span style="color:var(--mut)">Order stays chronological.</span></div><h2 class="era">2014-2016 &mdash; attention before the Transformer</h2>
+<article class="card added" data-family="foundation" data-added="1" id="bahdanau">
+<h3>Additive attention (Bahdanau)</h3>
+<div class="meta"><span class="date">2014-09-01</span><span class="tag">foundation</span><span class="tag add">added &mdash; not on the required list</span></div>
+<dl class="qa">
+<dt>the problem at that moment</dt><dd>Sequence-to-sequence translation squeezed an entire source sentence into one fixed-length vector. Long sentences degraded badly, because the vector had no more room for the fiftieth word than the fifth.</dd>
+<dt>mechanism</dt><dd>Let the decoder compute a weighted sum over all encoder states at every output step, with weights from a small feed-forward network scoring (decoder state, encoder state) pairs.</dd>
+<dt>what it buys</dt><dd>Removes the fixed-length bottleneck. Translation quality stops falling off with sentence length.</dd>
+<dt>what it gives up</dt><dd class="cost">Cost becomes O(n*m) in source and target length instead of O(n). The scoring network is an extra set of parameters trained per model, and it is sequential: the RNN still has to run step by step.</dd>
+<dt>when you would actually pick it</dt><dd>Historical. You would not build this today, but every mechanism after it is a variation on the weighted sum it introduced.</dd>
+</dl>
+<div class="note"><b>Why this card is here.</b> Not in the required list, and it belongs at the very start: attention predates the Transformer by two years and nine months. Opening the timeline in 2017 would imply the weighted sum was invented there. It was not — what 2017 added was dropping the RNN around it.</div>
+<div class="src">Date source: arXiv v1, confirmed via arXiv API<br>
+<a href="https://arxiv.org/abs/1409.0473">https://arxiv.org/abs/1409.0473</a></div>
+</article>
+<article class="card added" data-family="foundation" data-added="1" id="luong">
+<h3>Multiplicative / dot-product attention (Luong)</h3>
+<div class="meta"><span class="date">2015-08-17</span><span class="tag">foundation</span><span class="tag add">added &mdash; not on the required list</span></div>
+<dl class="qa">
+<dt>the problem at that moment</dt><dd>Bahdanau's scoring network was a trained MLP evaluated for every source-target pair. That is a lot of small matrix work for what is conceptually a similarity.</dd>
+<dt>mechanism</dt><dd>Replace the scoring MLP with a plain dot product between decoder and encoder states (optionally with a learned matrix in between).</dd>
+<dt>what it buys</dt><dd>The score becomes a single matmul, which hardware is extremely good at. No extra scoring parameters in the simplest form.</dd>
+<dt>what it gives up</dt><dd class="cost">Dot products grow with vector dimension, so the scores can get large and push softmax into saturation. The paper does not yet fix this.</dd>
+<dt>when you would actually pick it</dt><dd>Historical, but this is the exact operation Session 2's scaled dot-product attention inherits. The scaling factor added two years later exists to patch the flaw this card introduces.</dd>
+<dt>answers / builds on</dt><dd>End-To-End Memory Networks (arXiv 1503.08895) — softmax over inner products, five months earlier <span style="color:var(--mut)">(2015-03-31)</span>; Bahdanau additive attention <span style="color:var(--mut)">(2014-09-01)</span></dd></dl>
+<div class="note"><b>Why this card is here.</b> Not in the required list. It belongs immediately before the Transformer because this is where the score becomes a dot product — the exact operation Session 2 teaches. The sqrt(d_k) divisor in the standard formula is a patch on a flaw this card introduces.</div>
+<div class="src">Date source: arXiv v1, confirmed via arXiv API<br>
+<a href="https://arxiv.org/abs/1508.04025">https://arxiv.org/abs/1508.04025</a></div>
+</article>
+<article class="card" data-family="position" data-added="0" id="learned-abs">
+<h3>Absolute learned position embeddings</h3>
+<div class="meta"><span class="date">2016-11-07</span><span class="tag">position</span></div>
+<dl class="qa">
+<dt>the problem at that moment</dt><dd>A weighted sum over positions is order-blind: shuffle the input and the output is unchanged. Convolutional and attentional encoders both needed position put back in by hand.</dd>
+<dt>mechanism</dt><dd>Keep a trainable lookup table with one vector per absolute position, and add it to the token embedding.</dd>
+<dt>what it buys</dt><dd>Maximum flexibility: the model learns whatever positional structure the data actually has, with no assumption baked in.</dd>
+<dt>what it gives up</dt><dd class="cost">The table has a fixed number of rows. Position 4097 in a 4096-row table does not exist, so the model cannot run one token past its trained length. Positions that were rare in training get undertrained rows.</dd>
+<dt>when you would actually pick it</dt><dd>Short, fixed-length inputs where you will never need to extrapolate — classification heads, fixed-size encoders. Every long-context method on this timeline exists because this card's ceiling is hard.</dd>
+</dl>
+<div class="note"><b>Why this card is here.</b> This predates *Attention Is All You Need* by seven months. <strong>We moved this date during review.</strong> It first sat at ConvS2S (1705.03122, 2017-05-08), the paper usually cited for learned absolute positions — but that card's own antecedent line named an earlier Gehring paper that already used them, and on a page whose thesis is that the date is the argument, citing the famous instance over the first one is exactly the error we are trying to avoid.</div>
+<div class="src">Date source: arXiv v1 (Gehring et al., A Convolutional Encoder Model for Neural Machine Translation), confirmed via arXiv API<br>
+<a href="https://arxiv.org/abs/1611.02344">https://arxiv.org/abs/1611.02344</a></div>
+</article>
+<h2 class="era">2017 &mdash; the architecture, and the bill it created</h2>
+<article class="card" data-family="foundation" data-added="0" id="standard">
+<h3>Scaled dot-product attention</h3>
+<div class="meta"><span class="date">2017-06-12</span><span class="tag">foundation</span></div>
+<dl class="qa">
+<dt>the problem at that moment</dt><dd>Attention still rode on top of a recurrent encoder, so training could not be parallelised across sequence positions. And Luong's raw dot products saturated softmax at high dimension.</dd>
+<dt>mechanism</dt><dd>Q x K^T, divide by sqrt(d_k), mask, softmax, multiply by V. Drop the RNN entirely and stack this with feed-forward layers. Multiple heads run the whole thing in parallel subspaces.</dd>
+<dt>what it buys</dt><dd>Every position attends to every other in one parallel operation. Training parallelises across the sequence, which is what made scale possible at all. The sqrt(d_k) divisor keeps softmax out of saturation.</dd>
+<dt>what it gives up</dt><dd class="cost">Two separate bills. Compute is O(n^2 d) for the score matrix. Memory at decode time is the KV cache, which grows linearly with sequence length and with batch size, and never shrinks. Everything below is somebody paying one of these two bills down.</dd>
+<dt>when you would actually pick it</dt><dd>Always the baseline, and still correct for short contexts. Below about 2K tokens the quadratic term is not what hurts you.</dd>
+<dt>answers / builds on</dt><dd>Luong dot-product attention <span style="color:var(--mut)">(2015-08-17)</span>; Bahdanau additive attention <span style="color:var(--mut)">(2014-09-01)</span></dd><dt>numbers</dt><dd>O(n^2 d) compute, O(n) cache per layer per sequence &mdash; <em>stated</em>, lesson section 3, 'The two bills attention sends'</dd></dl>
+
+<div class="src">Date source: arXiv v1, confirmed via arXiv API<br>
+<a href="https://arxiv.org/abs/1706.03762">https://arxiv.org/abs/1706.03762</a></div>
+</article>
+<article class="card" data-family="position" data-added="0" id="sinusoidal">
+<h3>Sinusoidal position encoding</h3>
+<div class="meta"><span class="date">2017-06-12</span><span class="tag">position</span></div>
+<dl class="qa">
+<dt>the problem at that moment</dt><dd>A learned position table cannot produce a vector for a position it never saw in training.</dd>
+<dt>mechanism</dt><dd>Compute the position vector from a fixed formula: sines and cosines at geometrically spaced frequencies. No parameters at all.</dd>
+<dt>what it buys</dt><dd>Defined at every position, including ones never trained on. Free in parameters. Neighbouring positions get similar encodings, and offsets are expressible as linear functions of the encoding.</dd>
+<dt>what it gives up</dt><dd class="cost">Defined is not the same as useful. The model still only learned to interpret the frequency patterns it actually met during training, so quality degrades past trained length even though the formula keeps returning numbers. It is also added to the input once, so the positional signal has to survive every layer.</dd>
+<dt>when you would actually pick it</dt><dd>When you want extrapolation to at least be defined and you do not want positional parameters. Superseded in practice by RoPE, which injects position at every attention layer rather than once at the input.</dd>
+<dt>answers / builds on</dt><dd>Absolute learned positions <span style="color:var(--mut)">(2016-11-07)</span></dd></dl>
+<div class="note"><b>Why this card is here.</b> Same paper, same day, as standard attention. On a date-sorted timeline these two are one event, which is itself the point: the Transformer shipped its position problem and its position patch simultaneously, and the patch was the weaker half.</div>
+<div class="src">Date source: arXiv v1, same paper as scaled dot-product attention<br>
+<a href="https://arxiv.org/abs/1706.03762">https://arxiv.org/abs/1706.03762</a></div>
+</article>
+<h2 class="era">2019-2020 &mdash; the first wave: stop computing every pair</h2>
+<article class="card added" data-family="recurrent" data-added="1" id="transformer-xl">
+<h3>Segment-level recurrence (Transformer-XL)</h3>
+<div class="meta"><span class="date">2019-01-09</span><span class="tag">recurrent state</span><span class="tag add">added &mdash; not on the required list</span></div>
+<dl class="qa">
+<dt>the problem at that moment</dt><dd>Train on long documents by cutting them into fixed-length segments and every segment starts cold. Context is destroyed at every boundary, and a token cannot see one position past the cut. This is context fragmentation.</dd>
+<dt>mechanism</dt><dd>Cache the previous segment's hidden states and let the current segment attend to them, but write the cache under <strong>stop-gradient</strong> so the loss never back-propagates across the boundary. Relative position encoding is required to make the reused states meaningful at their new offsets.</dd>
+<dt>what it buys</dt><dd>Dependencies that outlive the segment, roughly 4.5x longer effective dependency than a vanilla Transformer, and much faster evaluation because segments are not recomputed from scratch. Stop-gradient keeps the *backward* graph from crossing the boundary — but the cached hidden states are real activation memory at every layer, which is why how many segments you cache is a tuning knob.</dd>
+<dt>what it gives up</dt><dd class="cost">Activation memory grows with how many segments you keep, so the context is bought with GPU memory rather than for free. Gradients stop at the boundary, so the model never learns to *write* a state that will be useful later — it only learns to read whatever happens to be there. The recurrence is also sequential across segments, which limits training parallelism.</dd>
+<dt>when you would actually pick it</dt><dd>Any time you process a document in chunks and need something to cross the seam. This is the mechanism the course's Memory Stream is a compressed, O(1) descendant of.</dd>
+<dt>answers / builds on</dt><dd>Scaled dot-product attention <span style="color:var(--mut)">(2017-06-12)</span></dd></dl>
+<div class="note"><b>Why this card is here.</b> Not in the required list, and the one omission that most needed fixing: lesson section 14, 'State that outlives the window', teaches cross-chunk state with stop-gradient as V4's Memory Stream. This is that mechanism's dated public ancestor, stop-gradient and all, seven years earlier.</div>
+<div class="src">Date source: arXiv v1 (Dai et al., Transformer-XL), confirmed via arXiv API<br>
+<a href="https://arxiv.org/abs/1901.02860">https://arxiv.org/abs/1901.02860</a></div>
+</article>
+<article class="card" data-family="sparsity" data-added="0" id="sparse-transformer">
+<h3>Sparse attention (strided / fixed patterns)</h3>
+<div class="meta"><span class="date">2019-04-23</span><span class="tag">sparsity</span></div>
+<dl class="qa">
+<dt>the problem at that moment</dt><dd>The n^2 score matrix became the binding constraint the moment anyone wanted images or long documents. At 16K tokens the matrix alone is 268M entries per head per layer.</dd>
+<dt>mechanism</dt><dd>Do not compute every pair. Attend only along fixed patterns — a local band plus a strided set of columns — chosen so that any two positions are connected within two hops.</dd>
+<dt>what it buys</dt><dd>Drops cost from O(n^2) to O(n*sqrt(n)). Made 16K-token sequences trainable in 2019 hardware budgets.</dd>
+<dt>what it gives up</dt><dd class="cost">The pattern is fixed before you see the data, so a genuinely long-range dependency the pattern does not cover is unreachable in one layer. Child et al. do report their own sparse kernels beating dense on their benchmarks — the broader problem is that hand-written sparse kernels across the field generally ran below dense matmul efficiency, which is why dense attention stayed the default until FlashAttention made exactness cheap.</dd>
+<dt>when you would actually pick it</dt><dd>When the sequence has known structure — images, audio, code with local scope — so a hand-chosen pattern is actually a good prior. This card is the origin of both sliding-window attention and every learned-sparsity method below.</dd>
+<dt>answers / builds on</dt><dd>Scaled dot-product attention <span style="color:var(--mut)">(2017-06-12)</span></dd><dt>numbers</dt><dd>O(n*sqrt(n)) attention cost &mdash; <em>stated</em>, Child et al. 2019, abstract</dd></dl>
+
+<div class="src">Date source: arXiv v1 (Child et al., Generating Long Sequences with Sparse Transformers), confirmed via arXiv API<br>
+<a href="https://arxiv.org/abs/1904.10509">https://arxiv.org/abs/1904.10509</a></div>
+</article>
+<article class="card" data-family="cache" data-added="0" id="mqa">
+<h3>Multi-query attention (MQA)</h3>
+<div class="meta"><span class="date">2019-11-06</span><span class="tag">KV cache</span><span class="tag ship">shipped 2022-12-02</span></div>
+<dl class="qa">
+<dt>the problem at that moment</dt><dd>The second bill. At decode time you reload the entire KV cache for every single token you generate. That is memory bandwidth, not compute, and it is what actually limits tokens per second.</dd>
+<dt>mechanism</dt><dd>Keep all the query heads, but give every head one shared key head and one shared value head instead of its own.</dd>
+<dt>what it buys</dt><dd>Divides the KV cache by the number of heads — a 32-head model gets a 32x smaller cache, so decoding stops being bandwidth-starved and batch sizes can grow.</dd>
+<dt>what it gives up</dt><dd class="cost">A quality cost. All heads must now agree on what to retrieve, which removes the representational diversity multi-head attention exists for. Shazeer characterises the degradation as <strong>minor</strong> — "only minor quality degradation"; the harsher reading, quality loss plus training instability, comes from the GQA paper four years later, which is also where the case for an intermediate point is made.</dd>
+<dt>when you would actually pick it</dt><dd>Aggressive decode-throughput targets on a small model where you can afford the quality hit. Superseded by GQA, which recovers most of the quality for most of the saving.</dd>
+<dt>answers / builds on</dt><dd>Scaled dot-product attention (its KV cache is the bill MQA attacks) <span style="color:var(--mut)">(2017-06-12)</span></dd><dt>numbers</dt><dd>KV cache divided by the number of heads; "only minor quality degradation" &mdash; <em>stated</em>, Shazeer 2019, abstract</dd></dl>
+<div class="note"><b>Why this card is here.</b> Published November 2019 and then essentially unused for two and a half years. The idea was not waiting on insight; it was waiting on inference cost mattering enough for anyone to accept the quality hit.</div>
+<div class="src">Date source: arXiv v1 (Shazeer, Fast Transformer Decoding: One Write-Head is All You Need), confirmed via arXiv API<br>
+<a href="https://arxiv.org/abs/1911.02150">https://arxiv.org/abs/1911.02150</a><br>Shipped: bigcode/santacoder — the earliest public weights with `attention_head_type: multiquery`. Falcon-7B followed 2023-04-24, Falcon-40B later still &mdash; <a href="https://huggingface.co/bigcode/santacoder">link</a></div>
+</article>
+<article class="card added" data-family="recurrent" data-added="1" id="compressive-transformer">
+<h3>Compressive memory</h3>
+<div class="meta"><span class="date">2019-11-13</span><span class="tag">recurrent state</span><span class="tag add">added &mdash; not on the required list</span></div>
+<dl class="qa">
+<dt>the problem at that moment</dt><dd>Transformer-XL's cache is a FIFO queue: once a state is old enough it falls off the end and is gone entirely. Discarding is a strange choice when the alternative is summarising.</dd>
+<dt>mechanism</dt><dd>Add a second tier. Instead of evicting old memories, compress several of them into one coarser memory and keep that. Recent history stays at full resolution; distant history degrades gracefully rather than vanishing.</dd>
+<dt>what it buys</dt><dd>Much longer effective memory at sublinear cost, and a graceful-degradation curve instead of a cliff. Notably strong on rare words, where the relevant context is often far back.</dd>
+<dt>what it gives up</dt><dd class="cost">The compression function has to be trained with its own auxiliary loss, which is extra machinery that can fail quietly. Compressed memories are lossy by construction, so exact retrieval from the distant past is gone — you traded a hard cutoff for a soft blur.</dd>
+<dt>when you would actually pick it</dt><dd>Long documents where distant context is genuinely useful but does not need to be exact. The two-tier idea reappears directly in the compressed-plus-selected branches of NSA.</dd>
+<dt>answers / builds on</dt><dd>Segment-level recurrence (Transformer-XL) <span style="color:var(--mut)">(2019-01-09)</span></dd></dl>
+<div class="note"><b>Why this card is here.</b> Not in the required list. Included because it is the missing middle between Transformer-XL's discard-the-old cache and the aggressive block compression that DeepSeek's NSA does six years later.</div>
+<div class="src">Date source: arXiv v1 (Rae et al., Compressive Transformers), confirmed via arXiv API<br>
+<a href="https://arxiv.org/abs/1911.05507">https://arxiv.org/abs/1911.05507</a></div>
+</article>
+<article class="card" data-family="sparsity" data-added="0" id="topk">
+<h3>Top-k / explicit sparse attention</h3>
+<div class="meta"><span class="date">2019-12-25</span><span class="tag">sparsity</span></div>
+<dl class="qa">
+<dt>the problem at that moment</dt><dd>Softmax never returns zero. Every irrelevant token still receives some probability mass, which both wastes the budget and dilutes the signal from the tokens that matter.</dd>
+<dt>mechanism</dt><dd>Score everything, then keep only the k highest scores per query and mask the rest to negative infinity before softmax.</dd>
+<dt>what it buys</dt><dd>Concentrates attention mass on genuinely relevant tokens; the paper reports quality improvements, not just savings.</dd>
+<dt>what it gives up</dt><dd class="cost">The hidden cost the lesson's widget makes explicit: you still had to compute all n scores in order to find the top k. Selection is not free, and naive top-k saves no compute at all during training — only the weighted sum gets cheaper. It is also non-differentiable at the selection boundary.</dd>
+<dt>when you would actually pick it</dt><dd>When quality from denoising matters more than compute, or as the selection stage inside a method like NSA that has already reduced the candidate set to something cheap to score.</dd>
+<dt>answers / builds on</dt><dd>Sparse Transformer <span style="color:var(--mut)">(2019-04-23)</span></dd><dt>numbers</dt><dd>all n scores still computed before selection &mdash; <em>stated</em>, lesson section 7 and widget s8_widget_6_sparse_topk</dd></dl>
+
+<div class="src">Date source: arXiv v1 (Zhao et al., Explicit Sparse Transformer), confirmed via arXiv API<br>
+<a href="https://arxiv.org/abs/1912.11637">https://arxiv.org/abs/1912.11637</a></div>
+</article>
+<article class="card" data-family="sparsity" data-added="0" id="sliding-window">
+<h3>Sliding-window attention</h3>
+<div class="meta"><span class="date">2020-04-10</span><span class="tag">sparsity</span><span class="tag ship">shipped 2020-03-31</span></div>
+<dl class="qa">
+<dt>the problem at that moment</dt><dd>Sparse Transformer's strided pattern was awkward to implement and tuned per modality. Documents mostly need local context plus a few global anchors.</dd>
+<dt>mechanism</dt><dd>Each token attends only to a window of w neighbours — w/2 each side in Longformer, which is bidirectional, or the w tokens behind it in the causal decoder form Mistral popularised. Stack L layers and the effective receptive field is L*w, so information still propagates across the whole document, just indirectly.</dd>
+<dt>what it buys</dt><dd>Cost becomes linear in sequence length, O(n*w). The KV cache is bounded by w rather than by n, so it stops growing. Simple to implement and to reason about.</dd>
+<dt>what it gives up</dt><dd class="cost">Exact long-range retrieval. A fact at distance greater than w has to survive being relayed through intermediate layers, and relayed information is lossy — this is why sliding-window models fail 'needle in a haystack' tests at distances a full-attention model handles. Longformer patched it with a handful of global-attention tokens.</dd>
+<dt>when you would actually pick it</dt><dd>Streaming or chat workloads where recent context dominates and you need a bounded cache. Wrong for an agent that must retrieve an exact token from 500K back.</dd>
+<dt>answers / builds on</dt><dd>Sparse Transformer local band <span style="color:var(--mut)">(2019-04-23)</span>; Image Transformer local attention (arXiv 1802.05751) <span style="color:var(--mut)">(2018-02-15)</span></dd><dt>numbers</dt><dd>theoretical receptive field = layers x window &mdash; <em>stated</em>, Beltagy et al. 2020 (stated for the bidirectional case, where each token sees w/2 per side; the causal Mistral variant sees w tokens behind)</dd></dl>
+<div class="note"><b>Why this card is here.</b> Longformer released its own code before the paper, so 'shipped' here is 10 days negative. What actually took three and a half years was adoption <strong>in a decoder</strong>: Mistral 7B's weights landed 2023-09-20 (HF API), 1,258 days after Longformer. Longformer was an encoder for documents; Mistral made the sliding window a decoder default. Those are two different events and the timeline shows the first.</div>
+<div class="src">Date source: arXiv v1 (Beltagy et al., Longformer), confirmed via arXiv API<br>
+<a href="https://arxiv.org/abs/2004.05150">https://arxiv.org/abs/2004.05150</a><br>Shipped: allenai/longformer reference code, 10 days BEFORE the paper &mdash; <a href="https://github.com/allenai/longformer">link</a></div>
+</article>
+<article class="card" data-family="recurrent" data-added="0" id="linear-attention">
+<h3>Linear attention</h3>
+<div class="meta"><span class="date">2020-06-29</span><span class="tag">recurrent state</span></div>
+<dl class="qa">
+<dt>the problem at that moment</dt><dd>Sparsity picks which pairs to skip. The other option is to change the algebra so you never form the n x n matrix at all.</dd>
+<dt>mechanism</dt><dd>Replace softmax(QK^T)V with a kernel feature map: phi(Q)(phi(K)^T V), carrying a running sum of phi(k) as the normaliser. Matrix multiplication is associative, so computing K^T V first gives a d x d state instead of an n x n matrix. Decoding becomes a recurrent update of that fixed-size state.</dd>
+<dt>what it buys</dt><dd>O(n) training and O(1) memory per decode step. The KV cache disappears entirely — it is replaced by one fixed-size state matrix regardless of sequence length.</dd>
+<dt>what it gives up</dt><dd class="cost">Softmax. And softmax was doing real work: it makes attention selective, so one token can dominate. Without it every write is added into the same state and old contributions are never removed, so the state saturates and recall degrades on long sequences. Quality was well below full attention for years.</dd>
+<dt>when you would actually pick it</dt><dd>Very long sequences where a bounded state is a hard requirement and approximate recall is acceptable. The delta rule and Gated DeltaNet below are both attempts to fix exactly the saturation problem this card creates.</dd>
+<dt>answers / builds on</dt><dd>Scaled dot-product attention (removes its softmax) <span style="color:var(--mut)">(2017-06-12)</span>; Sparse attention (the other answer to the same bill) <span style="color:var(--mut)">(2019-04-23)</span></dd><dt>numbers</dt><dd>O(n) vs O(n^2); fixed d x d state replaces the KV cache &mdash; <em>stated</em>, lesson sections 4-5; widgets s8_widget_3_softmax_removed and s8_widget_4_state_matrix</dd></dl>
+
+<div class="src">Date source: arXiv v1 (Katharopoulos et al., Transformers are RNNs), confirmed via arXiv API<br>
+<a href="https://arxiv.org/abs/2006.16236">https://arxiv.org/abs/2006.16236</a></div>
+</article>
+<h2 class="era">2021-2022 &mdash; position becomes the problem; exactness gets cheap</h2>
+<article class="card" data-family="recurrent" data-added="0" id="delta-rule">
+<h3>The delta rule (fast-weight programmers)</h3>
+<div class="meta"><span class="date">2021-02-22</span><span class="tag">recurrent state</span></div>
+<dl class="qa">
+<dt>the problem at that moment</dt><dd>Linear attention's state is a running sum. Writing a new key-value pair does not erase whatever was previously stored at that key, so the state accumulates interference until it stops being readable.</dd>
+<dt>mechanism</dt><dd>Before writing, read what the state currently returns for this key, and write only the difference between what you want and what is already there. This is the Widrow-Hoff delta rule from 1960, applied to the attention state.</dd>
+<dt>what it buys</dt><dd>Bounded, non-saturating memory. Updating a key overwrites rather than superimposes, so capacity stops degrading with sequence length.</dd>
+<dt>what it gives up</dt><dd class="cost">The update becomes sequential — each step depends on reading the state the previous step wrote — which breaks the parallel training that made Transformers trainable at scale. That is the blocker, and it took three more years to solve.</dd>
+<dt>when you would actually pick it</dt><dd>Whenever you use a linear-attention state at all; the plain running sum is strictly worse. But it was not practical until the parallel formulation below.</dd>
+<dt>answers / builds on</dt><dd>Schmidhuber's fast weight programmers (1992) — the paper's framing <span style="color:var(--mut)">(1992)</span>; Widrow-Hoff delta rule (1960), pre-arXiv <span style="color:var(--mut)">(1960)</span>; Linear attention <span style="color:var(--mut)">(2020-06-29)</span></dd></dl>
+
+<div class="src">Date source: arXiv v1 (Schlag et al., Linear Transformers Are Secretly Fast Weight Programmers), confirmed via arXiv API<br>
+<a href="https://arxiv.org/abs/2102.11174">https://arxiv.org/abs/2102.11174</a></div>
+</article>
+<article class="card" data-family="position" data-added="0" id="rope">
+<h3>RoPE (rotary position embedding)</h3>
+<div class="meta"><span class="date">2021-04-20</span><span class="tag">position</span><span class="tag ship">shipped 2021-03-22</span></div>
+<dl class="qa">
+<dt>the problem at that moment</dt><dd>Both absolute schemes add position to the input once and hope it survives. What attention actually needs is the relative distance between two tokens, and adding absolute vectors expresses that only indirectly.</dd>
+<dt>mechanism</dt><dd>Do not add anything. Rotate each query and key vector by an angle proportional to its position, in 2D pairs of dimensions at geometrically spaced frequencies. The dot product between a rotated query and a rotated key then depends on position only through the difference m-n. <strong>Not every dimension has to be rotated.</strong> Many implementations rotate only part of each head and leave the rest unchanged — the lesson flags this as the implementation detail people most often miss, and gives DeepSeek-V4 applying RoPE to only the last 64 dimensions as the example. Unrotated dimensions carry content with no positional signal at all, which is what makes MLA's decoupled RoPE path below possible.</dd>
+<dt>what it buys</dt><dd>Relative position falls out of the algebra exactly, with zero parameters, applied at every attention layer rather than once at the input. Defined at any position.</dd>
+<dt>what it gives up</dt><dd class="cost">The frequencies are fixed at training time. Beyond the trained length, low-frequency dimensions enter rotation ranges the model has never interpreted, and quality collapses even though the formula is still defined. Every scaling method below exists to patch this one sentence.</dd>
+<dt>when you would actually pick it</dt><dd>Default for any decoder today. The question is not whether to use RoPE but which scaling scheme you pair with it.</dd>
+<dt>answers / builds on</dt><dd>Sinusoidal encoding <span style="color:var(--mut)">(2017-06-12)</span></dd><dt>numbers</dt><dd>position enters as rotation angle, dot product depends on (m-n) &mdash; <em>stated</em>, lesson section 8; widget s8_widget_7_rope</dd><dd>partial rotation: DeepSeek-V4 rotates only the last 64 dimensions of each head &mdash; <em>stated</em>, lesson section 8, 'The implementation detail people often miss'</dd></dl>
+
+<div class="src">Date source: arXiv v1 (Su et al., RoFormer), confirmed via arXiv API<br>
+<a href="https://arxiv.org/abs/2104.09864">https://arxiv.org/abs/2104.09864</a><br>Shipped: ZhuiyiTechnology/roformer — the authors' own reference code, 29 days BEFORE the paper &mdash; <a href="https://github.com/ZhuiyiTechnology/roformer">link</a></div>
+</article>
+<article class="card" data-family="position" data-added="0" id="alibi">
+<h3>ALiBi (attention with linear biases)</h3>
+<div class="meta"><span class="date">2021-08-27</span><span class="tag">position</span><span class="tag ship">shipped 2021-08-24</span></div>
+<dl class="qa">
+<dt>the problem at that moment</dt><dd>RoPE, four months old at this point, still degrades past trained length. Maybe encoding position as a vector transformation is the wrong idea entirely.</dd>
+<dt>mechanism</dt><dd>Do not encode position in the vectors at all. Subtract a penalty proportional to distance directly from the attention scores, with a different fixed slope per head.</dd>
+<dt>what it buys</dt><dd>Genuine length extrapolation: train at 1K, run at 2K+ with perplexity holding. No positional parameters, and almost no compute.</dd>
+<dt>what it gives up</dt><dd class="cost">A hard recency prior baked into every head. The penalty grows without bound, so a token far enough back is effectively unreachable no matter how relevant it is. This makes ALiBi poor at exact long-range retrieval — the model degrades gracefully rather than remembering.</dd>
+<dt>when you would actually pick it</dt><dd>Long-form generation where relevance really does decay with distance and you value extrapolation over retrieval. Wrong for retrieval-heavy agent workloads. Largely displaced by RoPE plus scaling, which keeps the retrieval ability.</dd>
+<dt>answers / builds on</dt><dd>RoPE <span style="color:var(--mut)">(2021-04-20)</span></dd></dl>
+<div class="note"><b>Why this card is here.</b> Four months after RoPE. The two are not sequential improvements — they are competing answers to the same failure, proposed almost simultaneously, and the field spent the next two years deciding.</div>
+<div class="src">Date source: arXiv v1 (Press et al., Train Short, Test Long), confirmed via arXiv API<br>
+<a href="https://arxiv.org/abs/2108.12409">https://arxiv.org/abs/2108.12409</a><br>Shipped: ofirpress/attention_with_linear_biases — the author's own code, 3 days BEFORE the paper &mdash; <a href="https://github.com/ofirpress/attention_with_linear_biases">link</a></div>
+</article>
+<article class="card added" data-family="systems" data-added="1" id="flashattention">
+<h3>FlashAttention</h3>
+<div class="meta"><span class="date">2022-05-27</span><span class="tag">systems</span><span class="tag add">added &mdash; not on the required list</span><span class="tag ship">shipped 2022-05-19</span></div>
+<dl class="qa">
+<dt>the problem at that moment</dt><dd>Everyone had spent three years approximating attention to avoid the n x n matrix. But the real bottleneck was never the FLOPs — it was writing that matrix to GPU high-bandwidth memory and reading it back.</dd>
+<dt>mechanism</dt><dd>Never materialise the score matrix. Tile Q, K and V into SRAM-sized blocks and compute softmax with a running online normaliser, so the full matrix exists only in fast on-chip memory, block by block.</dd>
+<dt>what it buys</dt><dd>Mathematically exact attention — no approximation, no sparsification, unlike the whole 2019-20 wave — at a fraction of the memory traffic, with memory now linear in sequence length rather than quadratic. Long contexts became affordable without giving anything up mathematically.</dd>
+<dt>what it gives up</dt><dd class="cost">Nothing mathematically, but it is not bit-identical to a reference kernel: tiling changes the order of floating-point accumulation and FP addition is not associative, so low-order bits differ. The real costs are elsewhere — a hand-written CUDA kernel re-tuned per GPU generation and head dimension, and a constraint on what you can do inside attention, since any variant needing the explicit score matrix cannot use it. Compute is still O(n^2).</dd>
+<dt>when you would actually pick it</dt><dd>Always, if a kernel exists for your hardware. Its real timeline role is that it removed most of the motivation for the 2020 approximation wave.</dd>
+<dt>answers / builds on</dt><dd>Rabe &amp; Staats, Self-attention Does Not Need O(n^2) Memory (arXiv 2112.05682) <span style="color:var(--mut)">(2021-12-10)</span>; Milakov &amp; Gimelshein, online softmax (arXiv 1805.02867) <span style="color:var(--mut)">(2018-05-08)</span>; Scaled dot-product attention (keeps it exact) <span style="color:var(--mut)">(2017-06-12)</span></dd><dt>numbers</dt><dd>memory O(n) instead of O(n^2); exact, not approximate &mdash; <em>stated</em>, Dao et al. 2022, abstract</dd></dl>
+<div class="note"><b>Why this card is here.</b> Not in the required list. Included because the timeline is unreadable without it: it explains why Reformer, Linformer, Performer and BigBird all effectively stopped mattering after mid-2022, and why the next wave of savings had to target the cache rather than the score matrix.</div>
+<div class="src">Date source: arXiv v1 (Dao et al.), confirmed via arXiv API<br>
+<a href="https://arxiv.org/abs/2205.14135">https://arxiv.org/abs/2205.14135</a><br>Shipped: Dao-AILab/flash-attention, 8 days BEFORE the paper &mdash; <a href="https://github.com/Dao-AILab/flash-attention">link</a></div>
+</article>
+<article class="card added" data-family="recurrent" data-added="1" id="rmt">
+<h3>Recurrent memory tokens (RMT)</h3>
+<div class="meta"><span class="date">2022-07-14</span><span class="tag">recurrent state</span><span class="tag add">added &mdash; not on the required list</span></div>
+<dl class="qa">
+<dt>the problem at that moment</dt><dd>Transformer-XL carries the previous segment's whole hidden state across the boundary, which is a lot of memory for information the next segment mostly will not use. What if the model could choose a small summary instead?</dd>
+<dt>mechanism</dt><dd>Add a handful of special memory tokens to the input. The model writes whatever it wants into them by the end of a segment, and they are prepended to the next segment as ordinary tokens. The memory is a learned message the model sends to its future self, and it needs no architecture change at all — just extra tokens.</dd>
+<dt>what it buys</dt><dd>O(1) cross-segment state at a size you choose, learned end-to-end, with no modification to the attention implementation. Scales to very long inputs by chaining segments.</dd>
+<dt>what it gives up</dt><dd class="cost">A few tokens is a severe bottleneck — everything the next segment needs must fit through them. Training is sequential across segments and can be unstable, since a bad early write corrupts everything downstream. Exact recall of arbitrary earlier tokens is impossible.</dd>
+<dt>when you would actually pick it</dt><dd>Very long inputs processed in a stream where you can accept a summary rather than exact recall. This is the closest published relative of the course's V4 Memory Stream.</dd>
+<dt>answers / builds on</dt><dd>Segment-level recurrence (Transformer-XL) <span style="color:var(--mut)">(2019-01-09)</span>; Compressive memory <span style="color:var(--mut)">(2019-11-13)</span></dd><dt>numbers</dt><dd>V4 Memory Stream: one model-width vector, injection scale 0.078 rising to ~0.391 by the 2B stage, average injected memory ~6% of embedding magnitude &mdash; <em>stated</em>, lesson section 14 — the course's V4 record, not this paper</dd></dl>
+<div class="note"><b>Why this card is here.</b> Lesson section 14 teaches the V4 Memory Stream: one stop-gradient vector across a chunk boundary, read through a learned gate. That is RMT's idea narrowed to a single vector. The lesson presents it without a public antecedent; this is the antecedent.</div>
+<div class="src">Date source: arXiv v1 (Bulatov et al., Recurrent Memory Transformer), confirmed via arXiv API<br>
+<a href="https://arxiv.org/abs/2207.06881">https://arxiv.org/abs/2207.06881</a></div>
+</article>
+<article class="card added" data-family="position" data-added="1" id="xpos">
+<h3>xPos (length-extrapolatable Transformer)</h3>
+<div class="meta"><span class="date">2022-12-20</span><span class="tag">position</span><span class="tag add">added &mdash; not on the required list</span></div>
+<dl class="qa">
+<dt>the problem at that moment</dt><dd>RoPE's high-frequency dimensions oscillate fast, and at distances beyond training those oscillations produce unstable, high-variance attention scores.</dd>
+<dt>mechanism</dt><dd>Multiply RoPE's rotation by a per-dimension exponential decay, so high-frequency components attenuate with distance while low-frequency ones persist.</dd>
+<dt>what it buys</dt><dd>Stabler extrapolation than plain RoPE without abandoning rotation, and it keeps the relative-position property.</dd>
+<dt>what it gives up</dt><dd class="cost">Requires training with it from the start — it is not a post-hoc fix you can apply to an existing RoPE checkpoint, which is precisely why the 2023 scaling methods below beat it in practice despite being cruder.</dd>
+<dt>when you would actually pick it</dt><dd>Pretraining from scratch with extrapolation as a first-class goal. In practice almost everyone had an existing RoPE checkpoint instead, which is why this card lost.</dd>
+<dt>answers / builds on</dt><dd>RoPE <span style="color:var(--mut)">(2021-04-20)</span>; ALiBi <span style="color:var(--mut)">(2021-08-27)</span></dd></dl>
+<div class="note"><b>Why this card is here.</b> Not in the required list. It matters because it is the last attempt to fix extrapolation at training time; everything after it fixes an already-trained model, and that shift is visible only in date order.</div>
+<div class="src">Date source: arXiv v1 (Sun et al.), confirmed via arXiv API<br>
+<a href="https://arxiv.org/abs/2212.10554">https://arxiv.org/abs/2212.10554</a></div>
+</article>
+<h2 class="era">2023 &mdash; the year the bills came due</h2>
+<article class="card" data-family="cache" data-added="0" id="gqa">
+<h3>Grouped-query attention (GQA)</h3>
+<div class="meta"><span class="date">2023-05-22</span><span class="tag">KV cache</span><span class="tag ship">shipped 2023-07-18</span></div>
+<dl class="qa">
+<dt>the problem at that moment</dt><dd>MQA had been available for three and a half years and nobody used it, because collapsing every key head to one cost too much quality. But the cache bill had by then become the dominant serving cost.</dd>
+<dt>mechanism</dt><dd>Interpolate. Give every group of query heads its own shared key/value head. The number of groups *is* the number of KV heads. Llama 2 70B ships 64 query heads over 8 KV heads: 8 groups of 8 query heads each. MQA is the g=1 corner and full MHA is the g=heads corner.</dd>
+<dt>what it buys</dt><dd>Most of MQA's cache saving with most of MHA's quality. Critically, an existing MHA checkpoint can be uptrained into GQA with a few percent of original compute, so nobody had to retrain.</dd>
+<dt>what it gives up</dt><dd class="cost">Still a real quality loss versus full MHA, just a smaller one, and it is still linear in sequence length — GQA divides the cache by a constant, it does not change its growth rate. At 1M tokens a constant divisor is not enough.</dd>
+<dt>when you would actually pick it</dt><dd>The default baseline for any decoder you intend to serve. The lesson is explicit that it is the baseline rather than the answer, and MLA below is why.</dd>
+<dt>answers / builds on</dt><dd>MQA <span style="color:var(--mut)">(2019-11-06)</span></dd><dt>numbers</dt><dd>cache divided by heads/groups; still O(n) growth &mdash; <em>stated</em>, lesson section 11; widget s8_widget_10_gqa</dd></dl>
+
+<div class="src">Date source: arXiv v1 (Ainslie et al.), confirmed via arXiv API<br>
+<a href="https://arxiv.org/abs/2305.13245">https://arxiv.org/abs/2305.13245</a><br>Shipped: Llama 2's public release. The HF repo was staged 2023-07-11 but gated until launch, so we use the launch &mdash; <a href="https://huggingface.co/meta-llama/Llama-2-70b-hf">link</a></div>
+</article>
+<article class="card" data-family="scaling" data-added="0" id="ntk-aware">
+<h3>NTK-aware scaled RoPE</h3>
+<div class="meta"><span class="date">2023-06-26</span><span class="tag bounded">date bounded, not exact</span><span class="tag">context scaling</span><span class="tag ship">shipped 2023-06-26</span></div>
+<dl class="qa">
+<dt>the problem at that moment</dt><dd>You have a RoPE model trained at 2K and you want 8K tonight, without fine-tuning and without a GPU cluster.</dd>
+<dt>mechanism</dt><dd>Do not interpolate all RoPE frequencies equally. Change the base of the frequency geometric series instead, so low-frequency dimensions get stretched a lot and high-frequency ones barely at all — preserving the fine positional detail that uniform interpolation destroys.</dd>
+<dt>what it buys</dt><dd>Extends context several-fold with zero fine-tuning and minimal perplexity loss. It was usable the day it was posted, which is why adoption was near-immediate.</dd>
+<dt>what it gives up</dt><dd class="cost">It is not purely an interpolation — some dimensions get pushed slightly out of bounds, so if you *do* fine-tune, YaRN's own paper reports it underperforms plain Position Interpolation. It was also published without theory or peer review, and the 'NTK' justification is an analogy rather than a derivation.</dd>
+<dt>when you would actually pick it</dt><dd>You need more context right now on a checkpoint you cannot retrain. If you can fine-tune, use YaRN.</dd>
+<dt>answers / builds on</dt><dd>RoPE <span style="color:var(--mut)">(2021-04-20)</span></dd><dt>numbers</dt><dd>8K+ from a 2K-trained LLaMA with no fine-tuning &mdash; <em>stated</em>, bloc97's post title, as cited in the YaRN bibliography</dd></dl>
+<div class="note"><b>Why this card is here.</b> The only mechanism on this timeline with no paper. It is dated by a GitHub repository and a Reddit thread, and it beat a Meta research paper to the same problem by roughly one day.</div>
+<div class="src">Date source: Reddit post by u/bloc97, no paper. Exact day UNVERIFIED from this environment: reddit.com returns HTTP 403. Bounded below by github.com/jquesnelle/scaled-rope created 2023-06-26T13:27:56Z (GitHub API) and above by bloc97's PR #1 on 2023-07-07T20:40:33Z. Cited as bloc97 [2023a] in the YaRN bibliography, whose first author Bowen Peng IS u/bloc97 — so that citation is effectively primary.<br>
+<a href="https://www.reddit.com/r/LocalLLaMA/comments/14lz7j5/ntkaware_scaled_rope_allows_llama_models_to_have/">https://www.reddit.com/r/LocalLLaMA/comments/14lz7j5/ntkaware_scaled_rope_allows_llama_models_to_have/</a><br>Shipped: jquesnelle/scaled-rope, the reference implementation — the same repository whose creation timestamp we use to bound the Reddit post's date &mdash; <a href="https://github.com/jquesnelle/scaled-rope">link</a></div>
+</article>
+<article class="card added" data-family="scaling" data-added="1" id="position-interpolation">
+<h3>Position Interpolation (PI)</h3>
+<div class="meta"><span class="date">2023-06-27</span><span class="tag">context scaling</span><span class="tag add">added &mdash; not on the required list</span></div>
+<dl class="qa">
+<dt>the problem at that moment</dt><dd>Same problem as NTK-aware, approached from a lab instead of a forum: extend a trained RoPE window without retraining from scratch.</dd>
+<dt>mechanism</dt><dd>Divide every position index by the extension factor, so position 8000 in a 2K-trained model is presented as position 2000. Interpolate rather than extrapolate — stay inside the range the model already understands.</dd>
+<dt>what it buys</dt><dd>Extends LLaMA's window to 32,768 tokens — 16x its pretrained 2,048 — with only ~1000 fine-tuning steps, with a stability argument for why interpolation is safer than extrapolation. Outperforms NTK-aware when you do fine-tune.</dd>
+<dt>what it gives up</dt><dd class="cost">It squashes all frequencies uniformly, which crushes the high-frequency dimensions that encode fine local distance — so adjacent tokens become harder to tell apart. And unlike NTK-aware it does need fine-tuning to work well.</dd>
+<dt>when you would actually pick it</dt><dd>You can afford a short fine-tune and want the better end state. In practice you would now use YaRN, which is explicitly the combination of this card and the one above.</dd>
+<dt>answers / builds on</dt><dd>RoPE <span style="color:var(--mut)">(2021-04-20)</span></dd><dt>numbers</dt><dd>to 32,768 tokens (16x from LLaMA's 2,048) within 1000 fine-tuning steps &mdash; <em>stated</em>, Chen et al. 2023, abstract — the abstract gives the token count, not a multiplier; the 16x is ours</dd></dl>
+<div class="note"><b>Why this card is here.</b> Not in the required list, and its absence breaks the causal chain. YaRN is built from PI and NTK-aware together; without this card, YaRN appears to come from nowhere. Its date — one day after the scaled-rope repo — is the most striking adjacency on the whole timeline.</div>
+<div class="src">Date source: arXiv v1 (Chen et al., Meta), confirmed via arXiv API<br>
+<a href="https://arxiv.org/abs/2306.15595">https://arxiv.org/abs/2306.15595</a></div>
+</article>
+<article class="card" data-family="scaling" data-added="0" id="yarn">
+<h3>YaRN</h3>
+<div class="meta"><span class="date">2023-08-31</span><span class="tag">context scaling</span><span class="tag ship">shipped 2023-08-31</span></div>
+<dl class="qa">
+<dt>the problem at that moment</dt><dd>Two rival scaling methods existed, each better in a different regime, and neither had a theory of which RoPE dimensions should be treated how.</dd>
+<dt>mechanism</dt><dd>Split RoPE dimensions by wavelength relative to the context window. Dimensions whose wavelength is shorter than the window are left alone; dimensions longer than the window are interpolated; the rest blend — 'NTK-by-parts'. Add a temperature adjustment to attention logits to compensate for the distribution shift.</dd>
+<dt>what it buys</dt><dd>Best of both. Extends context with roughly 10x fewer tokens and 2.5x fewer training steps than PI, and works both with and without fine-tuning.</dd>
+<dt>what it gives up</dt><dd class="cost">More hyperparameters — the wavelength boundaries and the temperature all need setting, and the published values are tuned for LLaMA-family models. It is still a post-hoc correction to a positional scheme that was fixed at pretraining time, so it cannot exceed what the base model's attention patterns can support.</dd>
+<dt>when you would actually pick it</dt><dd>The default when you have a RoPE checkpoint and need a longer window. Prefer plain NTK-aware only if you cannot fine-tune at all and need something working tonight; prefer PI only if you want the simplest possible change and can afford the fine-tune. Once you are past roughly 4x extension, or you need retrieval quality to hold across the whole extended window rather than just perplexity, YaRN is the one that still works. It is not the answer if you are pretraining from scratch — then the position scheme itself is the decision.</dd>
+<dt>answers / builds on</dt><dd>Position Interpolation <span style="color:var(--mut)">(2023-06-27)</span>; NTK-aware scaled RoPE <span style="color:var(--mut)">(2023-06-26)</span></dd><dt>numbers</dt><dd>10x fewer tokens, 2.5x fewer steps than PI &mdash; <em>stated</em>, Peng et al. 2023, abstract</dd></dl>
+<div class="note"><b>Why this card is here.</b> Nine weeks after the two methods it unifies. The paper's own stated purpose includes 'making a complete account of the previous unpublished works' — a peer-reviewed paper written partly to document forum posts.</div>
+<div class="src">Date source: arXiv v1 (Peng, Quesnelle, Fan, Shippole), confirmed via arXiv API<br>
+<a href="https://arxiv.org/abs/2309.00071">https://arxiv.org/abs/2309.00071</a><br>Shipped: jquesnelle/yarn commit 'publish YaRN' at 17:53:20Z — 25 minutes before the arXiv v1 timestamp &mdash; <a href="https://github.com/jquesnelle/yarn">link</a></div>
+</article>
+<article class="card" data-family="sparsity" data-added="0" id="attention-sinks">
+<h3>Attention sinks / StreamingLLM</h3>
+<div class="meta"><span class="date">2023-09-29</span><span class="tag">sparsity</span><span class="tag ship">shipped 2023-09-29</span></div>
+<dl class="qa">
+<dt>the problem at that moment</dt><dd>Sliding-window attention should let you stream forever with a bounded cache. In practice, the moment the first few tokens fall out of the window, perplexity explodes. Nobody knew why.</dd>
+<dt>mechanism</dt><dd>The diagnosis is the contribution: softmax must sum to one, so when no token is genuinely relevant the model dumps the leftover probability mass somewhere — and it learns to dump it on the first few tokens. Evict those and the softmax denominator changes for every subsequent computation. The fix is trivial: always keep the first ~4 tokens in the cache, whatever else you evict. The paper also explains *why* it is the first tokens specifically: in a causal model they are visible to every subsequent token, so they are the most readily trained to absorb leftover mass.</dd>
+<dt>what it buys</dt><dd>Stable streaming over millions of tokens with a fixed cache, from an existing model, with a four-token change and no retraining.</dd>
+<dt>what it gives up</dt><dd class="cost">It does not extend the model's context — anything outside the window is still gone. It makes a bounded-memory model stop breaking; it does not make it remember. Keeping the sink tokens also permanently spends four cache slots, and the pretraining-time version of the fix (a dedicated learnable sink token, which is what gpt-oss actually ships) requires retraining rather than being free.</dd>
+<dt>when you would actually pick it</dt><dd>Any long-running streaming deployment on a sliding-window cache. It is close to free, so the question is only whether you have the window in the first place.</dd>
+<dt>answers / builds on</dt><dd>Sliding-window attention <span style="color:var(--mut)">(2020-04-10)</span></dd><dt>numbers</dt><dd>keeping ~4 initial tokens restores stable streaming &mdash; <em>stated</em>, Xiao et al. 2023</dd></dl>
+<div class="note"><b>Why this card is here.</b> gpt-oss-120b (2025-08-04) ships a *learned per-head sink logit*, which is a pretraining-time variant of this idea and required a from-scratch run — 675 days later. That is a different mechanism from the published trick of keeping four tokens, so it is recorded here rather than as this card's release date. An earlier version of this site used it as the release date and drew a conclusion from the gap; see the retraction in Q2-1.</div>
+<div class="src">Date source: arXiv v1 (Xiao et al., Efficient Streaming Language Models with Attention Sinks), confirmed via arXiv API<br>
+<a href="https://arxiv.org/abs/2309.17453">https://arxiv.org/abs/2309.17453</a><br>Shipped: mit-han-lab/streaming-llm, created the same day as the arXiv v1 &mdash; <a href="https://github.com/mit-han-lab/streaming-llm">link</a></div>
+</article>
+<article class="card added" data-family="systems" data-added="1" id="ring-attention">
+<h3>Ring Attention</h3>
+<div class="meta"><span class="date">2023-10-03</span><span class="tag">systems</span><span class="tag add">added &mdash; not on the required list</span></div>
+<dl class="qa">
+<dt>the problem at that moment</dt><dd>FlashAttention made attention memory linear, but linear in n still exceeds one device's memory when n is a million tokens.</dd>
+<dt>mechanism</dt><dd>Shard the sequence across devices in a ring. Each device holds a block of K and V and passes it to its neighbour while computing, so communication overlaps entirely with computation and no device ever holds the whole sequence.</dd>
+<dt>what it buys</dt><dd>Context length scales with the number of devices, with no approximation whatsoever. This is how million-token exact context becomes physically possible.</dd>
+<dt>what it gives up</dt><dd class="cost">It is a distribution strategy, not a cost reduction — total FLOPs are unchanged and still quadratic. You are buying length with hardware. It needs high-bandwidth interconnect, and it does nothing for single-device serving.</dd>
+<dt>when you would actually pick it</dt><dd>Training or batch inference at extreme context on a multi-GPU node. Irrelevant to a single-GPU deployment.</dd>
+<dt>answers / builds on</dt><dd>Blockwise Parallel Transformer (arXiv 2305.19370), named in Ring Attention's own title <span style="color:var(--mut)">(2023-05-30)</span>; FlashAttention <span style="color:var(--mut)">(2022-05-27)</span></dd></dl>
+<div class="note"><b>Why this card is here.</b> Not in the required list. Included as the counterexample to the whole timeline: every other card changes the mechanism to pay less; this one keeps the mechanism exact and changes the machine.</div>
+<div class="src">Date source: arXiv v1 (Liu et al.), confirmed via arXiv API<br>
+<a href="https://arxiv.org/abs/2310.01889">https://arxiv.org/abs/2310.01889</a></div>
+</article>
+<article class="card added" data-family="recurrent" data-added="1" id="mamba">
+<h3>Mamba (selective state space)</h3>
+<div class="meta"><span class="date">2023-12-01</span><span class="tag">recurrent state</span><span class="tag add">added &mdash; not on the required list</span></div>
+<dl class="qa">
+<dt>the problem at that moment</dt><dd>Linear attention and state-space models both give O(1) decoding, but their state update is the same for every token — they cannot choose to ignore an irrelevant token or to remember an important one.</dd>
+<dt>mechanism</dt><dd>Make the state-space parameters functions of the input, so the model selectively decides what enters and what decays out of the state. Recover parallel training with a hardware-aware associative scan.</dd>
+<dt>what it buys</dt><dd>Linear scaling with selective memory and a genuinely competitive quality at moderate scale. It made recurrence a serious option again after five years of Transformer dominance.</dd>
+<dt>what it gives up</dt><dd class="cost">Fixed-size state means exact recall of an arbitrary earlier token is impossible in principle — Mamba underperforms attention on tasks requiring verbatim retrieval, which is why the strong 2024-25 models are hybrids rather than pure SSMs.</dd>
+<dt>when you would actually pick it</dt><dd>Long streaming sequences where bounded state matters more than exact recall, or as the recurrent half of a hybrid.</dd>
+<dt>answers / builds on</dt><dd>S4 structured state spaces (arXiv 2111.00396) <span style="color:var(--mut)">(2021-10-31)</span>; Linear attention <span style="color:var(--mut)">(2020-06-29)</span></dd></dl>
+<div class="note"><b>Why this card is here.</b> Not in the required list, but Gated DeltaNet's own title is 'Improving Mamba2 with Delta Rule'. The required card is a child of this one.</div>
+<div class="src">Date source: arXiv v1 (Gu and Dao), confirmed via arXiv API<br>
+<a href="https://arxiv.org/abs/2312.00752">https://arxiv.org/abs/2312.00752</a></div>
+</article>
+<h2 class="era">2024-2025 &mdash; state returns, sparsity returns rebuilt</h2>
+<article class="card added" data-family="composition" data-added="1" id="hybrid-schedule">
+<h3>Hybrid depth schedules (interleaved layer types)</h3>
+<div class="meta"><span class="date">2024-02-29</span><span class="tag">composition</span><span class="tag add">added &mdash; not on the required list</span><span class="tag ship">shipped 2024-03-28</span></div>
+<dl class="qa">
+<dt>the problem at that moment</dt><dd>Every mechanism above is presented as a choice for the whole network: linear attention OR sparse attention OR full attention. But the two failure modes are complementary. Fixed-state layers are cheap to serve and cannot recall an exact old token; attention layers recall exactly and grow a KV cache per layer. Picking one for all layers means accepting one of those two costs everywhere.</dd>
+<dt>mechanism</dt><dd>Do not pick. Assign different memory systems to different depths and repeat the motif. Most layers carry a cheap fixed state; a minority are attention layers that can read exact earlier tokens. The pattern of layer types is the <strong>depth schedule</strong>, and it is itself an architectural parameter.</dd>
+<dt>what it buys</dt><dd>Most of attention's exact recall at a fraction of the serving memory, because only the minority attention layers hold a KV cache. It is the design that made long-context recurrent models competitive rather than merely cheap.</dd>
+<dt>what it gives up</dt><dd class="cost">A new hyperparameter with a large search space and almost no clean ablation in the literature — the ratio and the placement both matter and are usually inherited rather than measured. Exact recall now depends on how far a token is from the nearest attention layer, which is a strange property to reason about. And it locks two mechanisms into one architecture, so both must be supported by your kernels.</dd>
+<dt>when you would actually pick it</dt><dd>Long-context serving where KV cache is the binding cost and you can afford to pretrain the hybrid. It is the shape most strong 2024-25 long-context models converged on.</dd>
+<dt>answers / builds on</dt><dd>Linear Recurrent Unit (arXiv 2303.06349) — Griffin's stated inspiration for its RG-LRU <span style="color:var(--mut)">(2023-03-11)</span>; Sliding-window attention <span style="color:var(--mut)">(2020-04-10)</span>; Mamba (a baseline Griffin compares against, not an antecedent) <span style="color:var(--mut)">(2023-12-01)</span></dd><dt>numbers</dt><dd>LightningLM V4 used the repeating motif DDDGDDDG — six DeltaNet fixed-state layers to two sparse-attention layers — held from the 1.78B seed model to the 120B run &mdash; <em>stated</em>, lesson section 13; the lesson is explicit that neighbouring schedules were not cleanly ablated, so this is a successful choice and not a proven optimum</dd></dl>
+<div class="note"><b>Why this card is here.</b> Not in the required list. Added because lesson section 13 teaches it directly and it is the organising idea behind V4's architecture — a submission that covers every individual mechanism but not the schedule has missed how they are actually combined. Precedent exists before Griffin — GPT-3 (2020-05) alternated dense and locally-banded sparse attention layers, and StripedHyena (2023-12) interleaved attention with Hyena — so we date the modern recurrent-plus-attention hybrid, not the general idea of mixing layer types.</div>
+<div class="src">Date source: arXiv v1 (De et al., Griffin: Mixing Gated Linear Recurrences with Local Attention), confirmed via arXiv API<br>
+<a href="https://arxiv.org/abs/2402.19427">https://arxiv.org/abs/2402.19427</a><br>Shipped: Jamba (arXiv 2403.19887) publishes a hybrid Transformer-Mamba stack with a stated layer ratio and open weights &mdash; <a href="https://arxiv.org/abs/2403.19887">link</a></div>
+</article>
+<article class="card" data-family="cache" data-added="0" id="mla">
+<h3>Multi-head latent attention (MLA)</h3>
+<div class="meta"><span class="date">2024-05-07</span><span class="tag">KV cache</span><span class="tag ship">shipped 2024-04-22</span></div>
+<dl class="qa">
+<dt>the problem at that moment</dt><dd>GQA divides the cache by a constant and stops. To go further you have to stop storing keys and values in their original form at all.</dd>
+<dt>mechanism</dt><dd>Project keys and values down into a shared low-rank latent vector and cache only that. At inference the up-projection can be absorbed into the neighbouring weight matrices so the per-head keys and values never need materialising. RoPE needs a separate decoupled path, because rotation does not commute with the low-rank projection. The decoupled RoPE key is cached alongside the latent, so the cache is the latent plus that shared 64-dim key.</dd>
+<dt>what it buys</dt><dd>Cache reduction far beyond GQA — DeepSeek-V2 reports 93.3% KV cache reduction versus DeepSeek 67B, of which about 82 points are the architecture and the rest is 6-bit KV quantization — while reporting quality *better* than MHA rather than merely close to it.</dd>
+<dt>what it gives up</dt><dd class="cost">Real architectural complexity: the decoupled RoPE path is a genuine wart, kernels must be written for it, and it is not something you can uptrain an existing GQA checkpoint into. You are committing at pretraining time.</dd>
+<dt>when you would actually pick it</dt><dd>You are pretraining a model you intend to serve at high concurrency and can afford custom kernels. Not a retrofit.</dd>
+<dt>answers / builds on</dt><dd>GQA <span style="color:var(--mut)">(2023-05-22)</span>; MQA <span style="color:var(--mut)">(2019-11-06)</span></dd><dt>numbers</dt><dd>93.3% KV cache reduction vs DeepSeek 67B &mdash; <em>stated</em>, DeepSeek-V2 abstract. <strong>Two confounds, and the second is the big one.</strong> The baseline already used GQA (8 KV heads of 64), so this is a saving on top of GQA, not against MHA; and the models differ in depth (95 vs 60 layers). More importantly the figure is <strong>not architecture alone</strong> — section 3.2.3 also applies 6-bit KV quantization. Architecture by itself gives 1 - (512+64)x60 / (2x8x128x95) = <strong>82.2%</strong>; adding 6-bit against bf16 gives 93.34%, which is the published number to two decimals. <strong>measured</strong> by us from the two configs</dd></dl>
+
+<div class="src">Date source: arXiv v1 (DeepSeek-V2), confirmed via arXiv API<br>
+<a href="https://arxiv.org/abs/2405.04434">https://arxiv.org/abs/2405.04434</a><br>Shipped: deepseek-ai/DeepSeek-V2 weights, 15 days BEFORE the paper &mdash; <a href="https://huggingface.co/deepseek-ai/DeepSeek-V2">link</a></div>
+</article>
+<article class="card" data-family="recurrent" data-added="0" id="deltanet-parallel">
+<h3>DeltaNet, parallelised</h3>
+<div class="meta"><span class="date">2024-06-10</span><span class="tag">recurrent state</span></div>
+<dl class="qa">
+<dt>the problem at that moment</dt><dd>The delta rule fixed linear attention's memory interference in 2021 and then sat unused for three years, because its sequential update could not be trained at scale.</dd>
+<dt>mechanism</dt><dd>Reformulate the sequence of rank-one delta updates as a WY-style matrix product, which turns the recurrence into chunked matrix multiplications that a GPU can run in parallel.</dd>
+<dt>what it buys</dt><dd>The delta rule's non-saturating memory at trainable speed. This is what turned a 2021 idea into a usable architecture.</dd>
+<dt>what it gives up</dt><dd class="cost">Still a fixed-size state, so the recall ceiling of linear attention remains. The chunked formulation adds implementation complexity and a chunk-size hyperparameter that trades parallelism against memory.</dd>
+<dt>when you would actually pick it</dt><dd>As the linear-attention component of a hybrid, where you want better memory than a running sum without paying attention's quadratic cost.</dd>
+<dt>answers / builds on</dt><dd>The delta rule <span style="color:var(--mut)">(2021-02-22)</span>; Linear attention <span style="color:var(--mut)">(2020-06-29)</span></dd></dl>
+<div class="note"><b>Why this card is here.</b> Three years and four months between the delta rule and the paper that made it trainable. The idea was never the bottleneck; the parallel formulation was.</div>
+<div class="src">Date source: arXiv v1 (Yang et al., Parallelizing Linear Transformers with the Delta Rule over Sequence Length), confirmed via arXiv API<br>
+<a href="https://arxiv.org/abs/2406.06484">https://arxiv.org/abs/2406.06484</a></div>
+</article>
+<article class="card added" data-family="sparsity" data-added="1" id="diff-transformer">
+<h3>Differential Transformer</h3>
+<div class="meta"><span class="date">2024-10-07</span><span class="tag">sparsity</span><span class="tag add">added &mdash; not on the required list</span></div>
+<dl class="qa">
+<dt>the problem at that moment</dt><dd>In long contexts, attention assigns non-trivial probability mass to irrelevant context tokens. The paper calls this <strong>attention noise</strong>, and it drowns the signal from the token you actually need.</dd>
+<dt>mechanism</dt><dd>Compute two separate softmax attention maps and subtract one from the other, scaled — the same trick as a differential amplifier. Common-mode noise cancels; the genuine signal does not.</dd>
+<dt>what it buys</dt><dd>Measurably sharper attention on long-context retrieval and in-context learning, with reduced activation outliers that help quantisation.</dd>
+<dt>what it gives up</dt><dd class="cost">Halves the number of heads to stay parameter- and FLOP-matched, so you get fewer independent attention subspaces for the same budget — the noise cancellation is paid for in head diversity, not in FLOPs. Adds a learned lambda per layer. It does not need a custom kernel — the paper reuses stock FlashAttention with two calls (Appendix A) — though the variant with differing Q/K and V head dimensions does need kernel support. It cannot be applied post-hoc; the model must be pretrained with it.</dd>
+<dt>when you would actually pick it</dt><dd>Pretraining a long-context retrieval-heavy model where attention noise is the observed failure mode.</dd>
+<dt>answers / builds on</dt><dd>Scaled dot-product attention <span style="color:var(--mut)">(2017-06-12)</span></dd></dl>
+<div class="note"><b>Why this card is here.</b> Not in the required list. The paper's stated analogy is the differential amplifier and noise-cancelling headphones, not any prior attention paper. <strong>Correction:</strong> we first filed this as the direct descendant of the attention-sink diagnosis. It is not — 2410.05258 never cites StreamingLLM and never uses the word 'sink'. Attention *noise* (mass on irrelevant context) and an attention *sink* (mass parked on initial tokens, which StreamingLLM shows is load-bearing and must be kept) are different phenomena. The two are thematically adjacent and causally unrelated.</div>
+<div class="src">Date source: arXiv v1 (Ye et al., Microsoft), confirmed via arXiv API<br>
+<a href="https://arxiv.org/abs/2410.05258">https://arxiv.org/abs/2410.05258</a></div>
+</article>
+<article class="card" data-family="recurrent" data-added="0" id="gated-deltanet">
+<h3>Gated DeltaNet</h3>
+<div class="meta"><span class="date">2024-12-09</span><span class="tag">recurrent state</span></div>
+<dl class="qa">
+<dt>the problem at that moment</dt><dd>The delta rule gives precise targeted edits to the state. Mamba's gating gives fast wholesale forgetting. Each is bad at the other's job: the delta rule cannot clear the state when the topic changes, and gating cannot surgically update one key.</dd>
+<dt>mechanism</dt><dd>Combine them. A gate controls global decay of the state, while the delta rule handles the targeted key-wise correction, in a single chunked-parallel update.</dd>
+<dt>what it buys</dt><dd>Both erase modes at once, outperforming Mamba2 and plain DeltaNet on language modelling, retrieval and long-context benchmarks at matched scale.</dd>
+<dt>what it gives up</dt><dd class="cost">Still a fixed-size state, so verbatim recall from far back remains bounded — the paper's own strongest results come from hybrid variants that reintroduce some real attention layers. More hyperparameters than either parent.</dd>
+<dt>when you would actually pick it</dt><dd>The recurrent layers of a hybrid long-context model in 2025. Not as a full replacement for attention.</dd>
+<dt>answers / builds on</dt><dd>DeltaNet, parallelised <span style="color:var(--mut)">(2024-06-10)</span>; Mamba <span style="color:var(--mut)">(2023-12-01)</span></dd></dl>
+
+<div class="src">Date source: arXiv v1 (Yang et al., Gated Delta Networks: Improving Mamba2 with Delta Rule), confirmed via arXiv API<br>
+<a href="https://arxiv.org/abs/2412.06464">https://arxiv.org/abs/2412.06464</a></div>
+</article>
+<article class="card" data-family="sparsity" data-added="0" id="nsa">
+<h3>Native Sparse Attention (NSA)</h3>
+<div class="meta"><span class="date">2025-02-16</span><span class="tag">sparsity</span></div>
+<dl class="qa">
+<dt>the problem at that moment</dt><dd>Every sparse method so far was bolted onto a model trained densely, and top-k selection still required scoring everything. Sparsity that only applies at inference wastes the training signal, and sparsity that is not hardware-aligned runs slower than the dense kernel it replaced.</dd>
+<dt>mechanism</dt><dd>Three branches per query, combined by a learned gate: coarse compressed blocks summarising the whole sequence, fine-grained tokens from the top-scoring blocks, and a local sliding window. Selection is at block granularity so it maps onto GPU memory access patterns, and the whole thing is trained end-to-end from the start.</dd>
+<dt>what it buys</dt><dd>Sparsity that is native rather than retrofitted, with real measured speedups on 64K sequences and quality matching or beating full attention. Block-level selection makes top-k affordable, because you score blocks rather than tokens.</dd>
+<dt>what it gives up</dt><dd class="cost">Architectural commitment at pretraining time and a custom Triton kernel. The three-branch design has more moving parts than a sliding window, and its advantage depends on hardware whose block-access behaviour it was tuned for.</dd>
+<dt>when you would actually pick it</dt><dd>Pretraining a long-context model where you control the kernel stack. This is the current shape of the answer, not a retrofit.</dd>
+<dt>answers / builds on</dt><dd>Top-k attention <span style="color:var(--mut)">(2019-12-25)</span>; Sliding-window attention <span style="color:var(--mut)">(2020-04-10)</span>; Sparse Transformer <span style="color:var(--mut)">(2019-04-23)</span></dd><dt>numbers</dt><dd>9.0x forward and 6.0x backward speedup at 64k &mdash; <em>stated</em>, Yuan et al. 2025, speed comparison against Triton FlashAttention-2 — vendor measurement on their own kernel</dd><dd>11.6x decode speedup at 64k &mdash; <em>stylized</em>, Yuan et al. 2025, Table 4 <strong>Expected Speedup</strong> — derived from memory-access volume in equivalent tokens, not a kernel timing. Labelled stylized rather than stated for that reason</dd></dl>
+
+<div class="src">Date source: arXiv v1 (Yuan et al., DeepSeek), confirmed via arXiv API<br>
+<a href="https://arxiv.org/abs/2502.11089">https://arxiv.org/abs/2502.11089</a></div>
+</article>
+<article class="card" data-family="sparsity" data-added="0" id="dsa">
+<h3>DeepSeek Sparse Attention (the lightning indexer)</h3>
+<div class="meta"><span class="date">2025-09-29</span><span class="tag bounded">date bounded, not exact</span><span class="tag">sparsity</span><span class="tag ship">shipped 2025-09-29</span></div>
+<dl class="qa">
+<dt>the problem at that moment</dt><dd>NSA selects blocks by scoring their compressed summaries, which means the selector and the reader share one representation. That couples two jobs with different requirements: choosing *which* blocks deserve a look should be as cheap as possible, while actually reading them should be as accurate as possible.</dd>
+<dt>mechanism</dt><dd>Split selection from reading. A small <strong>lightning indexer</strong> scores which earlier tokens are worth attending to; it never produces attention output itself, and its training signal comes from its own loss with its input detached from the main graph. Attention then runs over the <strong>top-2048 individual key-value entries per query</strong> — token-level, not block-level. Training runs a dense warm-up stage for the indexer first, then a sparse stage.</dd>
+<dt>what it buys</dt><dd>Selection becomes a cheap scoring pass by a small dedicated module rather than full-resolution scoring, so top-k stays affordable at long context. Because selection is per token rather than per block, it keeps fine-grained recall that block selection blurs — DeepSeek's own framing is that this is fine-grained sparse attention for the first time at production scale.</dd>
+<dt>what it gives up</dt><dd class="cost">Another trained component that fails on its own terms: an indexer that ranks badly starves the reader, and that failure is silent — you get a fluent answer computed from the wrong context. Top-2048 is a fixed budget, so a query genuinely needing more is capped. It needs the dense warm-up stage and a custom kernel, and it is an architectural commitment, not something you retrofit.</dd>
+<dt>when you would actually pick it</dt><dd>Long-context serving where top-k selection is the bottleneck rather than the attention itself. This is the current production shape of DeepSeek's sparse attention, and the direct answer to the cost NSA's block scoring still pays.</dd>
+<dt>answers / builds on</dt><dd>Native Sparse Attention <span style="color:var(--mut)">(2025-02-16)</span>; Top-k attention <span style="color:var(--mut)">(2019-12-25)</span>; Compressive memory <span style="color:var(--mut)">(2019-11-13)</span></dd></dl>
+<div class="note"><b>Why this card is here.</b> Lesson section 12 teaches this mechanism, and the instructor spends a passage on the indexer in the live session. <strong>Two corrections against the primary source</strong> (see C11): the lesson calls it a *low-rank* indexer — DeepSeek's report calls it a *lightning* indexer and the string 'low-rank' appears nowhere in it — and the lesson describes it ranking *block summaries*, where the report describes fine-grained selection of individual tokens and explicitly contrasts itself with block granularity. We first wrote this card from the lesson; an independent review caught it. Required item 16 maps to both this and NSA.</div>
+<div class="src">Date source: No arXiv paper. Dated to the public release of DeepSeek-V3.2-Exp, whose HuggingFace repository was created 2025-09-29T06:07:26Z (HF API) and whose GitHub repo was created the same day; the release and its tech report are the primary source. This is a release date, not an arXiv v1 submission date, and is marked bounded for that reason.<br>
+<a href="https://huggingface.co/deepseek-ai/DeepSeek-V3.2-Exp">https://huggingface.co/deepseek-ai/DeepSeek-V3.2-Exp</a><br>Shipped: DeepSeek-V3.2-Exp weights, released with the tech report &mdash; <a href="https://huggingface.co/deepseek-ai/DeepSeek-V3.2-Exp">link</a></div>
+</article>
+<article class="card" data-family="scaling" data-added="0" id="drope">
+<h3>DroPE (dropping positional embeddings)</h3>
+<div class="meta"><span class="date">2025-12-13</span><span class="tag">context scaling</span></div>
+<dl class="qa">
+<dt>the problem at that moment</dt><dd>Every scaling method from PI through YaRN patches the positional function while keeping it. But if over-reliance on explicit position is itself what blocks generalisation to unseen lengths, patching it can only go so far.</dd>
+<dt>mechanism</dt><dd>Remove the positional embeddings entirely after pretraining, then run a short recalibration phase. Positional information was essential as a convergence prior during pretraining; the claim is that it is not required afterwards, and that keeping it is what caps extrapolation.</dd>
+<dt>what it buys</dt><dd>Context extension without the expensive beyond-pretraining-length fine-tuning that every prior method needs.</dd>
+<dt>what it gives up</dt><dd class="cost">It is a training-time procedure, not an inference switch — you need the recalibration phase and the compute to run it. And discarding explicit position means relying entirely on the implicit positional information a causal decoder carries, which is a strong claim that will need independent replication.</dd>
+<dt>when you would actually pick it</dt><dd>You have a pretrained checkpoint and can afford a short recalibration run, and you want extension without a long-context fine-tune. Too new to be a default, and the claim that explicit position can simply be removed will need independent replication.</dd>
+<dt>answers / builds on</dt><dd>YaRN <span style="color:var(--mut)">(2023-08-31)</span>; Position Interpolation <span style="color:var(--mut)">(2023-06-27)</span></dd><dt>numbers</dt><dd>V4 record: trained 8K, reported 256K, 32x extension, recalibration before annealing &mdash; <em>stated</em>, lesson section 9 — the course's V4 cookbook, not the paper</dd></dl>
+
+<div class="src">Date source: arXiv v1 (Gelberg, Eguchi, Akiba, Cetin — 'Extending the Context of Pretrained LLMs by Dropping Their Positional Embeddings'), confirmed via arXiv API<br>
+<a href="https://arxiv.org/abs/2512.12167">https://arxiv.org/abs/2512.12167</a></div>
+</article>
+<h2 class="era">2026 &mdash; described in class, not yet in the literature</h2>
+<article class="card added" data-family="recurrent" data-added="1" id="memory-stream">
+<h3>Memory Stream (cross-chunk state, LightningLM V4)</h3>
+<div class="meta"><span class="date">2026-08-15</span><span class="tag bounded">date bounded, not exact</span><span class="tag">recurrent state</span><span class="tag add">added &mdash; not on the required list</span></div>
+<dl class="qa">
+<dt>the problem at that moment</dt><dd>Split a long document into chunks and chunk 1's attention state is discarded when chunk 2 begins. Without an explicit mechanism, exactly nothing crosses that boundary — the model restarts blind at every chunk.</dd>
+<dt>mechanism</dt><dd>Carry one vector. At the end of a chunk, take its final hidden state and pass it into the next chunk as a single summary of model width. Two rules make it work: it is written with <strong>stop-gradient</strong>, so the next chunk reads it in the forward pass but training cannot backpropagate through the boundary into every previous chunk; and each token applies it through a small <strong>learned gate</strong>, <code>updated = current + scale x gate x memory</code>, so a token that needs the old context can use it and an unrelated token can ignore it.</dd>
+<dt>what it buys</dt><dd>O(1) cross-chunk state — one model-width vector after two chunks or two thousand, so the stream never grows with the document. Stop-gradient keeps the training graph bounded, which is what makes it affordable at all. The learned gate means the model decides per token how much history to admit rather than having it forced in.</dd>
+<dt>what it gives up</dt><dd class="cost">Severe compression: one vector cannot preserve every sentence of every earlier chunk, so this is a nudge and not a memory. The reported V4 injection is only about 6% of the current embedding magnitude, which is the honest scale of the effect. Stop-gradient also means the model never learns to *write* a memory that will be useful later — it only learns to read whatever happens to be there, the same limitation Transformer-XL has.</dd>
+<dt>when you would actually pick it</dt><dd>Streaming or chunked processing of documents far longer than the window, where a summary nudge across the boundary is worth more than nothing and you cannot afford to grow state. Not a substitute for retrieval when the next chunk needs an exact fact from the last one.</dd>
+<dt>answers / builds on</dt><dd>Recurrent memory tokens (RMT) <span style="color:var(--mut)">(2022-07-14)</span>; Segment-level recurrence (Transformer-XL) <span style="color:var(--mut)">(2019-01-09)</span>; Compressive memory <span style="color:var(--mut)">(2019-11-13)</span></dd><dt>numbers</dt><dd>one model-width vector; injection scale 0.078 rising to ~0.391 by the 2B stage; average injected memory ~6% of embedding magnitude &mdash; <em>stated</em>, lesson section 14 — the course's V4 record</dd></dl>
+<div class="note"><b>Why this card is here.</b> Taught in lesson section 14 and absent from the required list. <strong>We flagged this gap in our own corrections and then did not close it</strong> — the mechanism appeared only as prose inside the Transformer-XL and RMT cards, with no date, no timeline position and none of the six fields the assignment demands. Found by an independent review of this page. Its closest published relative is RMT, four years earlier: a small learned state a model writes for its future self.</div>
+<div class="src">Date source: No public paper. This is a LightningLM V4 component, and the earliest public description we can verify is this session's own lesson, section 14, delivered 2026-08-15 (session <code>opensAt</code> 2026-08-15T03:30:00Z from the course API). The V4 work certainly predates that by an unknown margin, so the date is a first-public-description date and is marked bounded. It is the one card on this timeline dated from the course material rather than from a paper or a release.<br>
+<a href="https://axiom.theschoolofai.in/courses/cmq97i5kn032208o8xu5dab4q/sessions/cms8msrhwu8ss0yxe9zg/lesson">https://axiom.theschoolofai.in/courses/cmq97i5kn032208o8xu5dab4q/sessions/cms8msrhwu8ss0yxe9zg/lesson</a></div>
+</article>
+<footer>ERA V5 &middot; Session 8, Modern Attention Variants. Every date on this site is
+re-checkable: run <code>python3 verify_dates.py</code> to re-fetch each arXiv v1 date from the
+arXiv API and diff it against the stored value, and <code>python3 analyse.py</code> to recompute
+every number on the findings page. Built 2026-08-22.</footer>
+</div><script>
+(function(){
+ var t=document.getElementById('ctl'); if(t) t.style.display='flex';
+ var cards=[].slice.call(document.querySelectorAll('.card'));
+ var eras=[].slice.call(document.querySelectorAll('.era'));
+ function apply(f){
+   cards.forEach(function(c){
+     c.style.display=(f==='all'||c.dataset.family===f||(f==='added'&&c.dataset.added==='1'))?'':'none';});
+   eras.forEach(function(h){
+     var n=0,e=h.nextElementSibling;
+     while(e&&!e.classList.contains('era')){if(e.classList.contains('card')&&e.style.display!=='none')n++;e=e.nextElementSibling;}
+     h.style.display=n?'':'none';});
+ }
+ var sel=document.getElementById('fam');
+ if(sel) sel.addEventListener('change',function(){apply(this.value);});
+})();
+</script></body></html>

@@ -1,0 +1,171 @@
+{
+ "intro": "Question 2 asks what the timeline shows that a list cannot. Every claim below is computed from the dated table, and the arithmetic is in `analyse.py`. Where a number depends on a date we could not pin exactly, we say so.",
+ "findings": [
+  {
+   "id": "Q2-1",
+   "headline": "We tried three times to measure adoption lag from dates. It cannot be done, and finding that out is the result.",
+   "kind": "negative result — third version",
+   "body": "This finding has been retracted and rebuilt twice, and the third version is a negative result. That is the honest outcome, so it is what we publish.\n\n**What we wanted.** Two dates per row — paper and first public release — to show how long the field took to adopt each mechanism.\n\n**Version 1** claimed the lag \"collapsed from 3.5 years to zero\". Falsified: the column mixed third-party adoption with authors' own code drops, so the collapse was definitional. **Version 2** claimed the lag tracked what a mechanism costs to adopt. Falsified too: applying the release rule strictly moved five more rows, because in case after case *the authors had published code before their own paper*, and we had been crediting a later third party.\n\n**What the rule actually produces, applied without exception:**\n\n| mechanism | lag | released by |\n|---|---|---|\n| RoPE | -29 d | authors |\n| MLA | -15 d | authors |\n| sliding window | -10 d | authors |\n| FlashAttention | -8 d | authors |\n| ALiBi | -3 d | authors |\n| YaRN | 0 d | authors |\n| attention sinks | 0 d | authors |\n| NTK-aware | 0 d | authors |\n| DSA | 0 d | authors |\n| **GQA** | **57 d** | third party |\n| **MQA** | **1122 d** | third party |\n\n**Nine of eleven are at or before their own paper.** The column does not measure adoption at all — it measures **publishing practice**, and the practice is nearly universal: if you write the paper, you push the repo. A metric where nine of eleven rows are zero is not measuring the thing it was built to measure.\n\n**The two exceptions are the finding.** Both are Google papers, and in both cases Google published the idea without the weights, so somebody else had to reimplement it. Their waits differ by twenty times:\n\n- **GQA: 57 days.** Meta reimplemented it almost immediately, because it uptrains from an existing checkpoint for a few percent of original compute.\n- **MQA: 1,122 days.** Nobody reimplemented it for three years, because it degrades quality — and the wait ended exactly when serving economics made the KV cache unbearable.\n\nSo cost does appear to govern the wait — but on **two data points**, both from the same lab, and we are not going to call that a law after two retractions for overreaching on exactly this claim.\n\n**The real lesson, and the one we would defend.** *Adoption* and *release* are different events, and only release is mechanically datable. Every attempt to proxy the first with the second smuggles in a judgement about which artifact counts — which is how both earlier versions of this finding went wrong. The two-date design was still worth building: it is what made the failure visible. A single-date timeline would have let all three versions stand.",
+   "caveat": "MQA's row depends on SantaCoder (2022-12-02) being the earliest public multi-query weights; an earlier release could exist and we already replaced one wrong answer here (Falcon-40B). GQA's 57 days is also an overestimate of decision latency: Llama 2's pretraining run began before the GQA paper was posted, so the architecture choice necessarily predates the weights release. Both caveats weaken the two-point cost claim further, which is why it is stated as an observation rather than a result."
+  },
+  {
+   "id": "Q2-2",
+   "headline": "Four gaps from three origins, each almost exactly 3.4 years",
+   "kind": "measured",
+   "body": "| from | to | days |\n|---|---|---|\n| MQA (2019-11-06) | GQA (2023-05-22) | 1293 |\n| Longformer sliding window (2020-04-10) | Mistral 7B weights (2023-09-20) | 1258 |\n| Sliding window (2020-04-10) | attention sinks explains why it breaks (2023-09-29) | 1267 |\n| Delta rule (2021-02-22) | parallel DeltaNet makes it trainable (2024-06-10) | 1204 |\n\nFour gaps within 90 days of each other, from three distinct origins — sliding window contributes two endpoints, so these are not four independent lines of work. In none of the four cases was the missing ingredient an idea. MQA waited for inference cost to dominate serving budgets; the delta rule waited for a parallel formulation; sliding window waited for someone to want a bounded cache badly enough; and the sink paper waited for someone to run a window long enough to hit the bug. Grouped by family these look like four separate stories. Sorted by date they are one story about what actually gates progress.",
+   "caveat": "The 1250-day clustering is an observation on four points. We are not claiming a mechanism behind the specific number."
+  },
+  {
+   "id": "Q2-3",
+   "headline": "FlashAttention is the hinge, and it is not in the required list",
+   "kind": "structural",
+   "body": "Between 2019 and 2020 the field produced a wave of approximations to escape the n-squared score matrix — Sparse Transformer, Longformer, linear attention, and alongside them Reformer, Linformer, Performer and BigBird. Then it stops. Nothing on this timeline between 2021 and 2024 tries to approximate the score matrix for compute reasons.\n\nThat gap is partly an artefact of our own selection — Nyströmformer (2021-02), Hyena (2023-02), LongNet (2023-07) and Monarch Mixer (2023-10) all exist in that window and are not on this timeline. The wave thinned; it did not vanish. But the thinning is real and the date explains it. FlashAttention (2022-05-27) made *exact* attention cheap by never writing the matrix to HBM. The bottleneck had been memory traffic, not FLOPs, and once someone fixed the actual bottleneck the approximations lost their reason to exist. Every card after mid-2022 attacks a different bill: the KV cache (GQA, MLA), position (PI, NTK, YaRN, DroPE), or state (DeltaNet, Mamba, Gated DeltaNet).\n\nRemove FlashAttention from the timeline and 2021-2024 looks like the field losing interest in efficiency for no reason. That is why we added it.",
+   "caveat": "Causal claim argued from adjacency, not proved, and the \"nothing between 2021 and 2024\" phrasing we first used was circular — it was true of the set we curated. Corrected above. The counter-reading, that the approximations simply lost on merit, remains live and both can be true."
+  },
+  {
+   "id": "Q2-4",
+   "headline": "Sparsity leaves and comes back as a different thing",
+   "kind": "structural",
+   "body": "Sparsity by year: 2019, 2019, 2020, then a three-year hole, then 2023, 2024, and two in 2025.\n\nThe instructor predicted 'sparsity returning'. The timeline confirms it and adds what a list would hide: it did not return as the same idea. The 2019-20 generation was hand-designed, fixed before training, and bolted onto a dense model at inference — and it lost to FlashAttention. The 2025 generation is the opposite: NSA is trained sparse from the first step, selects at block granularity because that is what GPU memory access rewards, and learns its gating. Same word, inverted design. The lesson to take forward is that when an idea returns, check what changed about it, because the second version is usually the mirror image of the first.",
+   "caveat": null
+  },
+  {
+   "id": "Q2-5",
+   "headline": "One of 2023's most widely adopted context-extension methods has no paper, and you only notice when you try to sort by date",
+   "kind": "structural",
+   "body": "NTK-aware scaled RoPE is a Reddit post — by u/bloc97, who is Bowen Peng, YaRN's first author, so \"hobbyist\" is the wrong word for the person even though the forum is the wrong venue for the record. It has no arXiv number, no peer review, and no exact date we could verify — reddit.com returns 403 from our environment, so we bounded it to 2023-06-26..2023-07-07 using the GitHub API and the YaRN bibliography.\n\nTwo things follow that a reading list cannot express. First, it landed within a day of Meta's Position Interpolation paper — a forum contributor and a corporate lab converging on the same problem in the same week. We say converging, not independently: arXiv posting is not when the work was done, and we have no evidence either way about what each knew. Second, YaRN — a peer-reviewed paper nine weeks later — states in its own introduction that part of its purpose is 'making a complete account of the previous unpublished works'. The formal literature was reverse-engineering the forum, not leading it.\n\nA bibliography is a list of papers and therefore structurally cannot contain this entry. A timeline has to, because the date exists whether or not a paper does. That is the sharpest answer we have to 'what can you see here that you cannot see in a list'.",
+   "caveat": "The one-day ordering against Position Interpolation is inside our own 11-day uncertainty band. We are claiming simultaneity, not priority."
+  },
+  {
+   "id": "Q2-6",
+   "headline": "The position problem is older than the Transformer, and shipped with its own patch",
+   "kind": "structural",
+   "body": "Learned absolute positions (2016-11-07) predate *Attention Is All You Need* (2017-06-12) by **217 days**. (We first wrote 35 days, dating them to ConvS2S; the earlier Gehring paper already used them, and re-dating makes the point stronger, not weaker.) Sinusoidal encoding shares the Transformer's date exactly, because it is in the same paper.\n\nSo the architecture did not acquire a position problem later; it was published with the problem and a patch on the same day, and the patch was the weaker half. Nine of our 34 cards — over a quarter of the timeline — are downstream of that one paragraph. Presented as a taxonomy, 'positional encodings' looks like a design choice with several options. Presented in date order, it looks like a defect report that stayed open for eight years and is still open, since DroPE's answer in December 2025 is to delete the feature.",
+   "caveat": null
+  },
+  {
+   "id": "Q2-7",
+   "headline": "RoPE and ALiBi are rivals, not a lineage",
+   "kind": "structural",
+   "body": "129 days apart. Any ordered list invites reading the second as an improvement on the first, and courses usually teach them that way. They are not a lineage — they are competing answers to the same failure.\n\n**Correction.** We first wrote that \"neither author had the other's result.\" That is false: the ALiBi paper benchmarks directly against rotary and notes it was \"recently popularized by the open source GPT-J implementation.\" The true relationship is sharper than independence — ALiBi is an explicit *rebuttal* of RoPE published four months later, while RoPE could not have known ALiBi. RoPE won on retrieval; ALiBi extrapolated better but its unbounded recency penalty makes distant tokens unreachable. Knowing they are contemporaries in argument, not successors, changes how you read both.",
+   "caveat": "Corrected after review. The original claim of mutual independence was contradicted by ALiBi's own related-work section."
+  },
+  {
+   "id": "Q2-8",
+   "kind": "structural",
+   "headline": "The assignment's own list of 17 is shorter than what the session taught",
+   "body": "We audited the lesson section by section against the required list rather than assuming the list was complete. It is not.\n\n| taught in | mechanism | on the list? |\n|---|---|---|\n| section 13, *Schedules across depth* | hybrid depth schedules, the `DDDGDDDG` motif | no |\n| section 14, *State that outlives the window* | cross-chunk O(1) state (the V4 Memory Stream) | no |\n| section 12, *Compressing the sequence itself* | DeepSeek's **low-rank indexer** | named only obliquely, as item 16 |\n\nThese are not asides. `schedule` occurs 10 times in the lesson and `Memory Stream` 4 times; ALiBi, MLA and attention sinks occur **once each**, and all three are on the list. Section 13 also carries the session's sharpest piece of intellectual honesty — that `DDDGDDDG` is \"a successful design choice, not a proven optimum\", because the neighbouring schedules were never cleanly ablated.\n\nThe reason this matters is in the instructor's own description of how he will grade: *\"It'll make something but you don't know it missed something and if it did miss something I'm going to score you zero. And how will you know it missed something? By actually studying it.\"* The binding set is what the session **covered**, not what the list **enumerates** — and the gap between those two is the trap.\n\nSo the timeline carries both, dated like everything else: hybrid schedules to Griffin (2024-02-29), and cross-chunk state to its real lineage — Transformer-XL (2019-01-09), Compressive Transformer (2019-11-13), RMT (2022-07-14).\n\n**A third case, and the one we half-missed.** Required item 16 is \"DeepSeek's compressed sparse attention\", and we mapped it to Native Sparse Attention. NSA is DeepSeek's and does belong — but the lesson never says NSA, and what section 12 actually describes is the *low-rank indexer* that ranks block summaries cheaply without producing attention output. That is the DeepSeek-V3.2 line, not NSA, which scores blocks with their own compressed representations. Both are now on the timeline and item 16 maps to both.",
+   "caveat": "Dating a *pattern* is softer than dating a paper. Griffin is our anchor for hybrid schedules as the first of the 2024 wave, but interleaving cheap and expensive layers has older partial precedents; we date the modern recurrent-plus-attention hybrid, not the general idea."
+  },
+  {
+   "id": "Q2-9",
+   "kind": "measured",
+   "headline": "We tested the instructor's own prediction about the timeline's shape. Five of seven stages hold; one pair is inverted.",
+   "body": "The assignment does not just ask for a timeline, it predicts what one will show:\n\n> \"you should see the priorities of the field move over time: exact global attention, cheaper decoding memory, better position handling, longer contexts, recurrent state returning, sparsity returning, compression becoming more aggressive.\"\n\nThat is a falsifiable claim about ordering, and the dated table can test it. For each family we take the **return date** — the paper that ends the family's longest internal silence — because his claim is about priorities *returning*, not about first invention.\n\n| his predicted stage | family | returns / first appears | verdict |\n|---|---|---|---|\n| exact global attention | foundation | 2014-09 → 2017-06 | holds, first |\n| cheaper decoding memory | KV cache | **2023-05-22** | **out of order** |\n| better position handling | position | **2021-04-20** | **out of order** |\n| longer contexts | context scaling | 2023-06-26 | holds |\n| recurrent state returning | recurrent | **2022-07-14 (RMT)** | holds |\n| sparsity returning | sparsity | 2023-09-29 | holds |\n| compression more aggressive | composition / NSA | 2024-02, 2025-02 | holds, last |\n\n**The inverted pair is real and it is not close.** He puts cheaper decoding memory before better position handling. The data puts position handling **25 months earlier**: position's second wave opens with RoPE on 2021-04-20, while the cache wave does not open until GQA on 2023-05-22. Measured from first appearance the gap is the same direction and wider — position 2017-05, cache 2019-11.\n\nThere is a good reason the memory of it runs the other way. MQA, the first cache mechanism, *was* published early (2019-11-06) — it simply sat unused for 1,293 days. If you date the cache era by when the idea was published rather than when the field acted on it, his ordering is correct. That is precisely the distinction this timeline was built to make visible, and it is why every row carries two dates.\n\n**Correction.** We first graded the recurrent-versus-sparsity pair \"ambiguous\", using Mamba (2023-12-01) as the recurrent return. That was us not applying our own rule. The rule is *the paper ending the family's longest internal silence*, and the recurrent family's longest gap between two *dated papers* is 507 days (we exclude the gap ending at the Memory Stream, which is dated to this session and so ends at the present rather than at a return), from the delta rule (2021-02-22) to RMT (2022-07-14) — not the 2023 Mamba wave. By our own operationalisation the recurrent return is 2022-07-14, comfortably before sparsity's 2023-09-29, and **his ordering holds**. Caught by an independent review of this page.\n\n**Five of the seven stages survive in order.** Two are the inverted pair. An earlier version of this finding said six of seven and graded the recurrent/sparsity pair 'ambiguous' — both were miscounts of our own table, caught by review.",
+   "caveat": "'Return date' is our operationalisation, not his — he did not define one. We chose the end of each family's longest internal gap because it matches what 'returning' means, but a different rule (median date, or weight by citations) could shift the ambiguous pair. The cache-before-position inversion survives every rule we tried, including first appearance and median."
+  }
+ ],
+ "uncovered": {
+  "intro": "Question 2 offers points for a relevant mechanism not covered in class. The table below has 14 entries. **Two of them were covered in class and are absent from the assignment's minimum list** — hybrid depth schedules and the V4 Memory Stream — and a third, DeepSeek's low-rank indexer, is covered by the list only obliquely. Each is held to the same six-field standard as the required ones.",
+  "items": [
+   {
+    "name": "Additive attention (Bahdanau)",
+    "date": "2014-09-01",
+    "arxiv": "1409.0473",
+    "url": "https://arxiv.org/abs/1409.0473",
+    "why": "Attention predates the Transformer by two years and nine months. Starting at 2017 hides that the weighted sum was the borrowed part and dropping the RNN was the new part."
+   },
+   {
+    "name": "Dot-product attention (Luong)",
+    "date": "2015-08-17",
+    "arxiv": "1508.04025",
+    "url": "https://arxiv.org/abs/1508.04025",
+    "why": "This is where the dot product replaces a scoring MLP. The sqrt(d_k) in Session 2's formula is a patch on a flaw introduced here."
+   },
+   {
+    "name": "Segment-level recurrence (Transformer-XL)",
+    "date": "2019-01-09",
+    "arxiv": "1901.02860",
+    "url": "https://arxiv.org/abs/1901.02860",
+    "why": "The origin of every cross-chunk state mechanism, including the V4 Memory Stream that lesson section 14 teaches. It also shows relative position encoding arriving as a *consequence* of cross-segment memory, two years before RoPE."
+   },
+   {
+    "name": "Compressive memory",
+    "date": "2019-11-13",
+    "arxiv": "1911.05507",
+    "url": "https://arxiv.org/abs/1911.05507",
+    "why": "The missing middle between Transformer-XL discarding old cache entries and NSA compressing blocks six years later: summarise the old instead of evicting it."
+   },
+   {
+    "name": "FlashAttention",
+    "date": "2022-05-27",
+    "arxiv": "2205.14135",
+    "url": "https://arxiv.org/abs/2205.14135",
+    "why": "Explains the 2021-2024 silence on compute approximation. See Q2-3."
+   },
+   {
+    "name": "Recurrent memory tokens (RMT)",
+    "date": "2022-07-14",
+    "arxiv": "2207.06881",
+    "url": "https://arxiv.org/abs/2207.06881",
+    "why": "The closest published relative of the V4 Memory Stream, which lesson section 14 presents without an antecedent: a small learned state the model writes for its future self across a chunk boundary."
+   },
+   {
+    "name": "xPos",
+    "date": "2022-12-20",
+    "arxiv": "2212.10554",
+    "url": "https://arxiv.org/abs/2212.10554",
+    "why": "The last attempt to fix extrapolation at training time. Everything after it patches an existing checkpoint, and that shift is only visible in date order."
+   },
+   {
+    "name": "Position Interpolation (PI)",
+    "date": "2023-06-27",
+    "arxiv": "2306.15595",
+    "url": "https://arxiv.org/abs/2306.15595",
+    "why": "The strongest omission. YaRN is explicitly built from PI and NTK-aware together — its own paper defines NTK-by-parts against PI's uniform interpolation. Without this card, YaRN appears from nowhere and the required list has a causal hole between RoPE and YaRN."
+   },
+   {
+    "name": "Ring Attention",
+    "date": "2023-10-03",
+    "arxiv": "2310.01889",
+    "url": "https://arxiv.org/abs/2310.01889",
+    "why": "The only card that buys length with hardware instead of approximation. It is the control case for the whole timeline."
+   },
+   {
+    "name": "Mamba",
+    "date": "2023-12-01",
+    "arxiv": "2312.00752",
+    "url": "https://arxiv.org/abs/2312.00752",
+    "why": "Gated DeltaNet's own title is 'Improving Mamba2 with Delta Rule'. A required card is a direct child of an uncovered one."
+   },
+   {
+    "name": "Hybrid depth schedules (Griffin / Jamba / Samba)",
+    "date": "2024-02-29",
+    "arxiv": "2402.19427",
+    "url": "https://arxiv.org/abs/2402.19427",
+    "why": "**Taught in class and missing from the required list.** Lesson section 13 is entirely about interleaving layer types — the V4 motif `DDDGDDDG`, six DeltaNet layers per two sparse-attention layers. The word 'schedule' appears 10 times in the lesson; ALiBi, MLA and attention sinks appear once each and are all on the list. Dated to Griffin as the first of the 2024 hybrids, with Jamba and Samba inside fifteen weeks."
+   },
+   {
+    "name": "Differential Transformer",
+    "date": "2024-10-07",
+    "arxiv": "2410.05258",
+    "url": "https://arxiv.org/abs/2410.05258",
+    "why": "Cancels **attention noise** — mass spread over irrelevant context tokens — by subtracting two softmax maps, the differential-amplifier trick. Note this is *not* a descendant of the attention-sink work: we first claimed it was, and the paper never cites StreamingLLM. Retained because noise cancellation is a distinct answer to the long-context signal problem."
+   },
+   {
+    "name": "DeepSeek's low-rank indexer (DSA)",
+    "date": "2025-09-29",
+    "arxiv": "—",
+    "url": "https://huggingface.co/deepseek-ai/DeepSeek-V3.2-Exp",
+    "why": "**Taught in lesson section 12**, which the list names only obliquely as \"DeepSeek's compressed sparse attention\". A small low-rank module ranks block summaries cheaply and never produces attention output — distinct from NSA, which scores blocks with their own compressed representations. No arXiv paper; dated from the V3.2-Exp release via the HuggingFace API."
+   },
+   {
+    "name": "Memory Stream (cross-chunk state, LightningLM V4)",
+    "date": "2026-08-15",
+    "arxiv": "—",
+    "url": "https://axiom.theschoolofai.in/courses/cmq97i5kn032208o8xu5dab4q/sessions/cms8msrhwu8ss0yxe9zg/lesson",
+    "why": "**Taught in lesson section 14 and absent from the required list.** One model-width vector across a chunk boundary, stop-gradient, read through a learned gate. No public paper; dated to its earliest verifiable public description, this session. Its closest published relative is RMT, four years earlier."
+   }
+  ]
+ }
+}

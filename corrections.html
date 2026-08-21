@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Corrections and limitations - ERA V5 Session 8</title>
+<meta name="description" content="Where the course material, our sources, and our own first answers were wrong -- and one case where they were right.">
+<style>
+:root{--bg:#fbfaf8;--fg:#1c1a17;--mut:#6b655c;--line:#e2ddd4;--card:#fff;--acc:#8a4b2a;
+--warn:#8a2a2a;--ok:#2a6b46;--code:#f2efe9;--shadow:0 1px 2px rgba(0,0,0,.05)}
+@media(prefers-color-scheme:dark){:root{--bg:#141311;--fg:#eae6df;--mut:#9b948a;--line:#2e2b27;
+--card:#1c1a18;--acc:#d99a6c;--warn:#e08585;--ok:#7fc9a0;--code:#242120;--shadow:none}}
+:root[data-theme=dark]{--bg:#141311;--fg:#eae6df;--mut:#9b948a;--line:#2e2b27;--card:#1c1a18;
+--acc:#d99a6c;--warn:#e08585;--ok:#7fc9a0;--code:#242120;--shadow:none}
+:root[data-theme=light]{--bg:#fbfaf8;--fg:#1c1a17;--mut:#6b655c;--line:#e2ddd4;--card:#fff;
+--acc:#8a4b2a;--warn:#8a2a2a;--ok:#2a6b46;--code:#f2efe9;--shadow:0 1px 2px rgba(0,0,0,.05)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);
+font:16px/1.62 ui-serif,Georgia,'Iowan Old Style',serif;-webkit-text-size-adjust:100%}
+.wrap{max-width:52rem;margin:0 auto;padding:2rem 1.15rem 6rem}
+h1{font-size:2rem;line-height:1.15;margin:.2em 0 .3em;letter-spacing:-.015em}
+h2{font-size:1.3rem;margin:2.6em 0 .5em;letter-spacing:-.01em}
+h3{font-size:1.05rem;margin:1.8em 0 .3em}
+p{margin:.7em 0}
+a{color:var(--acc)}
+code{font:.87em ui-monospace,SFMono-Regular,Menlo,monospace;background:var(--code);
+padding:.1em .32em;border-radius:3px}
+pre{background:var(--code);padding:.85rem 1rem;border-radius:6px;overflow-x:auto;
+font:.83rem/1.5 ui-monospace,SFMono-Regular,Menlo,monospace}
+.sub{color:var(--mut);font-size:1.02rem;margin-top:0}
+nav.top{display:flex;flex-wrap:wrap;gap:.5rem;margin:1.4rem 0 0;font-size:.87rem;
+font-family:system-ui,sans-serif}
+nav.top a{display:inline-block;padding:.32rem .7rem;border:1px solid var(--line);
+border-radius:99px;text-decoration:none;background:var(--card)}
+nav.top a[aria-current]{border-color:var(--acc);color:var(--acc);font-weight:600}
+.tw{overflow-x:auto;margin:1rem 0}
+table{border-collapse:collapse;width:100%;font-size:.87rem;
+font-family:system-ui,sans-serif}
+th,td{text-align:left;padding:.42rem .6rem;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-weight:600;color:var(--mut);font-size:.8rem;text-transform:uppercase;letter-spacing:.04em}
+.flow{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:1.1rem;
+margin:1.2rem 0;box-shadow:var(--shadow)}
+.flow pre{background:transparent;padding:0;font-size:.86rem;text-align:center}
+.era{font-family:system-ui,sans-serif;font-size:.78rem;letter-spacing:.14em;color:var(--mut);
+text-transform:uppercase;margin:3rem 0 .8rem;padding-bottom:.3rem;border-bottom:1px solid var(--line)}
+.card{background:var(--card);border:1px solid var(--line);border-left:3px solid var(--line);
+border-radius:7px;padding:1.1rem 1.2rem;margin:.9rem 0;box-shadow:var(--shadow)}
+.card.added{border-left-color:var(--acc)}
+.card h3{margin:0 0 .15rem;font-size:1.12rem}
+.meta{font-family:system-ui,sans-serif;font-size:.79rem;color:var(--mut);
+display:flex;flex-wrap:wrap;gap:.45rem;align-items:center;margin-bottom:.75rem}
+.date{font-weight:700;color:var(--fg);font-variant-numeric:tabular-nums}
+.tag{border:1px solid var(--line);border-radius:99px;padding:.05rem .5rem}
+.tag.add{border-color:var(--acc);color:var(--acc)}
+.tag.bounded{border-color:var(--warn);color:var(--warn)}
+.tag.ship{border-color:var(--ok);color:var(--ok)}
+.qa{margin:.55rem 0 0}
+.qa dt{font-family:system-ui,sans-serif;font-size:.72rem;text-transform:uppercase;
+letter-spacing:.07em;color:var(--mut);margin-top:.6rem}
+.qa dd{margin:.1rem 0 0}
+.qa dd.cost{color:var(--fg)}
+.src{font-family:system-ui,sans-serif;font-size:.76rem;color:var(--mut);margin-top:.8rem;
+padding-top:.6rem;border-top:1px dotted var(--line);overflow-wrap:anywhere}
+.note{font-size:.9rem;background:var(--code);border-radius:5px;padding:.6rem .8rem;margin-top:.8rem}
+.note b{color:var(--acc)}
+.f{border:1px solid var(--line);border-radius:7px;padding:1.1rem 1.2rem;margin:1.1rem 0;
+background:var(--card);box-shadow:var(--shadow)}
+.f h3{margin-top:0}
+.kind{font-family:system-ui,sans-serif;font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;
+color:var(--mut)}
+.caveat{font-size:.87rem;color:var(--mut);border-top:1px dotted var(--line);margin-top:.8rem;
+padding-top:.55rem}
+.sev{display:inline-block;font-family:system-ui,sans-serif;font-size:.7rem;letter-spacing:.06em;
+text-transform:uppercase;padding:.12rem .5rem;border-radius:99px;border:1px solid var(--line)}
+.sev.correction{border-color:var(--warn);color:var(--warn)}
+.sev.negative-control{border-color:var(--ok);color:var(--ok)}
+footer{margin-top:4rem;padding-top:1.2rem;border-top:1px solid var(--line);
+font-family:system-ui,sans-serif;font-size:.82rem;color:var(--mut)}
+#ctl{display:none}
+
+.viz{--s1:#2a78d6;--s2:#eb6834;--s3:#1baf7a;--vsurf:var(--card);--vink:var(--fg);--vmut:var(--mut);
+--vgrid:var(--line);margin:1.4rem 0}
+@media(prefers-color-scheme:dark){:root:where(:not([data-theme=light])) .viz{--s1:#3987e5;--s2:#d95926;--s3:#199e70}}
+:root[data-theme=dark] .viz{--s1:#3987e5;--s2:#d95926;--s3:#199e70}
+:root[data-theme=light] .viz{--s1:#2a78d6;--s2:#eb6834;--s3:#1baf7a}
+.viz svg{width:100%;height:auto;display:block;overflow:visible}
+.viz figcaption{font-family:system-ui,sans-serif;font-size:.82rem;color:var(--mut);
+margin-top:.6rem;line-height:1.5}
+.vzl{font-family:system-ui,sans-serif;font-size:.82rem;color:var(--mut);display:flex;
+flex-wrap:wrap;gap:1rem;align-items:center;margin:.2rem 0 .7rem}
+.vzl b{display:inline-flex;align-items:center;gap:.35rem;font-weight:400;white-space:nowrap}
+.vzl i{width:11px;height:11px;border-radius:50%;display:inline-block}
+.vzs{font:600 10.5px system-ui,sans-serif;fill:var(--vink)}
+.vzlane{font:600 10px system-ui,sans-serif;fill:var(--vmut);letter-spacing:.03em}
+.vzax{font:10px system-ui,sans-serif;fill:var(--vmut)}
+.viz .grid{stroke:var(--vgrid);stroke-width:1}
+.viz .dot{stroke:var(--vsurf);stroke-width:2}
+.viz .conn{stroke-width:2;stroke-linecap:round;opacity:.45}
+.viz g.m:hover .dot{stroke:var(--vink)}
+.vztable{margin-top:.7rem;font-family:system-ui,sans-serif;font-size:.8rem}
+.vztable summary{cursor:pointer;color:var(--acc)}
+</style></head>
+<body><div class="wrap">
+<nav class="top"><a href="index.html">Timeline</a><a href="findings.html">What the timeline shows</a><a href="corrections.html" aria-current=page>Corrections</a><a href="sources.html">Sources</a><a class="repo" href="https://github.com/vedapragna-cs/era-v5-s8-attention-timeline" rel="noopener">Code &amp; data on GitHub</a></nav>
+<h1>Corrections and limitations</h1><p class="sub">The assignment asks us to check every date against a primary source, and to say so if the course material got something wrong. It also warns that our own agent will invent dates confidently. Both directions are recorded here, including one case where we went looking for an error and found the material was right.</p>
+<div class="f"><span class="sev correction">correction</span> <span class="kind">C1</span><h3>DroPE is an acronym collision, and the obvious match is the wrong paper</h3><dl class="qa"><dt>claim, and where it comes from</dt><dd>Our own first instinct, and what an exact-string search returns</dd><dt>what we checked</dt><dd>arXiv full-text search for 'DroPE', then both candidate abstracts via the arXiv API</dd><dt>finding</dt><dd>Two real papers share the acronym. <strong>DRoPE</strong> (arXiv 2503.15029, v1 2025-03-19) is 'Directional Rotary Position Embedding for Efficient Agent Interaction Modeling' — autonomous-driving trajectory generation, nothing to do with context extension. <strong>DroPE</strong> (arXiv 2512.12167, v1 2025-12-13) is 'Extending the Context of Pretrained LLMs by Dropping Their Positional Embeddings', which is the one the lesson means. The wrong paper is the better string match and is nine months earlier, so an agent that trusts exact-match ranking will report 2025-03-19 and then confidently describe a self-driving system.</dd><dt>what we did about it</dt><dd>Timeline uses 2025-12-13 (arXiv v1, API-confirmed). The collision is documented here rather than silently avoided.</dd><dt>primary sources</dt><dd><a href="https://arxiv.org/abs/2512.12167">https://arxiv.org/abs/2512.12167</a><br><a href="https://arxiv.org/abs/2503.15029">https://arxiv.org/abs/2503.15029</a></dd></dl></div>
+<div class="f"><span class="sev correction">correction</span> <span class="kind">C2</span><h3>The lesson says DroPE's mechanism is not established. It was published eight months before the lesson.</h3><dl class="qa"><dt>claim, and where it comes from</dt><dd>Lesson section 9, and widget s8_widget_8_drope — the two agree, so this is the course's settled position, not a prose slip</dd><dt>what we checked</dt><dd>The lesson's callout reads: 'What the available record does not establish: the exact DroPE algorithm or which rotary dimensions it changes. Any more detailed mechanism is a hypothesis until it is checked against the reference implementation.' The widget repeats it verbatim and states it 'deliberately does not simulate an unverified DroPE mechanism.'</dd><dt>finding</dt><dd>The mechanism is public. arXiv 2512.12167 (v1 2025-12-13, eight months before this lesson) states it in the abstract: positional embeddings are <strong>dropped entirely after pretraining</strong>, followed by a short recalibration phase. The paper's argument is that explicit position is a necessary convergence prior during pretraining but is precisely what blocks test-time generalisation to unseen lengths — so removing it beats scaling it. Note the direction of this correction: the question the lesson leaves open has a published answer, and the answer is more interesting than a rotary-dimension tweak, because DroPE is not a RoPE variant at all.</dd><dt>what we did about it</dt><dd>We state the mechanism and cite the paper. We flag the identification itself as inference: the lesson never names a paper, and the V4 cookbook line 'positional recalibration: DroPE, applied before annealing' matches the paper's recalibration phase closely but is not proof they are the same procedure.</dd><dt>primary sources</dt><dd><a href="https://arxiv.org/abs/2512.12167">https://arxiv.org/abs/2512.12167</a></dd></dl></div>
+<div class="f"><span class="sev limitation">limitation</span> <span class="kind">C3</span><h3>NTK-aware scaling has no paper and we could not pin its exact day</h3><dl class="qa"><dt>claim, and where it comes from</dt><dd>Our own chronology requirement</dd><dt>what we checked</dt><dd>reddit.com and old.reddit.com both return HTTP 403 from this environment, so the post's timestamp could not be read directly. Fell back to the YaRN bibliography and the GitHub API.</dd><dt>finding</dt><dd>NTK-aware scaled RoPE originated as a Reddit post by u/bloc97, cited as bloc97 [2023a] in YaRN's bibliography — and YaRN's first author, Bowen Peng, <strong>is</strong> u/bloc97, which makes that citation effectively primary. The bibliography gives the year only. Hard bounds from the GitHub API: github.com/jquesnelle/scaled-rope was created 2023-06-26T13:27:56Z, and bloc97's PR #1 ('NTK-Aware interpolation by parts correction') opened 2023-07-07T20:40:33Z.</dd><dt>what we did about it</dt><dd>Dated <strong>2023-06-26 (bounded, not exact)</strong> and rendered as unverified on the timeline. The widely-repeated 2023-06-30 is plausible but we could not confirm it, so we do not assert it. Because the bound is eleven days wide, this card's ordering relative to Position Interpolation (2023-06-27) is inside the uncertainty band and we say so rather than implying a photo finish we cannot prove.</dd><dt>primary sources</dt><dd><a href="https://github.com/jquesnelle/scaled-rope">https://github.com/jquesnelle/scaled-rope</a><br><a href="https://arxiv.org/abs/2309.00071">https://arxiv.org/abs/2309.00071</a></dd></dl></div>
+<div class="f"><span class="sev observation">observation</span> <span class="kind">C4</span><h3>The lesson contains no dates at all</h3><dl class="qa"><dt>claim, and where it comes from</dt><dd>Lesson markdown, all 1,532 lines</dd><dt>what we checked</dt><dd>Regex for any four-digit year 19xx/20xx across the full lesson markdown pulled from /api/lessons/cms8lmsrhwu9k6b284dx.</dd><dt>finding</dt><dd>One match, and it is not a date: <code>2025</code> appears as a path component inside an image URL on line 40. <strong>Zero dates.</strong> The lesson teaches eighteen mechanisms and dates none of them. The assignment then makes chronology the graded axis and warns that dates are 'exactly where an AI agent can sound completely confident while being wrong'. (We first reported this as 'zero matches', which was wrong about the regex even though the conclusion held — corrected after review.)</dd><dt>what we did about it</dt><dd>This is consistent rather than contradictory — it means every date in this app had to come from a primary source, because there was no course-supplied number to copy or to check against. It also means the instructor cannot have made a date error in the lesson, which narrows where his 'if I have made one here, catch that too' can apply.</dd></dl></div>
+<div class="f"><span class="sev transcript-error">transcript-error</span> <span class="kind">C5</span><h3>The transcript dates the Transformer to 2018</h3><dl class="qa"><dt>claim, and where it comes from</dt><dd>S8 transcript, line 38</dd><dt>what we checked</dt><dd>arXiv API for 1706.03762</dd><dt>finding</dt><dd>The transcript reads 'this is where the Vaswani and Vaswani invented in 2018 and 17'. Attention Is All You Need has arXiv v1 2017-06-12. Line 266 also says 'go back to 2018 pick the main transformer architecture'.</dd><dt>what we did about it</dt><dd>We use 2017-06-12. We record this as an <strong>ASR artifact, not an instructor error</strong> — the transcript is an auto-generated caption track, the speaker audibly self-corrects to '17' in the same sentence, and this project's own source-precedence rule already ranks transcripts as unreliable for numbers. Listing it as a caught mistake would be unfair to the speaker; listing it at all is what the precedence rule is for.</dd><dt>primary sources</dt><dd><a href="https://arxiv.org/abs/1706.03762">https://arxiv.org/abs/1706.03762</a></dd></dl></div>
+<div class="f"><span class="sev negative-control">negative-control</span> <span class="kind">C6</span><h3>We tried to break the lesson's KV-cache arithmetic and could not</h3><dl class="qa"><dt>claim, and where it comes from</dt><dd>Lesson section 10</dd><dt>what we checked</dt><dd>Recomputed 2 x layers x kv_heads x head_dim x T x bytes for the lesson's stated yardstick: 48 layers, 8 KV heads, head_dim 128, bf16, T = 32,768.</dd><dt>finding</dt><dd>2 x 48 x 8 x 128 x 32768 x 2 = 6,442,450,944 bytes = <strong>6.442 GB</strong> decimal, which the lesson gives as 6.44 GB. Eight users: 51.54 GB, which the lesson gives as 51.54 GB. Both exact. The DroPE widget's 8K to 256K = 32x also checks out (262144 / 8192 = 32).</dd><dt>what we did about it</dt><dd>No correction. This is here deliberately: a conflict hunt that only ever finds conflicts is not a hunt, it is a bias. The lesson's arithmetic is right, and reporting that is the control on the five findings above.</dd></dl></div>
+<div class="f"><span class="sev not-found">not-found</span> <span class="kind">C7</span><h3>We could not find the Session 7 correction the assignment refers to</h3><dl class="qa"><dt>claim, and where it comes from</dt><dd>Assignment prose: 'I got a mechanism wrong in Session 7 by trusting a confident sentence and had to correct it at the beginning of today's class.'</dd><dt>what we checked</dt><dd>The opening of the S8 transcript, where an at-the-top-of-class correction would appear; then the full transcript for correction language (wrong / mistake / misspoke / let me correct / earlier I / previously I); then the S8 lesson for any reference to a Session 7 error; then the S7 lesson's section 12, 'The families, and what Session 8 builds', which is the S7-to-S8 handoff and therefore the most likely place for a mechanism to have been mis-stated.</dd><dt>finding</dt><dd>Not found in any of them. The transcript opens with Independence Day greetings and goes straight into the session; there is no correction in it. The only mention of the incident anywhere in the material is the assignment sentence itself. S7's section 12 places the rotary family at 'applied inside attention to the queries and keys, so the score depends on offset' and ALiBi at 'applied to the attention scores directly as a distance-dependent bias' -- both correct as they currently stand.</dd><dt>what we did about it</dt><dd>Reported as a non-finding rather than left blank or filled with a guess. Two readings are consistent with the evidence and we cannot separate them: the lesson page may have been edited after the correction, so the error is no longer in the material we can read; or the ASR transcript dropped it, which would be unsurprising given it also renders 2017 as '2018 and 17'. We are explicitly not claiming the correction did not happen.</dd></dl></div>
+<div class="f"><span class="sev correction">correction</span> <span class="kind">C8</span><h3>The assignment's minimum list omits two mechanisms the session taught</h3><dl class="qa"><dt>claim, and where it comes from</dt><dd>The assignment's 'What to cover, at minimum' list, in both the lesson (section 18) and the portal description</dd><dt>what we checked</dt><dd>Walked all 18 lesson sections against the 17-item list instead of treating the list as the specification, then counted term frequency across the lesson markdown.</dd><dt>finding</dt><dd>Two taught mechanisms are absent from the list. <strong>Section 13, 'Schedules across depth'</strong>, teaches hybrid depth schedules — the <code>DDDGDDDG</code> motif of six DeltaNet fixed-state layers to two sparse-attention layers, held from a 1.78B seed to a 120B run. <strong>Section 14, 'State that outlives the window'</strong>, teaches cross-chunk O(1) state: the V4 Memory Stream, one model-width vector written with stop-gradient and read through a learned gate. Frequency check: <code>schedule</code> appears 10 times in the lesson and <code>Memory Stream</code> 4 times, against <strong>one</strong> occurrence each for ALiBi, MLA and attention sinks — all three of which the list does name.</dd><dt>what we did about it</dt><dd>Both are on the timeline with primary-source dates, and the cross-chunk lineage the lesson leaves implicit is supplied: Transformer-XL (2019-01-09) for segment-level recurrence, Compressive Transformer (2019-11-13), and RMT (2022-07-14) as the closest published relative of the Memory Stream. This is offered as a gap in the list, not an error in the teaching — the sessions are consistent; the enumeration is just shorter than the lesson.</dd><dt>primary sources</dt><dd><a href="https://arxiv.org/abs/2402.19427">https://arxiv.org/abs/2402.19427</a><br><a href="https://arxiv.org/abs/1901.02860">https://arxiv.org/abs/1901.02860</a><br><a href="https://arxiv.org/abs/2207.06881">https://arxiv.org/abs/2207.06881</a><br><a href="https://arxiv.org/abs/1911.05507">https://arxiv.org/abs/1911.05507</a></dd></dl></div>
+<div class="f"><span class="sev self-correction">self-correction</span> <span class="kind">C9</span><h3>Two rounds of independent review falsified our headline finding and sixteen other claims</h3><dl class="qa"><dt>claim, and where it comes from</dt><dd>Our own published work, at commit a6bf322</dd><dt>what we checked</dt><dd>We commissioned three independent reviews — one re-fetching every date from the arXiv API without trusting our own verification script, one grading the rendered HTML against the assignment text, one auditing the technical accuracy of every mechanism description against the source papers.</dd><dt>finding</dt><dd>They found real defects, and we had missed all of them. The headline finding (Q2-1) claimed the publish-to-ship lag "collapsed from 3.5 years to zero" — but the column mixed third-party adoption with authors' own same-day code drops, so the collapse was substantially an artefact of switching definitions; two of its dates were also wrong. Nine further errors: GQA's group arithmetic (32 query heads over 8 KV heads is 8 groups, not 4); Position Interpolation's "32x" (the abstract says 32,768 tokens, which from LLaMA's 2,048 is 16x); FlashAttention described as "bit-for-bit" exact (tiling reorders floating-point accumulation, so it is mathematically exact but not bit-identical); Differential Transformer costed at "double the score computation" (the paper halves head count precisely to stay FLOP-matched); a <strong>fabricated lineage</strong> claiming Differential Transformer descends from the attention-sink diagnosis (2410.05258 never cites StreamingLLM and never uses the word 'sink'); Q2-7's claim that ALiBi's and RoPE's authors did not know each other's work (ALiBi benchmarks against rotary explicitly); MLA's 93.3% described as versus a dense baseline (DeepSeek 67B already used GQA); Transformer-XL credited with "no extra training memory"; and Q2-9 grading a pair "ambiguous" by failing to apply its own stated rule — which, applied correctly, makes the instructor right. A second round found more: the Transformer-XL fix had never been applied though this entry claimed it was; the Memory Stream card was silently dropped from the rendered page by an era-bucket bug while the build still reported 34 cards validated; the DSA card described a low-rank block-selecting indexer when DeepSeek published a token-selecting lightning indexer (C11); MQA's shipped row used Falcon-40B when SantaCoder is 18 months earlier; MLA's 93.3% turned out to include 6-bit KV quantization, with architecture alone accounting for about 82 points; and five shipped rows violated the very rule the first retraction had promised to apply uniformly.</dd><dt>what we did about it</dt><dd>All corrected in place, with retractions visible rather than the text quietly swapped. <strong>Including one correction that did not take:</strong> the Transformer-XL memory fix was listed here as done and had in fact never been applied — the second review caught the log claiming a fix that was not in the artifact, which is worse than the original error. It is fixed now. Q2-1 has been rewritten twice; the current version applies one release rule to every row, which moved five rows once we found the authors had shipped code before their own papers. The lag chart was rebuilt as a sorted comparison because plotting lag against time implied a trend the data does not contain.</dd></dl></div>
+<div class="f"><span class="sev transcript-error">transcript-error</span> <span class="kind">C10</span><h3>The transcript's "GSA" and "MSA" in the assignment sentence itself</h3><dl class="qa"><dt>claim, and where it comes from</dt><dd>S8 transcript, line 408 — the sentence where the instructor sets the assignment</dd><dt>what we checked</dt><dd>The transcript reads: "So you would cover Delta Knight, you will cover GSA, GQA, then you have MSA and whatever terms I'm using, right?" Checked each token against the lesson's own vocabulary.</dd><dt>finding</dt><dd>"Delta Knight" is DeltaNet, "GSA" is almost certainly GQA said twice, and "MSA" is either MHA or MLA — the lesson teaches both and neither is spelled MSA anywhere in it. The speaker's own hedge, "whatever terms I'm using", indicates he knew the names were approximate in speech.</dd><dt>what we did about it</dt><dd>Read as ASR artifacts, consistent with the same transcript rendering 2017 as "2018 and 17". We cover DeltaNet, GQA, MHA and MLA regardless, so nothing turns on the resolution. Recorded because we audited five other transcript conflicts and skipping this one — inside the assignment sentence itself — would have been selective.</dd></dl></div>
+<div class="f"><span class="sev correction">correction</span> <span class="kind">C11</span><h3>The lesson's "low-rank indexer" ranking "block summaries" is not what DeepSeek published</h3><dl class="qa"><dt>claim, and where it comes from</dt><dd>Lesson section 12: "DeepSeek uses a small <strong>low-rank indexer</strong> to rank the block summaries cheaply. The indexer does not produce the final attention output."</dd><dt>what we checked</dt><dd>DeepSeek's own tech report for V3.2-Exp, released with the weights on 2025-09-29.</dd><dt>finding</dt><dd>Three differences. DeepSeek calls it a <strong>lightning indexer</strong>; the string "low-rank" appears nowhere in the report. It selects <strong>individual tokens</strong> — the top-2048 key-value entries per query — not blocks, and the release explicitly contrasts this with block-granularity approaches, describing it as fine-grained sparse attention. And training is a dense warm-up stage followed by a sparse stage, not an interleaving of compressed-dense and top-k forms. The lesson's one-sentence summary that the indexer never produces attention output is correct and matches the report.</dd><dt>what we did about it</dt><dd>The card describes what DeepSeek published, and says so. This is a source-precedence case: the project rule ranks primary sources above lesson prose, and here they genuinely disagree on mechanism rather than on a number. Reported because we wrote the card from the lesson first and an independent review caught it — the same failure mode we documented in C9.</dd><dt>primary sources</dt><dd><a href="https://huggingface.co/deepseek-ai/DeepSeek-V3.2-Exp">https://huggingface.co/deepseek-ai/DeepSeek-V3.2-Exp</a></dd></dl></div>
+<footer>ERA V5 &middot; Session 8, Modern Attention Variants. Every date on this site is
+re-checkable: run <code>python3 verify_dates.py</code> to re-fetch each arXiv v1 date from the
+arXiv API and diff it against the stored value, and <code>python3 analyse.py</code> to recompute
+every number on the findings page. Built 2026-08-22.</footer>
+</div><script>
+(function(){
+ var t=document.getElementById('ctl'); if(t) t.style.display='flex';
+ var cards=[].slice.call(document.querySelectorAll('.card'));
+ var eras=[].slice.call(document.querySelectorAll('.era'));
+ function apply(f){
+   cards.forEach(function(c){
+     c.style.display=(f==='all'||c.dataset.family===f||(f==='added'&&c.dataset.added==='1'))?'':'none';});
+   eras.forEach(function(h){
+     var n=0,e=h.nextElementSibling;
+     while(e&&!e.classList.contains('era')){if(e.classList.contains('card')&&e.style.display!=='none')n++;e=e.nextElementSibling;}
+     h.style.display=n?'':'none';});
+ }
+ var sel=document.getElementById('fam');
+ if(sel) sel.addEventListener('change',function(){apply(this.value);});
+})();
+</script></body></html>
