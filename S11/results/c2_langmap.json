@@ -1,0 +1,12 @@
+{
+ "token_agreement": 0.9328101937670521,
+ "block_agreement": 1.0,
+ "blk": 1024,
+ "n_train_blocks": 6495,
+ "unresolved_tokens": 557,
+ "train_mixture": {
+  "en": 0.4674364896073903,
+  "hi": 0.2634334103156274,
+  "ml": 0.2691301000769823
+ }
+}

@@ -1,0 +1,167 @@
+C1 addendum - does the optimal learning rate depend on batch size, and how?
+
+WHY THIS EXISTS.  The README's headline C1 claim is that growing 8 -> 20 layers requires cutting
+the learning rate 1.59x.  Cookbook §13.2 shows V4's 9B stage moves TWO things at once: layers
+8 -> 20 AND global batch 32 -> 120.  Our depth law has no batch term, so as published the claim
+describes a change V4 does not actually make.  A larger batch is generally held to push the optimal
+rate UP, which would work against the depth-driven cut.  This measures the missing term.
+
+CONVENTION, STATED UP FRONT BECAUSE IT DECIDES WHAT THE ANSWER MEANS.  Batch is varied at FIXED
+STEPS (1200), so a larger batch also sees proportionally more tokens.  That is the convention V4's
+own stage boundary uses - training continues, the batch gets bigger, the step count does not shrink
+to compensate.  It is NOT the convention the textbook rules were derived under: Goyal et al.'s
+linear rule and Krizhevsky's sqrt rule are both stated at fixed EPOCHS, where a larger batch means
+proportionally FEWER steps.  So a disagreement with those rules here is a disagreement about a
+different experiment, and is reported as such rather than as a refutation of them.
+
+PRE-REGISTERED (job 032 docstrings, committed before running):
+  CONFIRMED-LINEAR  fitted exponent within one grid step of 1.0
+  CONFIRMED-SQRT    within one grid step of 0.5
+  NEITHER           a real outcome: batch-insensitive over this range, and the depth-only 1.59x
+                    stands as published.
+
+WIDTH.  See results/gpu/032_CORRECTION.md.  Job 032 was cloned from the width-512 sweep and ran at
+width 512 while recording width=256.  Every point in the series is width 512, so the batch axis is
+clean; the batch-8 anchor is job 022, which is width 512 and was run independently a day earlier.
+The assertion below ties the width label to a runtime-computed quantity so the mislabel cannot
+silently propagate.
+
+============================================================================================
+MEASURED - width 512, depth 4, seq 256, 1200 steps, cosine, AdamW(0.9,0.95), wd 0.1
+============================================================================================
+ batch   job  pts   grid argmin   interpolated lr*     val*     status
+     4  032a    5      1.20e-03         9.4546e-04    6.0162        ok
+     8   022    6      1.00e-03         1.2472e-03    5.7270        ok
+    16  032a    5      1.20e-03         1.3043e-03    5.4221        ok
+    32  032b    5      2.40e-03         1.8033e-03    4.9605        ok
+
+--------------------------------------------------------------------------------------------
+REPLICATION - job 032c, batch 16 at seeds 1 and 2
+--------------------------------------------------------------------------------------------
+  The whole non-monotonicity turned on ONE comparison at ONE seed: at batch 16,
+  lr=2.4e-3 was 0.0730 nats worse than 1.2e-3, while at batch 32 the same comparison
+  flips.  Pre-registered sign test on d = val(2.4e-3) - val(1.2e-3):
+      seed 0:  d = +0.0730
+      seed 1:  d = +0.1553
+      seed 2:  d = +0.0464
+
+  >>> REPLICATED - d > 0 at 3/3 seeds.  The batch-16 optimum really is
+      near 1.2e-3, the local-exponent sequence really is non-monotone, and the
+      saturating form stays REFUTED.  Bn is not reinstated.
+
+  AND THE REPLICATION FOUND SOMETHING WE WERE NOT LOOKING FOR.
+          lr   n      mean   seed spread
+    6.00e-04   3    5.5458        0.0050
+    1.20e-03   3    5.4280        0.0089
+    2.40e-03   3    5.5196        0.1131
+
+  SEED VARIANCE IS NOT CONSTANT ALONG THE SWEEP.  It is 23x larger at 2.4e-03 than at 6.0e-04,
+  and 2.4e-03 is the point just PAST the optimum - exactly where the curve turns up and exactly
+  where a bracketing decision gets made.  Our pre-registered seed spread of 0.0073 nats (from S7
+  job 018) was measured at or below an optimum; above one it understates the noise by ~15x.
+
+  WHAT THAT COSTS US.  Re-estimating the batch-16 vertex from each seed separately:
+      seed 0: 1.3043e-03, seed 1: 1.1389e-03, seed 2: 1.3980e-03
+  a spread of about +-11% in the optimum, NOT the ~2% we previously claimed from a 0.004-nat noise
+  model.  Every single-seed optimum in this submission carries that uncertainty, including the ones
+  whose conclusions we are keeping.  It is reported here rather than only where it is convenient.
+
+  DOES IT CHANGE THE CONCLUSION?  No, and it makes it stronger.  Using the 3-seed MEAN curve at
+  batch 16 instead of seed 0 moves that optimum to 1.2532e-03, which makes the
+  local-exponent sequence MORE non-monotone, not less.  Both choices are shown below.
+
+--------------------------------------------------------------------------------------------
+LOCAL EXPONENT between adjacent batches   (lr* ~ B^p)
+--------------------------------------------------------------------------------------------
+    4 -> 8     lr* x1.3192   p = +0.3996
+    8 -> 16    lr* x1.0457   p = +0.0645
+   16 -> 32    lr* x1.3826   p = +0.4674
+
+  with batch 16 from the 3-seed MEAN (1.2532e-03) instead of seed 0:
+    4 -> 8     lr* x1.3192   p = +0.3996
+    8 -> 16    lr* x1.0048   p = +0.0069
+   16 -> 32    lr* x1.4389   p = +0.5250
+  -> still non-monotone; the dip at 16 is deeper, so the saturating form fits worse.
+
+  overall 4 -> 32:  lr* x1.9073,  fitted exponent p = +0.3105
+  linear rule predicts p = 1.0 (lr* x8);  sqrt rule predicts p = 0.5 (x2.83)
+
+  >>> PRE-REGISTERED CRITERION, APPLIED LITERALLY: CONFIRMED-SQRT
+
+  AND THE CRITERION IS DEGENERATE.  Do not read that verdict as a result.  With STEP = 0.5 the
+  sqrt band is p in (0.0, 1.0) and the linear band is p in (0.5, 1.5): they overlap, and the sqrt
+  band swallows every exponent between no dependence at all and a full linear rule.  NEITHER -
+  the outcome the pre-registration called "a real outcome" - cannot fire for any p in [0, 1].
+  The criterion produced this verdict, not the data.  This is the second time in this assignment
+  a badly written threshold has done that (see H4 in the README); it is recorded rather than
+  quietly re-thresholded, and the discriminating comparison is made directly instead:
+
+      measured    lr* x1.9073 over batch 4 -> 32
+      sqrt rule   lr* x2.8284      (-32.6% vs measured)
+      linear rule lr* x8.0000      (-76.2% vs measured)
+
+  The measured move is 1.48x smaller than the sqrt rule and 4.19x smaller than the linear rule.
+  Neither rule describes this.  The criterion-free finding is below, and it does not depend on a
+  threshold at all: the LOCAL exponent is NON-MONOTONE, +0.400, +0.064, +0.467,
+  and no single power law can produce a local exponent that changes at all.
+
+--------------------------------------------------------------------------------------------
+SHAPE  -  is it a saturating curve?
+--------------------------------------------------------------------------------------------
+  local exponents, in batch order: +0.400, +0.064, +0.467
+  monotonically decaying?  NO
+
+  best saturating fit: lr*(B) = 1.8495e-03 * B / (B + 4.00)       rms 8.2% in lr
+ batch    measured lr*    fitted lr*   residual
+     4      9.4546e-04    9.2474e-04       2.2%
+     8      1.2472e-03    1.2330e-03       1.2%
+    16      1.3043e-03    1.4796e-03     -11.8%
+    32      1.8033e-03    1.6440e-03       9.7%
+
+  >>> THE SATURATING FORM IS REFUTED AS THE SHAPE, and this overturns what we published.
+
+  A saturating curve REQUIRES the local exponent to decay monotonically - it is linear below the
+  critical batch and flat above it, and it never steepens again.  Ours goes +0.400, +0.064, +0.467.
+
+  THE ARGUMENT IS NOT THE rms, AND WE SHOULD SAY SO.  The fit's rms of 8.2% in lr is NOT
+  comfortably outside the noise: job 032c measures the per-seed spread of a vertex at about +-11%
+  (see above), so a 8.2% misfit on single-seed points proves little on its own.  An earlier
+  draft of this file leaned on the rms against a "~2%" noise figure that came from a 0.004-nat
+  model rather than from measurement, and that comparison was wrong.
+
+  WHAT THE REFUTATION ACTUALLY RESTS ON is the size of the error that would be needed to rescue
+  the saturating form.  For the local exponent to decay monotonically, the 16 -> 32 step would have
+  to be no larger than the 8 -> 16 step.  With batch 16 at its replicated 3-seed value the 8 -> 16
+  step is +0.007, so batch 32's optimum would have to sit at essentially batch 16's, near 1.25e-3,
+  rather than the measured 1.80e-3.  That is a 44% error in a single vertex, four times the
+  measured +-11% per-seed spread.  The batch-16 dip that starts the non-monotonicity is separately
+  replicated at 3/3 seeds by a pre-registered sign test.
+
+  WHAT IS STILL THIN: batch 32 is ONE seed.  The 44%-vs-11% margin is the reason we call the shape
+  refuted rather than merely doubted, but a replicate at batch 32 would close it properly and we
+  did not run one.
+
+  WHAT WE PUBLISHED AND WHY IT WAS WRONG.  With batches 4, 8 and 16 alone the sequence was
+  +0.400, +0.064 - textbook saturation - and we fitted Bn = 2.40 and wrote it into the README
+  before batch 32 returned.  Three points cannot distinguish a saturating curve from a curve that
+  happens to be flat between two of them.  This is the assignment's own epigraph landing on us a
+  third time, and the mechanism is the same each time: a shape inferred from too few points, or an
+  exponent inferred from too few points, reads as a law.
+
+  WHAT SURVIVES, AND IT IS THE PART THE C1 CLAIM ACTUALLY NEEDS.  The batch sensitivity itself is
+  criterion-free and does not depend on the shape at all: over batch 4 -> 32 the optimum moves
+  x1.91, where the sqrt rule wants x2.83 and the linear rule x8.  It is 1.48x less
+  sensitive than the weaker of the two textbook rules, measured across an 8x batch range.
+
+  WHAT IS WITHDRAWN.  Bn = 2.40, the 4.00 refit, and every number downstream of them - the x1.054
+  batch term at V4's boundary, the 1.51x net cut, and the "Bn >= 13 cancels half the depth cut"
+  bound.  All of those assume a functional form the data now rejects.  Batch 16 is the worst
+  offender at -11.8%.
+
+  WHAT WOULD RESOLVE IT.  Every point above is ONE SEED, and "one run is an anecdote" is a rule we
+  wrote into our own rubric.  The whole non-monotonicity rests on batch 16 preferring lr=1.2e-3
+  over 2.4e-3 by 0.073 nats while batch 32 prefers 2.4e-3 by 0.067.  Job 032c re-runs batch 16 at
+  seeds 1 and 2 on those three LRs with a pre-registered sign test.  Until it returns, the shape is
+  reported as UNRESOLVED and no critical batch is quoted.
+
+============================================================================================
