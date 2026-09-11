@@ -1,0 +1,42 @@
+blocks: en 3036  indic 3459  (block-label accuracy on val: 100.00%)
+  ran trainable/shift
+  ran trainable/noshift
+  ran frozen/shift
+  ran frozen/noshift
+
+==============================================================================================
+H3 - no-shift controls (a spike here would mean the excursion is not the shift)
+==============================================================================================
+  arm                   signal                       peak z after step 200
+  trainable/noshift     global grad norm                              8.87
+  trainable/noshift     ratio blocks.0.qkv.weight                    -0.62
+  frozen/noshift        global grad norm                              8.07
+  frozen/noshift        ratio blocks.0.qkv.weight                     0.64
+
+==============================================================================================
+H1/H2 - the shift, global grad norm vs the layer immediately above the embedding
+==============================================================================================
+
+  --- trainable/shift ---
+  signal                          detect@   peak z   peak@    baseline        peak   x base
+  global grad norm                      0    98.72       0   3.958e-01   4.537e+00    11.46
+  ratio blocks.0.qkv.weight             1     7.87       3   1.136e-02   2.323e-02     2.04
+  ratio blocks.0.mlp.0.weight           0    12.59       3   8.545e-03   2.221e-02     2.60
+  ratio blocks.1.qkv.weight     1.3333333333333333     5.20       3   8.184e-03   2.071e-02     2.53
+  ratio head.weight                     3    17.31      15   8.919e-03   1.297e-02     1.45
+
+  --- frozen/shift ---
+  signal                          detect@   peak z   peak@    baseline        peak   x base
+  global grad norm                      0    77.86       1   3.914e-01   4.125e+00    10.54
+  ratio blocks.0.qkv.weight             0    15.53       3   9.372e-03   2.453e-02     2.62
+  ratio blocks.0.mlp.0.weight           0    15.08       3   7.421e-03   2.280e-02     3.07
+  ratio blocks.1.qkv.weight             0    13.07       2   5.253e-03   2.330e-02     4.43
+  ratio head.weight             3.3333333333333335    18.50      16   8.576e-03   1.290e-02     1.50
+
+  H2, frozen arm:  above-embedding peak z = 15.53 vs global 77.86  (0.20x)
+                   detection step: above 0  vs global 0
+  H2 REFUTED -- the global norm is the better indicator
+
+  H1:  above-embedding peak/baseline  frozen 2.62x vs trainable 2.04x  -> SUPPORTED
+
+wrote ../results/c2_scar.json

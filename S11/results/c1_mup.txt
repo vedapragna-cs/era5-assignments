@@ -1,0 +1,88 @@
+C1 addendum - does depth-muP make the optimal learning rate transfer across depth growth?
+
+THE POINT.  Everything else in C1 measures how badly a tuned rate breaks when the model grows.  This
+asks whether the right parametrisation makes it not break.  If it does, V5 never re-tunes at a growth
+boundary, and the fix is one line in the Block.
+
+THE ONE LINE.  Depth-muP (Yang et al., Tensor Programs VI) scales every residual branch by 1/sqrt(L):
+
+    x = x + (1/sqrt(L)) * attn(norm(x))
+    x = x + (1/sqrt(L)) * mlp(norm(x))
+
+Nothing else changes.  Width, steps, batch, sequence length, schedule, optimiser, data and eval are
+identical to the standard-parametrisation depth sweep (jobs 024a/021/024b/024c), and the LR grid is
+the same 6-point coarse grid, so b_muP and b_SP sit on the same surface.
+
+PRE-REGISTERED, in the job 033 docstrings, committed before running:
+
+  H11  the depth exponent collapses toward zero.
+       CONFIRMED if |b_muP| < 0.15 - the optimum moves less than one grid step across the depth
+       range, which is what "the rate transfers" means operationally.
+       REFUTED   if it stays within 0.15 of the standard-parametrisation 0.505.
+
+  H12  a guard, because this is how claims like this usually die.  VOID if muP's best achievable
+       loss is more than 0.05 nats worse than SP's at every depth.  A parametrisation that flattens
+       the LR curve by making everything equally bad is not transfer, it is a worse model.
+
+THE COMPARISON HAS TO BE GRID-MATCHED, and the inline table printed by job 033 is NOT.  That table
+compares muP's coarse-grid argmin against the README's published SP optima, which come from three
+different grids (see C1.5).  Every SP number used below is instead recomputed from the SP jobs on
+the IDENTICAL 6-point coarse grid the muP arm ran, with the identical parabola-vertex estimator.
+Comparing a coarse-grid optimum against a refined one would flatter whichever arm got the finer grid.
+
+================================================================================================
+MEASURED - width 256, batch 8, seq 256, 1200 steps, identical 6-point grid, 1 seed
+================================================================================================
+ depth      SP lr*   SP val*     muP lr*  muP val*   muP - SP    H12
+     2   2.858e-03    5.6761   2.902e-03    5.6616    -0.0145     ok
+     4   2.166e-03    5.7518   2.861e-03    5.6483    -0.1036     ok
+     8   1.548e-03    5.7580   2.738e-03    5.7278    -0.0302     ok
+    16   1.157e-03    5.8826   2.450e-03    5.7170    -0.1655     ok
+
+------------------------------------------------------------------------------------------------
+H12 - is the muP arm simply worse?
+------------------------------------------------------------------------------------------------
+  H12 does not fire: muP is within 0.05 nats of SP at 4 of 4 depths (fires nowhere).
+  Best-loss difference across depths: 2: -0.0145, 4: -0.1036, 8: -0.0302, 16: -0.1655
+  NOTE the direction: a NEGATIVE gap means muP reached a LOWER loss than SP at that depth.
+
+------------------------------------------------------------------------------------------------
+H11 - does the depth exponent collapse?
+------------------------------------------------------------------------------------------------
+  standard parametrisation   b_SP  = +0.4397
+  depth-muP (1/sqrt(L))      b_muP = +0.0795
+  depths spanned: 2 to 16 (8x)
+
+ depth      SP lr*     muP lr*   SP local b   muP local b
+     2   2.858e-03   2.902e-03                           
+     4   2.166e-03   2.861e-03       +0.400        +0.021
+     8   1.548e-03   2.738e-03       +0.484        +0.063
+    16   1.157e-03   2.450e-03       +0.420        +0.160
+
+------------------------------------------------------------------------------------------------
+HOW WELL IS b PINNED?  (1 seed per point; vertex noise measured by job 032c)
+------------------------------------------------------------------------------------------------
+  per-point log-sd on lr*: 0.104   ->   se(b) = 0.0671 over 4 depths spanning 8x
+    b_SP  = +0.4397 +- 0.0671
+    b_muP = +0.0795 +- 0.0671
+    difference = +0.3602 +- 0.0949   ->  3.8 sigma
+    distance from H11's 0.15 threshold: 1.1 sigma
+
+  TWO CLAIMS, AND THEY ARE NOT EQUALLY WELL SUPPORTED.  Keeping them separate matters:
+
+    (a) muP FLATTENS the depth dependence relative to SP.  The difference is +0.360 +- 0.095,
+        about 4 sigma.  This is solid, and it is what the one-line change buys.
+
+    (b) muP makes the rate TRANSFER, i.e. b_muP is indistinguishable from zero.  |b_muP| = 0.0795
+        sits only 1.1 sigma inside H11's 0.15 threshold, and the local exponent is rising
+        through the range.  H11 passes as written, but "b is small" is much better supported
+        than "b is zero", and we do not claim the latter.
+
+  This is why jobs 034a/034b matter: an out-of-sample point at depth 32 tests (b) directly, where
+  the in-sample fit cannot.
+
+  >>> H11: CONFIRMED
+      |b_muP| = 0.0795   threshold for CONFIRMED is < 0.15; for REFUTED, within 0.15 of 0.505
+
+  Over the 8x depth range the optimum moves x0.848 under muP and x0.401 under SP.
+  In grid steps of the 2x sweep: 0.24 (muP) vs 1.32 (SP).

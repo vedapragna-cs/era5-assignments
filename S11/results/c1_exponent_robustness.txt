@@ -1,0 +1,109 @@
+How much of "lr* proportional to 1/(width*sqrt(depth))" is the data, and how much is the estimator?
+
+The assignment asks for the LR at width 4,096 "and how confident you are in it".  The README answers
+with exponents a = 0.990 and b = 0.505 and a growth-boundary factor of 1.59x.  Both exponents are
+computed in verify.py as TWO-POINT ENDPOINT estimates:
+
+    a = log(OW[256] / OW[1024]) / log(4)
+    b = log(OD[2]  / OD[16])   / log(8)
+
+That throws away the interior points entirely and puts the whole exponent on the two noisiest
+places in the sweep - the ends.  It is the same fragility that made criterion H4 print SUPPORTED off
+a 0.09-nat endpoint difference, and it is worth checking rather than assuming.
+
+A second, independent problem: the four depth optima the README quotes do not come from the same
+grid.  Depths 2 and 8 use the coarse 2x grid; depth 4 uses a sqrt(2) refinement (job 025) and depth
+16 a sqrt(2) point (job 028).  A per-depth optimum estimated from a finer grid is not comparable to
+one estimated from a coarser grid, and the tied-geometric-mean estimator is explicitly
+grid-sensitive: more grid points inside the seed spread means more terms in the mean.
+
+So: recompute both exponents under every combination of {estimator} x {grid}, and report the spread
+as the confidence interval it actually is.  Nothing here is new data.  Every number below comes from
+JSON already archived in results/gpu/.
+
+==============================================================================================
+DEPTH EXPONENT   (width 256, batch 8; optimum estimator x exponent fit)
+==============================================================================================
+
+  grid: identical coarse 2x grid only
+                                     2           4           8          16        2-point endpoints (README)           OLS over all points
+               grid argmin   4.000e-03   2.000e-03   2.000e-03   1.000e-03                            0.6667                        0.6000
+    tied geo-mean (README)   4.000e-03   2.000e-03   2.000e-03   1.000e-03                            0.6667                        0.6000
+           parabola vertex   2.887e-03   2.186e-03   1.548e-03   1.157e-03                            0.4395                        0.4453
+
+  grid: every point measured
+                                     2           4           8          16        2-point endpoints (README)           OLS over all points
+               grid argmin   4.000e-03   2.800e-03   2.000e-03   1.400e-03                            0.5049                        0.5029
+    tied geo-mean (README)   4.000e-03   2.366e-03   2.000e-03   1.400e-03                            0.5049                        0.4786
+           parabola vertex   2.887e-03   2.420e-03   1.789e-03   1.284e-03                            0.3895                        0.3941
+==============================================================================================
+WIDTH EXPONENT   (depth 4, batch 8; optimum estimator x exponent fit)
+==============================================================================================
+
+  grid: identical coarse 2x grid only
+                                   256         512        1024        2-point endpoints (README)           OLS over all points
+               grid argmin   2.000e-03   1.000e-03   6.000e-04                            0.8685                        0.8685
+    tied geo-mean (README)   2.000e-03   1.000e-03   6.000e-04                            0.8685                        0.8685
+           parabola vertex   2.186e-03   1.247e-03   6.270e-04                            0.9008                        0.9008
+
+  grid: every point measured
+                                   256         512        1024        2-point endpoints (README)           OLS over all points
+               grid argmin   2.800e-03   1.400e-03   6.000e-04                            1.1112                        1.1112
+    tied geo-mean (README)   2.366e-03   1.183e-03   6.000e-04                            0.9898                        0.9898
+           parabola vertex   2.420e-03   1.258e-03   6.315e-04                            0.9690                        0.9690
+
+==============================================================================================
+SPREAD ACROSS ESTIMATORS
+==============================================================================================
+
+  depth exponent b: 9 distinct estimates (12 cells; estimators coincide where a grid is coarse enough
+      that ties and argmin agree, and OLS over 3 log-spaced points equals the endpoint fit)
+      range 0.3895 to 0.6667, median 0.4786. README publishes 0.505 - rank 8 of 9.
+
+  width exponent a: 5 distinct estimates (12 cells; estimators coincide where a grid is coarse enough
+      that ties and argmin agree, and OLS over 3 log-spaced points equals the endpoint fit)
+      range 0.8685 to 1.1112, median 0.9690. README publishes 0.990 - rank 5 of 5.
+
+WHAT MOVES AND WHAT DOES NOT.
+
+  The WIDTH exponent is robust.  0.868 to 1.111 across every way of computing it, median 0.969.
+  All of them round to 1, so "lr* proportional to 1/width" survives the estimator choice, and the
+  answer the assignment actually asks for - the rate at width 4,096 - does not move materially.
+
+  The DEPTH exponent is not robust.  0.389 to 0.667, a 71% span.  Two things drive it,
+  and they are separable:
+    - ENDPOINT vs OLS.  The 2-point fit uses only depths 2 and 16 and discards 4 and 8.
+    - GRID.  The README's four depth optima come from three different grids - depths 2 and 8 from
+      the coarse 2x grid, depth 4 from a sqrt(2) refinement, depth 16 from a single sqrt(2) point.
+      The tied-geometric-mean estimator is grid-sensitive by construction: more grid points inside
+      the seed spread means more terms in the mean.  On ONE grid for all four depths the parabola
+      vertex gives 0.445; on the mixed grid the same estimator gives
+      0.394.
+
+  WHERE THE PUBLISHED VALUE SITS.  b = 0.505 is at the HIGH end - 8th of the 9 distinct estimates -
+  though it is the median if all 12 estimator-by-grid cells are weighted equally (0.5039).  Those two
+  summaries disagree because the coincidences are not random: argmin and tied-geo-mean collapse
+  together exactly on the coarse grid, so de-duplicating removes coarse-grid cells preferentially.
+  We report both rather than choosing the flattering one.  Either way the point stands: 0.505 is
+  quoted to three significant figures while the estimator choice alone moves it by 0.28, and it is
+  not a conservative pick.  a = 0.990 is likewise the largest of its 5 (median 0.969).
+
+WHAT IT DOES TO THE HEADLINE.
+                         estimate of b   growth 8 -> 20 factor
+          published (2-pt, mixed grid)                  1.588x
+        median of the estimator family                  1.550x
+       smallest (parabola, mixed grid)                  1.429x
+     largest (argmin, one coarse grid)                  1.842x
+
+  So the defensible headline is "about 1.6x, and between 1.43x and 1.84x depending on how the
+  exponent is estimated" - not the bare point value 1.59x.  The qualitative claim is untouched:
+  every one of the 9 estimates has the rate coming DOWN on depth growth, by roughly half a power,
+  and the practical recommendation is the same at either end of the range.  What is not supported is
+  the third significant figure.
+
+  DIRECTION.  This weakens our own published claim, and it was found by re-running our own analysis
+  with a different estimator rather than by collecting new data.  The lesson generalises past this
+  assignment: a scaling exponent read off two endpoints of a 2x grid is a choice, not a measurement,
+  and the assignment's own epigraph - "a well tuned method measured against a badly tuned one" -
+  applies to the ANALYSIS as much as to the training run.
+

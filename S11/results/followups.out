@@ -1,0 +1,54 @@
+==============================================================================
+F1/F2 - the step-200 comparison, with the controls it needs
+==============================================================================
+  mean LR multiplier after warmup:  cosine 0.5517   wsd 0.9017   ratio 1.634x
+  -> the assignment's two arms are NOT average-LR matched.
+
+  cosine               lr=2.00e-03 meanmult=0.552  val@200 8.3717  val@300 8.3027
+  wsd                  lr=2.00e-03 meanmult=0.902  val@200 8.3739  val@300 7.9741
+  wsd@matched_lr       lr=1.22e-03 meanmult=0.902  val@200 8.3854  val@300 8.2780
+  cosine@matched_lr    lr=3.27e-03 meanmult=0.552  val@200 8.3517  val@300 8.0582
+  wsd_annealed_200     lr=2.00e-03 meanmult=0.602  val@200 8.3707  val@300 8.3053
+
+  arm                    val@200  vs cosine   spread  signs agree
+  cosine                  8.3717    +0.0000   0.0354            -
+  wsd                     8.3739    +0.0021   0.0372         True
+  wsd@matched_lr          8.3854    +0.0137   0.0452         True
+  cosine@matched_lr       8.3517    -0.0200   0.0674         True
+  wsd_annealed_200        8.3707    -0.0010   0.0372        False
+
+==============================================================================
+F3 - warmup negative control
+==============================================================================
+                     layer     peak ON  @step    peak OFF  @step   OFF/ON
+                emb.weight   6.570e-03     30   1.080e-02      1     1.64
+       blocks.0.qkv.weight   1.178e-02     20   3.912e-02      1     3.32
+     blocks.0.mlp.0.weight   9.244e-03     20   3.914e-02      1     4.23
+       blocks.1.qkv.weight   1.253e-02     21   3.915e-02      1     3.12
+     blocks.1.mlp.0.weight   1.188e-02     22   3.920e-02      1     3.30
+               head.weight   3.095e-02     29   3.876e-02      1     1.25
+
+  step-1 grad norm (pre-clip):  warmup 0.464   no-warmup 0.464
+  clipped steps (>1.0):         warmup 0/300   no-warmup 0/300
+  val@300:                      warmup 8.2901   no-warmup 8.1774
+
+==============================================================================
+F4 - the embedding ratio is diluted by untouched rows
+==============================================================================
+  vocab 61070, tokens touched per step <= 1024 (1.68% of rows)
+
+  step   ratio over ALL rows   ratio over TOUCHED rows   dilution
+     1             3.601e-04                 3.337e-03        9.3x
+     2             6.775e-04                 4.860e-03        7.2x
+     5             1.533e-03                 8.476e-03        5.5x
+    10             2.867e-03                 1.362e-02        4.7x
+    20             5.135e-03                 2.082e-02        4.1x
+    30             6.570e-03                 2.708e-02        4.1x
+    50             5.608e-03                 2.113e-02        3.8x
+   100             5.074e-03                 1.998e-02        3.9x
+   200             3.001e-03                 8.859e-03        3.0x
+   300             7.655e-04                 2.003e-03        2.6x
+
+  median dilution factor: 3.4x
+
+wrote ../results/p3p4_followups.json
