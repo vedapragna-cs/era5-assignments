@@ -1,0 +1,78 @@
+How much of every depth-law claim survives the seed noise we actually measured?
+
+WHY THIS EXISTS.  Job 032c measured something we had assumed away: seed noise is NOT constant along
+an LR sweep.  At batch 16, three seeds gave a spread of 0.0050 nats at 6e-4, 0.0089 at 1.2e-3 and
+0.1131 at 2.4e-3 - 23x larger just PAST the optimum, which is exactly the point a parabola vertex
+leans on hardest.  Every optimum in this submission is a parabola through three points, one of which
+sits on that noisy side, and almost every one is a single seed.
+
+So: propagate the MEASURED noise through every vertex and every exponent, and report which claims
+survive.  Nothing here is new data.
+
+NOISE MODEL, grounded in job 032c rather than assumed:
+    sigma = 0.005 nats at or below the argmin      (measured 0.0050 and 0.0089)
+    sigma = 0.110 nats above the argmin            (measured 0.1131)
+This is deliberately the pessimistic reading of three seeds at one config; we do not have the
+replicates to do better, and saying so is part of the result.
+
+==================================================================================================
+PER-VERTEX: how well is each optimum pinned by its own three points?
+==================================================================================================
+ depth  arm         lr*     5th pct    95th pct     ->  in grid steps
+     2   SP  2.8583e-03  2.8177e-03  2.8923e-03   −0.02 / +0.02
+     4   SP  2.1656e-03  1.7096e-03  3.1090e-03   −0.34 / +0.52
+     8   SP  1.5484e-03  1.5017e-03  1.6481e-03   −0.04 / +0.09
+    16   SP  1.1572e-03  9.5779e-04  2.4960e-03   −0.27 / +1.11
+    32   SP  1.0429e-03  8.5929e-04  1.8250e-03   −0.28 / +0.81
+     2  muP  2.9018e-03  2.8720e-03  2.9393e-03   −0.01 / +0.02
+     4  muP  2.8607e-03  2.8324e-03  2.8913e-03   −0.01 / +0.02
+     8  muP  2.7379e-03  1.8225e-03  3.1011e-03   −0.59 / +0.18
+    16  muP  2.4505e-03  1.7858e-03  3.1423e-03   −0.46 / +0.36
+    32  muP  2.1683e-03  1.7431e-03  3.1688e-03   −0.31 / +0.55
+
+==================================================================================================
+WHICH CLAIMS SURVIVE
+==================================================================================================
+
+--------------------------------------------------------------------------------------------------
+ NOISE MODEL: pre-registered (0.0073 flat)   (4000/4000 draws kept)
+--------------------------------------------------------------------------------------------------
+  b_SP  over 2-16 (in-sample)              +0.439  90% CI [+0.417, +0.456]
+  b_muP over 2-16 (in-sample)              +0.079  90% CI [+0.044, +0.107]
+  H11: muP flattens vs SP (diff > 0)       +0.360  90% CI [+0.325, +0.398]   P = 100%
+  H11 as written: |b_muP| < 0.15           +0.079  90% CI [+0.044, +0.107]   P = 100%
+  held out: muP above SP at depth 32       +1.058  90% CI [+0.960, +1.172]   P = 100%
+  H14: muP local exp 16->32 > 0.15         +0.179  90% CI [+0.078, +0.299]   P = 67%
+  SP also decelerates (local < 0.15)       +0.151  90% CI [+0.060, +0.262]   P = 49%
+  V4 range 8-32: muP flattens vs SP        +0.122  90% CI [+0.054, +0.198]   P = 100%
+
+--------------------------------------------------------------------------------------------------
+ NOISE MODEL: measured 032c (0.005 / 0.110)   (4000/4000 draws kept)
+--------------------------------------------------------------------------------------------------
+  b_SP  over 2-16 (in-sample)              +0.431  90% CI [+0.061, +0.547]
+  b_muP over 2-16 (in-sample)              +0.084  90% CI [-0.031, +0.238]
+  H11: muP flattens vs SP (diff > 0)       +0.318  90% CI [-0.002, +0.526]   P = 95%
+  H11 as written: |b_muP| < 0.15           +0.084  90% CI [+0.004, +0.238]   P = 66%
+  held out: muP above SP at depth 32       +0.995  90% CI [+0.100, +1.750]   P = 97%
+  H14: muP local exp 16->32 > 0.15         +0.087  90% CI [-0.643, +0.732]   P = 44%
+  SP also decelerates (local < 0.15)       +0.140  90% CI [-0.754, +1.098]   P = 51%
+  V4 range 8-32: muP flattens vs SP        +0.133  90% CI [-0.358, +0.597]   P = 69%
+
+==================================================================================================
+VERDICT - probability each claim holds, under each noise model
+==================================================================================================
+  claim                                     pre-registered         measured 032c
+  H11: muP flattens vs SP (diff > 0)                 100%                   95%   SURVIVES
+  H11 as written: |b_muP| < 0.15                     100%                   66%   fails under measured noise
+  held out: muP above SP at depth 32                 100%                   97%   SURVIVES
+  H14: muP local exp 16->32 > 0.15                    67%                   44%   NOT ESTABLISHED
+  SP also decelerates (local < 0.15)                  49%                   51%   NOT ESTABLISHED
+  V4 range 8-32: muP flattens vs SP                  100%                   69%   fails under measured noise
+
+  A claim only counts if it survives BOTH models, because we do not know which is right.
+  What that leaves, and what it costs us, is written up in README C1.6.
+
+  WHAT WOULD FIX THIS, and it is cheap: replicate seeds at the points ABOVE each argmin. Those
+  are the points a parabola vertex leans on hardest and the only ones whose noise we have not
+  measured outside a single config. Three seeds at the two high-LR points of each depth would
+  collapse most of these intervals. We did not run it.

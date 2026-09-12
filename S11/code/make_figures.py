@@ -41,11 +41,19 @@ def load_all():
             if r["depth"] is None:
                 raise SystemExit(f"no depth for {stem}; add it to DEPTH_OF_FILE")
             r["_job"] = stem
+            # Same arm-isolation the verifier enforces: batch 8 and res_scale 1.0 are the
+            # defaults every job before 032/033 ran at, and a new arm is not more data for an
+            # old curve. Without these, job 032's batch sweep and job 033's muP sweep pool
+            # straight into the width and depth curves in figs 2 and 3.
+            r.setdefault("batch", 8)
+            r.setdefault("res_scale", 1.0)
             rows.append(r)
     return rows
 
 ROWS = load_all()
 def curve(**sel):
+    sel.setdefault("batch", 8)
+    sel.setdefault("res_scale", 1.0)
     d = {}
     for r in ROWS:
         if all(r.get(k) == v for k, v in sel.items()):
@@ -182,3 +190,92 @@ ax.legend(frameon=False, fontsize=9, ncol=2); tidy(ax)
 fig.savefig("figures/fig4_layer_ratios.png"); plt.close(fig)
 
 print("wrote:", *sorted(os.path.basename(x) for x in glob.glob("figures/*.png")))
+
+# ---------------------------------------------------------------- fig 5: depth-muP transfer
+# The clearest single statement in C1: two parametrisations, the same grid, the same estimator,
+# and an out-of-sample point at depth 32 that neither line was fitted on.
+def vertex(c):
+    pts = sorted(c.items())
+    i = min(range(len(pts)), key=lambda k: pts[k][1])
+    if i in (0, len(pts)-1): return None
+    (x1,y1),(x2,y2),(x3,y3) = [(math.log2(l), v) for l, v in pts[i-1:i+2]]
+    u1,u3,d1,d3 = x1-x2, x3-x2, y1-y2, y3-y2
+    det = u1*u1*u3 - u3*u3*u1
+    a = (d1*u3 - d3*u1)/det; b = (d3*u1*u1 - d1*u3*u3)/det
+    return 2 ** (x2 - b/(2*a))
+
+COARSE = (3e-4, 6e-4, 1e-3, 2e-3, 4e-3, 8e-3)
+SP_JOB = {2: "024a_s11_lrdepth_02", 4: "021_s11_lrwidth_256",
+          8: "024b_s11_lrdepth_08", 16: "024c_s11_lrdepth_16",
+          32: "034b_s11_sp_heldout_d32"}
+def on_grid(d): return {k: v for k, v in d.items() if any(abs(k/g-1) < 1e-9 for g in COARSE)}
+
+SPO, MPO = {}, {}
+for d, j in SP_JOB.items():
+    c = on_grid({r["lr"]: r["val_loss"] for r in ROWS if r["_job"] == j})
+    if len(c) >= 3 and vertex(c): SPO[d] = vertex(c)
+for d in (2, 4, 8, 16, 32):
+    c = curve(width=256, depth=d, res_scale=1/math.sqrt(d))
+    if len(c) >= 3 and vertex(c): MPO[d] = vertex(c)
+
+FIT = [2, 4, 8, 16]          # depths both lines were fitted on
+def ols(o, ds):
+    X = [math.log(d) for d in ds]; Y = [math.log(o[d]) for d in ds]
+    mx = sum(X)/len(X); my = sum(Y)/len(Y)
+    b = -sum((x-mx)*(y-my) for x, y in zip(X, Y))/sum((x-mx)**2 for x in X)
+    return math.exp(my + b*mx), b
+
+if len(MPO) >= 4 and len(SPO) >= 4:
+    # 90% intervals from the measured, position-dependent seed noise (job 032c): sigma 0.005 at
+    # or below each argmin, 0.110 above it. The point just past the argmin is what a parabola
+    # vertex leans on hardest and is the noisy one, so these widen as the curves flatten.
+    import random
+    def band(raw):
+        rng = random.Random(3)
+        v = []
+        for _ in range(2000):
+            am = min(raw, key=raw.get)
+            d = {k: x + rng.gauss(0, 0.110 if k > am else 0.005) for k, x in raw.items()}
+            q = vertex(d)
+            if q: v.append(q)
+        v.sort()
+        return v[int(.05*len(v))], v[int(.95*len(v))]
+    RAW = {("SP", d): on_grid({r["lr"]: r["val_loss"] for r in ROWS if r["_job"] == SP_JOB[d]})
+           for d in SPO}
+    RAW.update({("muP", d): curve(width=256, depth=d, res_scale=1/math.sqrt(d)) for d in MPO})
+    fig, ax = plt.subplots(figsize=(7.4, 4.9))
+    tidy(ax)
+    xs = [1.75, 45]
+    for (o, col, name) in ((SPO, C[0], "standard"), (MPO, C[1], "depth-muP  $1/\\sqrt{L}$")):
+        ds = [d for d in FIT if d in o]
+        A, b = ols(o, ds)
+        ax.plot(xs, [A*x**-b for x in xs], "--", color=col, lw=1.4, alpha=.75, zorder=2)
+        for d in sorted(o):
+            lo_, hi_ = band(RAW[(("SP" if col == C[0] else "muP"), d)])
+            ax.plot([d, d], [lo_, hi_], "-", color=col, lw=1.1, alpha=.45, zorder=3)
+        ax.plot(ds, [o[d] for d in ds], "o", color=col, zorder=4,
+                markeredgecolor=SURF, markeredgewidth=2, label=f"{name}   $b={b:+.3f}$")
+        if 32 in o:            # held out: open ring for measured, small x for predicted
+            ax.plot([32], [A*32**-b], "x", color=col, ms=9, mew=2.0, alpha=.8, zorder=4)
+            ax.plot([32], [o[32]], "o", mfc="none", color=col, ms=13, mew=2.4, zorder=5)
+            steps = abs(math.log2(o[32]/(A*32**-b)))
+            ax.annotate(f"{o[32]:.2e}  (pred {A*32**-b:.2e}, {steps:.2f} steps)",
+                        (32, o[32]), textcoords="offset points", xytext=(-14, -4),
+                        ha="right", va="center", color=col, fontsize=8.5)
+    ax.axvspan(22, 45, color=GRID, alpha=.3, zorder=1)
+    import matplotlib.transforms as mtr
+    ax.text(30, 0.955, "held out — in neither fit",
+            transform=mtr.blended_transform_factory(ax.transData, ax.transAxes),
+            ha="center", fontsize=8.5, color=INK2, style="italic")
+    ax.set_xscale("log", base=2); ax.set_yscale("log", base=2)
+    ax.set_xticks([2, 4, 8, 16, 32]); ax.set_xticklabels(["2", "4", "8", "16", "32"])
+    ax.set_xlim(1.75, 45)
+    ax.set_yticks([5e-4, 1e-3, 2e-3, 4e-3]); ax.set_yticklabels(["5e-4", "1e-3", "2e-3", "4e-3"])
+    ax.set_xlabel("depth (layers)"); ax.set_ylabel("optimal learning rate")
+    ax.set_title("muP flattens the depth dependence — and the deep end is barely pinned")
+    ax.legend(loc="lower left", frameon=False, fontsize=9)
+    fig.savefig("figures/fig5_mup_transfer.png"); plt.close(fig)
+    print("wrote: fig5_mup_transfer.png")
+else:
+    print("fig5 skipped: need >=4 depths in both arms "
+          f"(SP has {len(SPO)}, muP has {len(MPO)})")
