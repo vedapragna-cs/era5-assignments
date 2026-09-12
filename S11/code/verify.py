@@ -352,7 +352,9 @@ assert 0.9 < st.median(FA) < 1.15, "the width exponent no longer rounds to 1"
 # Recomputed independently of code/c1_mup.py, and grid-matched: both arms on the same 6-point
 # coarse grid with the same parabola-vertex estimator.
 print("\nC1.6 - depth-muP transfer")
-MUP_D = sorted({r["depth"] for r in ROWS if abs(r["res_scale"] - 1.0) > 1e-12})
+# The in-sample fit is depths 2-16 only.  Depth 32 (jobs 034a/b) is HELD OUT and is scored
+# separately below against the prediction this fit makes; folding it in would destroy the test.
+MUP_D = sorted({r["depth"] for r in ROWS if abs(r["res_scale"] - 1.0) > 1e-12 and r["depth"] <= 16})
 assert MUP_D, "no muP rows found"
 # SAMPLING IS MATCHED TO THE muP ARM, DELIBERATELY.  The muP arm is one seed per (depth, lr).  The
 # SP side has replicate seeds at depths 2 and 4 (jobs 025/028) and one seed at 8 and 16, so pooling
@@ -361,7 +363,8 @@ assert MUP_D, "no muP rows found"
 # same rule code/c1_mup.py applies and the same rule the batch series uses.  The alternative is not
 # hidden: seed-averaging instead moves b_SP from +0.4397 to +0.4453, which changes nothing.
 SP_JOB = {2: "024a_s11_lrdepth_02", 4: "021_s11_lrwidth_256",
-          8: "024b_s11_lrdepth_08", 16: "024c_s11_lrdepth_16"}
+          8: "024b_s11_lrdepth_08", 16: "024c_s11_lrdepth_16",
+          32: "034b_s11_sp_heldout_d32"}
 SPO, MPO, SPV, MPV = {}, {}, {}, {}
 for d in MUP_D:
     cs = {r["lr"]: r["val_loss"] for r in ROWS if r["_job"] == SP_JOB[d]
@@ -401,6 +404,99 @@ AS = math.exp(st.mean(math.log(SPO[d]) for d in MUP_D) + BSP*st.mean(math.log(d)
 check("held-out muP prediction", f"**{AM*32**-BMU:.4e}**")
 check("held-out SP prediction",  f"**{AS*32**-BSP:.4e}**")
 check("prediction separation",   f"×{(AM*32**-BMU)/(AS*32**-BSP):.2f}")
+
+# ------------------------------------------------- C1.6 held out: depth 32 (jobs 034a/034b)
+HELD = {}
+for arm, rs in (("muP", lambda d: 1/math.sqrt(d)), ("SP", lambda d: 1.0)):
+    c = {r["lr"]: r["val_loss"] for r in ROWS if r["depth"] == 32
+         and abs(r["res_scale"] - rs(32)) < 1e-12
+         and any(abs(r["lr"]/g - 1) < 1e-9 for g in COARSE)}
+    if len(c) >= 3:
+        lr_, _v = _vertex(c)
+        HELD[arm] = lr_
+        check(f"held-out depth-32 {arm} measured", f"**{lr_:.4e}**")
+if HELD:
+    print("  (depth 32 is in neither fit; predictions below come from the depths 2-16 fits)")
+    for arm, o, bb in (("muP", MPO, BMU), ("SP", SPO, BSP)):
+        if arm not in HELD: continue
+        ds = [d for d in sorted(o) if d <= 16]
+        A = math.exp(st.mean(math.log(o[d]) for d in ds) + bb*st.mean(math.log(d) for d in ds))
+        steps = abs(math.log2(HELD[arm]/(A*32**-bb)))
+        check(f"held-out {arm} grid-step error", f"**{steps:.2f} grid steps**")
+        assert steps < 0.5, (
+            f"H13 FAILS for the {arm} arm: {steps:.2f} grid steps from its own prediction; "
+            "README C1.6 claims PASS")
+    if "muP" in HELD and "SP" in HELD:
+        AM_ = math.exp(st.mean(math.log(MPO[d]) for d in sorted(MPO) if d <= 16)
+                       + BMU*st.mean(math.log(d) for d in sorted(MPO) if d <= 16))
+        AS_ = math.exp(st.mean(math.log(SPO[d]) for d in sorted(SPO) if d <= 16)
+                       + BSP*st.mean(math.log(d) for d in sorted(SPO) if d <= 16))
+        assert abs(math.log2(HELD["muP"]/(AM_*32**-BMU))) < abs(math.log2(HELD["muP"]/(AS_*32**-BSP))), \
+            "the muP held-out point is closer to the SP prediction -- H13 withdraws H11"
+    if "muP" in HELD:
+        # H14's point estimate is still what the README quotes in the "suggestive and nothing more"
+        # sentence; what is WITHDRAWN is reporting it as a verdict.  The withdrawal is enforced by
+        # the resampling block below, not here.
+        h14 = -math.log(HELD["muP"]/MPO[16])/math.log(2)
+        check("H14 point estimate 16->32", f"+0.021, +0.063, +0.160, +{h14:.3f}")
+        check("arm ratio at depth 32", f"×{HELD['muP']/HELD['SP']:.2f}")
+
+# ---------------------------------------------- C1.6 resampling: which claims survive the noise
+# Independent of code/c1_vertex_noise.py.  Two noise models; a claim counts only if it survives
+# both.  These checks are what keep the withdrawn claims withdrawn: if a future run pushed one
+# back over 90% under both models, its assert fires and the README must be rewritten.
+print("\nC1.6 - resampling under the measured seed noise")
+if "muP" in HELD and "SP" in HELD:
+    import random
+    ALLSP = dict(SPO); ALLSP[32] = HELD["SP"]
+    ALLMU = dict(MPO); ALLMU[32] = HELD["muP"]
+    RAWSP = {d: {r["lr"]: r["val_loss"] for r in ROWS if r["_job"] == SP_JOB[d]
+                 and any(abs(r["lr"]/g-1) < 1e-9 for g in COARSE)} for d in ALLSP}
+    RAWMU = {d: curve(width=256, depth=d, res_scale=1/math.sqrt(d)) for d in ALLMU}
+    def _vx2(c):
+        pts = sorted(c.items()); i = min(range(len(pts)), key=lambda k: pts[k][1])
+        if i in (0, len(pts)-1): return None
+        (x1,y1),(x2,y2),(x3,y3) = [(math.log2(l), v) for l, v in pts[i-1:i+2]]
+        u1,u3,d1,d3 = x1-x2, x3-x2, y1-y2, y3-y2
+        det = u1*u1*u3 - u3*u3*u1
+        a = (d1*u3-d3*u1)/det; b2 = (d3*u1*u1-d1*u3*u3)/det
+        return None if a <= 0 else 2**(x2 - b2/(2*a))
+    def _ols2(o, ds):
+        X = [math.log(d) for d in ds]; Y = [math.log(o[d]) for d in ds]
+        mx, my = st.mean(X), st.mean(Y)
+        return -sum((x-mx)*(y-my) for x, y in zip(X, Y))/sum((x-mx)**2 for x in X)
+    PROB = {}
+    for label, (slo, shi) in (("flat", (0.0073, 0.0073)), ("measured", (0.005, 0.110))):
+        rng = random.Random(7); ok = {k: 0 for k in ("flat16", "abs15", "sep32", "h14", "v4")}
+        n = 0
+        for _ in range(4000):
+            sp = {d: _vx2({k: v + rng.gauss(0, shi if k > min(RAWSP[d], key=RAWSP[d].get) else slo)
+                           for k, v in RAWSP[d].items()}) for d in RAWSP}
+            mu = {d: _vx2({k: v + rng.gauss(0, shi if k > min(RAWMU[d], key=RAWMU[d].get) else slo)
+                           for k, v in RAWMU[d].items()}) for d in RAWMU}
+            if any(x is None for x in list(sp.values()) + list(mu.values())): continue
+            n += 1
+            F16, F832 = [2, 4, 8, 16], [8, 16, 32]
+            ok["flat16"] += _ols2(sp, F16) - _ols2(mu, F16) > 0
+            ok["abs15"]  += abs(_ols2(mu, F16)) < 0.15
+            ok["sep32"]  += mu[32] > sp[32]
+            ok["h14"]    += -math.log(mu[32]/mu[16])/math.log(2) > 0.15
+            ok["v4"]     += _ols2(sp, F832) - _ols2(mu, F832) > 0
+        PROB[label] = {k: v/n for k, v in ok.items()}
+    for key, name in (("flat16", "muP flattens vs SP (2-16)"), ("sep32", "muP above SP at depth 32"),
+                      ("abs15", "H11 as written |b_muP|<0.15"), ("h14", "H14 degrades"),
+                      ("v4", "muP flattens over V4 range 8-32")):
+        f, m = PROB["flat"][key], PROB["measured"][key]
+        # Reported to the nearest 5%: these are Monte-Carlo estimates over 4,000 draws, so the
+        # sampling error is ~1% and two correct implementations disagree at the unit digit.
+        # code/c1_vertex_noise.py uses a different seed and lands within one bucket of these.
+        check(f"P({name})", f"| {round(f*20)*5:d}% | **{round(m*20)*5:d}%** |")
+    assert min(PROB[l]["flat16"] for l in PROB) >= 0.90, "C18 no longer survives both noise models"
+    assert min(PROB[l]["sep32"] for l in PROB) >= 0.90, "C18c no longer survives both noise models"
+    for key, claim in (("abs15", "C18b"), ("h14", "C20"), ("v4", "the V4-range comparison")):
+        assert min(PROB[l][key] for l in PROB) < 0.90, (
+            f"{claim} now survives BOTH noise models -- it is marked WITHDRAWN in README C1.6 and "
+            "that section must be rewritten rather than left standing")
 
 print(f"\n{'='*74}\n{N-len(FAIL)}/{N} checks pass")
 if FAIL:

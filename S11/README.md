@@ -19,7 +19,7 @@ repo, plus two results the assignment did not ask for that bear directly on the 
 | 3 | Where does warmup stop changing the update/weight ratio? | **Steps 20–22**, i.e. **before warmup ends at 30** — and disabling warmup entirely was **0.113 nats better** |
 | 4 | Cosine or WSD at step 200? | **Neither.** They differ by **+0.0021** nats against a 0.0018 seed spread. The 0.33-nat gap at step 300 is **92.5% average-LR artifact** |
 | 5 | LR at width 4,096? | **1.5e-04** — from `lr* ∝ 1/width`, `a = 0.990`, confirmed on two held-out points |
-| **C1** | What does V5 actually need? | `lr* ∝ 1/(width·√depth)`. V4 grows **8→20 layers at fixed width**, so that boundary needs the rate **cut ~1.6× (1.43–1.84× across estimators)**. **Or change one line**: `1/√L` residual scaling cuts the shift from 1.32 grid steps to **0.24** and costs nothing in loss (§C1.6) |
+| **C1** | What does V5 actually need? | `lr* ∝ 1/(width·√depth)`. V4 grows **8→20 layers at fixed width**, so that boundary needs the rate **cut ~1.6× (1.43–1.84× across estimators)**. **Or change one line**: `1/√L` residual scaling demonstrably flattens the depth dependence (95–100%) and costs nothing in loss — though we cannot say *by how much* at V4's depths (§C1.6) |
 | **C2** | Is S7 §9's monitoring rule right? | **No.** And the V4 scar reproduces at **140.8×**, stochastically and only with depth |
 
 ---
@@ -44,9 +44,11 @@ Every claim, its evidence, and what would kill it. **measured** = we computed it
 | C10 | `lr* ∝ width^−0.990` | 3 widths, √2 grid, all bracketed | any minimum at a grid endpoint | **holds** |
 | C11 | `lr* ∝ depth^−b`, **b between 0.389 and 0.667** | 4 depths; 9 distinct estimator×grid estimates | every estimate not having b > 0 | **holds, but the exponent is estimator-sensitive — see §C1.4** |
 | C16 | the optimum is **far less batch-sensitive than either textbook rule**: ×1.91 over batch 4→32, where √ wants ×2.83 and linear ×8.0 | 4 batches at width 512, jobs `032a`/`022`/`032b`/`032c` | a move matching either rule | **holds** — criterion-free, no fitted shape |
-| C18 | **depth-muP flattens the LR shift**: `b` 0.440 → **0.0795** over an 8× depth range, 1.32 → 0.24 grid steps | 4 depths, matched grid, matched estimator | `|b_muP| ≥ 0.15` | **holds in-sample** at 3.8σ vs SP; held-out test at depth 32 running |
-| C19 | muP costs **nothing** — it is **better** at all 4 depths (−0.015 … −0.166 nats) | H12 guard, matched grid | muP >0.05 nats worse at every depth | **holds** |
-| C20 | the flattening **degrades with depth**: muP local `b` rises +0.021 → +0.063 → **+0.160** | same 4 depths | a flat or falling local exponent | **holds** — and it is why C18 is not yet extrapolated to V4 |
+| C18 | **depth-muP flattens the LR shift relative to standard**: `b` 0.440 → 0.0795 over depths 2–16 | 4 depths, matched grid+estimator, resampled under two noise models | the difference `b_SP − b_muP` not being > 0 | **holds** — 95% / 100% |
+| C18b | ~~`\|b_muP\| < 0.15`, i.e. the rate **transfers**~~ | ~~same fit~~ | resampling puts it under threshold | **WITHDRAWN** — only **65%** under measured noise. The *comparative* claim survives; the absolute one does not |
+| C18c | the two arms stay separated **out of sample**: muP's depth-32 optimum is above SP's | jobs `034a`/`034b`, neither fitted on depth 32 | overlap at depth 32 | **holds** — 95% / 100%; measured ratio ×2.08 |
+| C19 | muP costs **nothing** — it is **better** at all 4 depths (−0.015 … −0.166 nats) | H12 guard, matched grid; compared at *argmin* values, which sit on the low-noise side | muP >0.05 nats worse at every depth | **holds** — gaps are 10× and 30× σ at depths 8 and 16 |
+| C20 | ~~the flattening **degrades with depth** (H14)~~ | ~~local exponents +0.021 → +0.176~~ | resampling puts the 16→32 exponent under 0.15 | **WITHDRAWN** — **45%** under measured noise, 65% under the optimistic one. Reported as a verdict earlier today; that was the error |
 | C21 | **seed variance is not constant along an LR sweep** — 23× larger just past the optimum (0.0050 → 0.1131 nats) than below it | 3 seeds × 3 LRs, job `032c` | flat spread across the sweep | **holds** — and it revises our own ±2% vertex-noise figure to **±11%** |
 | C22 | the batch-16 dip is real: `d = val(2.4e-3) − val(1.2e-3)` > 0 at **3/3** seeds | pre-registered sign test, job `032c` | any seed with `d < 0` | **holds** |
 | C17 | ~~the optimum **saturates** in batch; `Bn = 2.40`~~ | ~~3 points~~ | a non-monotone local exponent | **WITHDRAWN** — batch 32 gave +0.525 after +0.007. See §C1.4 |
@@ -64,6 +66,8 @@ Every claim, its evidence, and what would kill it. **measured** = we computed it
 | "depth-16 optimum is 1e-3" | refinement moved it to **1.4e-3** — the second time refinement changed an answer | job `028` |
 | "the depth exponent is 0.505" | that is a **two-point endpoint fit on three different grids**. The estimator family spans **0.389–0.667** | `code/c1_exponent_robustness.py` |
 | "the batch term could reverse the sign of the depth cut" | it moves **×1.91 over an 8× batch range** where √ predicts ×2.83 — much weaker than either rule, and it does not swamp depth here | jobs `032a`/`032b` |
+| "muP transfer DEGRADES with depth (H14)" | **our own verdict, published and withdrawn the same day.** Resampling under the noise we had just measured puts it at 45% | `code/c1_vertex_noise.py` |
+| "muP cuts the depth shift ~2.6× in V4's range" | compared `b_muP` over depths **8–32** against `b_SP` over **2–16** — unmatched ranges. Matched: 1.69×, and only 70% likely to have the right sign | job `034b` |
 | "the optimum saturates in batch, `Bn = 2.40`" | **our own fit to 3 points.** Batch 32 gave a local exponent of +0.467 after +0.064; a saturating curve cannot steepen again | job `032b` |
 | "job 032 measures width 256" | it was cloned from the width-**512** sweep. `input_params` proves it | `results/gpu/032_CORRECTION.md` |
 | "the per-layer ratio has the better SNR" (round 1) | true at 2 layers, **inverts by depth 16** | job `029` |
@@ -675,18 +679,21 @@ b_SP = +0.4397          b_muP = +0.0795          over an 8× depth range
 
 ##### Two claims here, and they are *not* equally well supported
 
-Job `032c` measured the per-seed spread of a parabola vertex directly at **±11%** (§C1.4). Every
-point in both arms is one seed, so that is the noise on each `lr*`. Propagating it through the OLS
-slope gives `se(b) = 0.067` over four depths:
+Job `032c` measured the per-seed spread of a parabola vertex at **±11%** (§C1.4). Every point in both
+arms is one seed, so that is the noise on each `lr*`. A Gaussian propagation through the OLS slope
+gives `se(b) ≈ 0.067` over four depths, which separates two claims that are easy to blur:
 
 | | |
 |---|---|
-| **(a) muP flattens the depth dependence relative to SP** | difference **+0.360 ± 0.095 — 3.8σ.** Solid. This is what the one-line change buys. |
-| **(b) muP makes the rate *transfer*, i.e. `b_muP` ≈ 0** | `|b_muP| = 0.0795` sits only **1.1σ** inside H11's own threshold, and the local exponent is rising through the range. |
+| **(a) muP flattens the depth dependence relative to SP** | difference **+0.360 ± 0.095.** This is what the one-line change buys. |
+| **(b) muP makes the rate *transfer*, i.e. `b_muP` ≈ 0** | `\|b_muP\| = 0.0795` sits only ~1σ inside H11's own threshold. |
 
-> **H11 passes as written, but "`b` is small" is much better supported than "`b` is zero", and we do
-> not claim the latter.** This is precisely what jobs `034a`/`034b` test: an out-of-sample point at
-> depth 32 probes (b) directly, where an in-sample fit cannot.
+> **"`b` is small" is much better supported than "`b` is zero", and we do not claim the latter.**
+
+⚠️ That ±0.067 is a **Gaussian approximation with a single σ**, and the real noise is neither Gaussian
+in `lr*` nor constant along a sweep. The proper treatment — resampling each curve's own points under
+the measured, position-dependent noise — is below, and it is **less** favourable: (a) survives at
+95%, (b) does not survive at all.
 
 **H12 fires nowhere, and fires in the *opposite* direction.** The guard was there because this is how
 such claims usually die — a parametrisation that flattens the LR curve by making everything equally
@@ -727,14 +734,89 @@ exactly, so the SP arm is bit-faithful to jobs `024`).
   support extrapolating it to V4's depth 20+. **HOLDS** otherwise. **Pre-registered because we expect
   it to degrade** — a caveat we predict and then measure is worth more than one we assert.
 
-#### What this would be worth to V5, and what it is not worth yet
+#### The held-out result (jobs `034a`/`034b`) — and then we propagated the noise, and it cost us
 
-The cookbook never mentions muP or any transfer parametrisation anywhere in its 284 KB. If the
-held-out test holds, the recommendation is one line in the `Block` and V5 stops re-tuning at growth
-boundaries. **We are not claiming that yet.** What is measured is: at toy scale, across 2–16 layers,
-`1/√L` residual scaling reduces the depth-driven LR shift from 1.32 grid steps to 0.24 **and** costs
-nothing in loss. Every point is one seed; widths above 256 are untested; the interaction with the
-MoE routing V4 actually grows into is untested.
+Both arms ran at depth 32, against predictions committed to their docstrings beforehand:
+
+| arm | predicted | measured | from own prediction | from the *other* arm's |
+|---|--:|--:|--:|--:|
+| muP | 2.3803e-3 | **2.1683e-3** | **0.13 grid steps** | 1.35 |
+| SP | 8.5175e-4 | **1.0429e-3** | **0.29 grid steps** | 1.19 |
+
+> **H13 PASS for both arms.** Each landed nearer its own prediction than the other's, by 1.22 and
+> 0.90 grid steps. The muP law predicts a depth it was not fitted on.
+
+##### ⚠️ Then we checked whether these vertices are pinned well enough to carry the claims. Mostly they are not.
+
+Claim C21 (§C1.4) measured seed noise at **0.0050** nats below the optimum and **0.1131** *above* it.
+A parabola vertex leans hardest on the point just past the argmin — the noisy one. Perturbing only
+that point by one C21-sized draw moves the depth-32 vertices by **+53%/−14%** (SP) and **+37%/−15%**
+(muP). Their curvature there is 0.060 and 0.086 against 0.19–0.77 at shallow depths: **the curves are
+nearly flat at depth 32, so the vertex is barely determined.**
+
+So `code/c1_vertex_noise.py` propagates the measured noise through **every** vertex and exponent, under
+two models — the spread we assumed all along, and the one job `032c` measured:
+
+| claim | σ=0.0073 flat *(pre-registered)* | σ=0.005/0.110 *(measured)* | |
+|---|--:|--:|---|
+| muP **flattens** the depth dependence vs SP (2–16) | 100% | **95%** | ✅ **survives** |
+| muP's optimum is **above** SP's at depth 32 | 100% | **95%** | ✅ **survives** |
+| **H11 as written**, `\|b_muP\| < 0.15` | 100% | **65%** | ❌ not established |
+| **H14 DEGRADES**, muP local exponent 16→32 > 0.15 | 65% | **45%** | ❌ not established |
+| SP *also* decelerates | 49% | 51% | ❌ coin flip |
+| muP flattens vs SP **over V4's range 8–32** | 100% | **70%** | ❌ not established |
+
+*Probabilities are Monte-Carlo over 4,000 resamples and are reported to the nearest 5%; the sampling
+error is ~1%, so a finer digit would be spurious. `code/verify.py` recomputes them independently with
+a different seed and lands within one bucket.*
+
+**A claim only counts if it survives both models, because we do not know which is right.** The
+measured model rests on three seeds at *one* config, and applying its 0.110 to every above-argmin
+point everywhere is an extrapolation; the truth is probably between the two. Reporting both is what
+separates the conclusions that depend on the noise model from the ones that do not.
+
+##### What we withdraw, including something published earlier today
+
+> - **`H14 DEGRADES` is withdrawn.** We reported it as a clean pre-registered hit. Under the measured
+>   noise it holds with probability **45%** — *less likely than not* — and even under the optimistic
+>   model only 65%. The rising sequence +0.021, +0.063, +0.160, +0.176 is suggestive and nothing more.
+>   It was never strong enough to report as a verdict, and the fault is in reporting it, not in the
+>   pre-registration.
+> - **`H11` as literally written is withdrawn** (65%). What survives is the *comparative* claim, not
+>   the absolute one.
+> - **Every V4-range number is withdrawn**, including the "cuts the shift ~2.6×" we published
+>   earlier today. That figure was also **computed wrong**: it compared `b_muP` over depths 8–32
+>   against `b_SP` over 2–16 — unmatched ranges. Matched over 8–32 the point estimate is 1.69×, and
+>   even that is only 70% likely to have the right sign.
+
+##### What survives, and it is still the most useful result in C1
+
+1. **muP flattens the depth dependence relative to standard parametrisation** — 95–100%.
+2. **The two arms stay separated out of sample** — muP's optimum is above SP's at depth 32 with 95%
+   probability, and the measured ratio climbs 1.02 → 1.32 → 1.77 → 2.12 → 2.08 across depths 2–32.
+3. **It costs nothing.** muP's best loss beat SP's at all four in-sample depths (−0.015, −0.104,
+   −0.030, −0.166), and those comparisons are between *argmin* values, which sit on the low-noise
+   side. At depths 8 and 16 the gaps are 10× and 30× the below-optimum σ.
+
+> **Revised recommendation.** Adopt `1/√L` residual scaling: it is one line, it demonstrably flattens
+> the depth dependence, and it does not cost loss. **But we cannot tell you by how much in V4's depth
+> range, and we cannot claim it reaches transfer.** Both of those need vertices we have not pinned.
+
+##### What would fix it, and it is cheap
+
+**Replicate seeds at the points *above* each argmin.** They are what the vertex leans on hardest and
+the only ones whose noise we have never measured outside a single config. Three seeds at the two
+high-LR points of each depth would collapse most of these intervals — far cheaper than more depths.
+**We did not run it**, which is why the table above has four rows marked ❌ rather than answers.
+
+![muP transfer](figures/fig5_mup_transfer.png)
+
+*Optimal rate against depth, log-log, both arms on the identical grid with the identical estimator.
+Filled dots were fitted on; rings at depth 32 were not. `×` marks what each fit predicted. The bars
+are the 90% intervals from the measured noise model — note how they widen with depth as the curves
+flatten.*
+
+Reproduce: `python code/c1_vertex_noise.py`.
 
 Reproduce: `python code/c1_mup.py`.
 
