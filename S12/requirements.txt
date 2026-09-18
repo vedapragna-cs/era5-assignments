@@ -1,0 +1,5 @@
+torch>=2.1
+pandas
+matplotlib
+jinja2
+jupyter
