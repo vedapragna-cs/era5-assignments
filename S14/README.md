@@ -116,11 +116,3 @@ Part 8  three runs            13.8 min   (2.7 + 5.6 + 5.5)
 Fixed for comparability: model size, batch 32, seed 1337, and the same learning-rate schedule for both MoE runs.
 
 **One T4-specific trap worth recording.** `torch.cuda.is_bf16_supported()` returns `True` on a T4, but Turing has no bfloat16 tensor cores — bf16 there is emulated and runs about 10× slower. The 16-bit type is selected by compute capability instead: bfloat16 only on Ampere or newer, float16 on Turing.
-
-## Things left to try
-
-* `gamma = 0` — remove the balancing bias and watch a few experts take everything. The clearest way to show what the bias is doing.
-* `score="softmax"` instead of sigmoid.
-* `shared=False` — measure how much the always-on expert was absorbing.
-* Fine-grained experts: slice the dense FFN into 8 experts of `ff=128` rather than 8 copies at `ff=1024`, and raise `top_k`. Same active compute, far more routing combinations.
-* Upcycle a second time, 8 → 16 experts, copying each expert and adding noise to the copy's bias.
