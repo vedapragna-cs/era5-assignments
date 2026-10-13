@@ -1,0 +1,1313 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<feed xmlns:opensearch="http://a9.com/-/spec/opensearch/1.1/" xmlns:arxiv="http://arxiv.org/schemas/atom" xmlns="http://www.w3.org/2005/Atom">
+  <id>https://arxiv.org/api/wzLsF8JsLKmIXC7+lnAondCu/wg</id>
+  <title>arXiv Query: search_query=&amp;id_list=1409.0473,1508.04025,1611.02344,1706.03762,1901.02860,1904.10509,1911.02150,1911.05507,1912.11637,2004.05150,2006.16236,2102.11174,2104.09864,2108.12409,2205.14135,2207.06881,2212.10554,2305.13245,2306.15595,2309.00071,2309.17453,2310.01889,2312.00752,2402.19427,2405.04434,2406.06484,2410.05258,2412.06464,2502.11089,2512.12167&amp;start=0&amp;max_results=200</title>
+  <updated>2026-08-21T22:26:46Z</updated>
+  <link href="https://arxiv.org/api/query?search_query=&amp;start=0&amp;max_results=200&amp;id_list=1409.0473,1508.04025,1611.02344,1706.03762,1901.02860,1904.10509,1911.02150,1911.05507,1912.11637,2004.05150,2006.16236,2102.11174,2104.09864,2108.12409,2205.14135,2207.06881,2212.10554,2305.13245,2306.15595,2309.00071,2309.17453,2310.01889,2312.00752,2402.19427,2405.04434,2406.06484,2410.05258,2412.06464,2502.11089,2512.12167" type="application/atom+xml"/>
+  <opensearch:itemsPerPage>200</opensearch:itemsPerPage>
+  <opensearch:totalResults>30</opensearch:totalResults>
+  <opensearch:startIndex>0</opensearch:startIndex>
+  <entry>
+    <id>http://arxiv.org/abs/2006.16236v3</id>
+    <title>Transformers are RNNs: Fast Autoregressive Transformers with Linear Attention</title>
+    <updated>2020-08-31T11:09:32Z</updated>
+    <link href="https://arxiv.org/abs/2006.16236v3" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2006.16236v3" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Transformers achieve remarkable performance in several tasks but due to their quadratic complexity, with respect to the input's length, they are prohibitively slow for very long sequences. To address this limitation, we express the self-attention as a linear dot-product of kernel feature maps and make use of the associativity property of matrix products to reduce the complexity from $\mathcal{O}\left(N^2\right)$ to $\mathcal{O}\left(N\right)$, where $N$ is the sequence length. We show that this formulation permits an iterative implementation that dramatically accelerates autoregressive transformers and reveals their relationship to recurrent neural networks. Our linear transformers achieve similar performance to vanilla transformers and they are up to 4000x faster on autoregressive prediction of very long sequences.</summary>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="stat.ML" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2020-06-29T17:55:38Z</published>
+    <arxiv:comment>ICML 2020, project at https://linear-transformers.com/</arxiv:comment>
+    <arxiv:primary_category term="cs.LG"/>
+    <author>
+      <name>Angelos Katharopoulos</name>
+    </author>
+    <author>
+      <name>Apoorv Vyas</name>
+    </author>
+    <author>
+      <name>Nikolaos Pappas</name>
+    </author>
+    <author>
+      <name>François Fleuret</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2104.09864v5</id>
+    <title>RoFormer: Enhanced Transformer with Rotary Position Embedding</title>
+    <updated>2023-11-08T13:36:32Z</updated>
+    <link href="https://arxiv.org/abs/2104.09864v5" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2104.09864v5" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Position encoding recently has shown effective in the transformer architecture. It enables valuable supervision for dependency modeling between elements at different positions of the sequence. In this paper, we first investigate various methods to integrate positional information into the learning process of transformer-based language models. Then, we propose a novel method named Rotary Position Embedding(RoPE) to effectively leverage the positional information. Specifically, the proposed RoPE encodes the absolute position with a rotation matrix and meanwhile incorporates the explicit relative position dependency in self-attention formulation. Notably, RoPE enables valuable properties, including the flexibility of sequence length, decaying inter-token dependency with increasing relative distances, and the capability of equipping the linear self-attention with relative position encoding. Finally, we evaluate the enhanced transformer with rotary position embedding, also called RoFormer, on various long text classification benchmark datasets. Our experiments show that it consistently overcomes its alternatives. Furthermore, we provide a theoretical analysis to explain some experimental results. RoFormer is already integrated into Huggingface: \url{https://huggingface.co/docs/transformers/model_doc/roformer}.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2021-04-20T09:54:06Z</published>
+    <arxiv:comment>fixed some typos</arxiv:comment>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Jianlin Su</name>
+    </author>
+    <author>
+      <name>Yu Lu</name>
+    </author>
+    <author>
+      <name>Shengfeng Pan</name>
+    </author>
+    <author>
+      <name>Ahmed Murtadha</name>
+    </author>
+    <author>
+      <name>Bo Wen</name>
+    </author>
+    <author>
+      <name>Yunfeng Liu</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2309.17453v4</id>
+    <title>Efficient Streaming Language Models with Attention Sinks</title>
+    <updated>2024-04-07T00:56:53Z</updated>
+    <link href="https://arxiv.org/abs/2309.17453v4" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2309.17453v4" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Deploying Large Language Models (LLMs) in streaming applications such as multi-round dialogue, where long interactions are expected, is urgently needed but poses two major challenges. Firstly, during the decoding stage, caching previous tokens' Key and Value states (KV) consumes extensive memory. Secondly, popular LLMs cannot generalize to longer texts than the training sequence length. Window attention, where only the most recent KVs are cached, is a natural approach -- but we show that it fails when the text length surpasses the cache size. We observe an interesting phenomenon, namely attention sink, that keeping the KV of initial tokens will largely recover the performance of window attention. In this paper, we first demonstrate that the emergence of attention sink is due to the strong attention scores towards initial tokens as a "sink" even if they are not semantically important. Based on the above analysis, we introduce StreamingLLM, an efficient framework that enables LLMs trained with a finite length attention window to generalize to infinite sequence lengths without any fine-tuning. We show that StreamingLLM can enable Llama-2, MPT, Falcon, and Pythia to perform stable and efficient language modeling with up to 4 million tokens and more. In addition, we discover that adding a placeholder token as a dedicated attention sink during pre-training can further improve streaming deployment. In streaming settings, StreamingLLM outperforms the sliding window recomputation baseline by up to 22.2x speedup. Code and datasets are provided at https://github.com/mit-han-lab/streaming-llm.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2023-09-29T17:59:56Z</published>
+    <arxiv:comment>ICLR 2024</arxiv:comment>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Guangxuan Xiao</name>
+    </author>
+    <author>
+      <name>Yuandong Tian</name>
+    </author>
+    <author>
+      <name>Beidi Chen</name>
+    </author>
+    <author>
+      <name>Song Han</name>
+    </author>
+    <author>
+      <name>Mike Lewis</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2108.12409v2</id>
+    <title>Train Short, Test Long: Attention with Linear Biases Enables Input Length Extrapolation</title>
+    <updated>2022-04-22T18:20:48Z</updated>
+    <link href="https://arxiv.org/abs/2108.12409v2" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2108.12409v2" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Since the introduction of the transformer model by Vaswani et al. (2017), a fundamental question has yet to be answered: how does a model achieve extrapolation at inference time for sequences that are longer than it saw during training? We first show that extrapolation can be enabled by simply changing the position representation method, though we find that current methods do not allow for efficient extrapolation. We therefore introduce a simpler and more efficient position method, Attention with Linear Biases (ALiBi). ALiBi does not add positional embeddings to word embeddings; instead, it biases query-key attention scores with a penalty that is proportional to their distance. We show that this method trains a 1.3 billion parameter model on input sequences of length 1024 that extrapolates to input sequences of length 2048, achieving the same perplexity as a sinusoidal position embedding model trained on inputs of length 2048 but training 11% faster and using 11% less memory. ALiBi's inductive bias towards recency also leads it to outperform multiple strong position methods on the WikiText-103 benchmark.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2021-08-27T17:35:06Z</published>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Ofir Press</name>
+    </author>
+    <author>
+      <name>Noah A. Smith</name>
+    </author>
+    <author>
+      <name>Mike Lewis</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/1911.05507v1</id>
+    <title>Compressive Transformers for Long-Range Sequence Modelling</title>
+    <updated>2019-11-13T14:36:01Z</updated>
+    <link href="https://arxiv.org/abs/1911.05507v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/1911.05507v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>We present the Compressive Transformer, an attentive sequence model which compresses past memories for long-range sequence learning. We find the Compressive Transformer obtains state-of-the-art language modelling results in the WikiText-103 and Enwik8 benchmarks, achieving 17.1 ppl and 0.97 bpc respectively. We also find it can model high-frequency speech effectively and can be used as a memory mechanism for RL, demonstrated on an object matching task. To promote the domain of long-range sequence learning, we propose a new open-vocabulary language modelling benchmark derived from books, PG-19.</summary>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="stat.ML" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2019-11-13T14:36:01Z</published>
+    <arxiv:comment>19 pages, 6 figures, 10 tables</arxiv:comment>
+    <arxiv:primary_category term="cs.LG"/>
+    <author>
+      <name>Jack W. Rae</name>
+    </author>
+    <author>
+      <name>Anna Potapenko</name>
+    </author>
+    <author>
+      <name>Siddhant M. Jayakumar</name>
+    </author>
+    <author>
+      <name>Timothy P. Lillicrap</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2004.05150v2</id>
+    <title>Longformer: The Long-Document Transformer</title>
+    <updated>2020-12-02T17:52:35Z</updated>
+    <link href="https://arxiv.org/abs/2004.05150v2" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2004.05150v2" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Transformer-based models are unable to process long sequences due to their self-attention operation, which scales quadratically with the sequence length. To address this limitation, we introduce the Longformer with an attention mechanism that scales linearly with sequence length, making it easy to process documents of thousands of tokens or longer. Longformer's attention mechanism is a drop-in replacement for the standard self-attention and combines a local windowed attention with a task motivated global attention. Following prior work on long-sequence transformers, we evaluate Longformer on character-level language modeling and achieve state-of-the-art results on text8 and enwik8. In contrast to most prior work, we also pretrain Longformer and finetune it on a variety of downstream tasks. Our pretrained Longformer consistently outperforms RoBERTa on long document tasks and sets new state-of-the-art results on WikiHop and TriviaQA. We finally introduce the Longformer-Encoder-Decoder (LED), a Longformer variant for supporting long document generative sequence-to-sequence tasks, and demonstrate its effectiveness on the arXiv summarization dataset.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2020-04-10T17:54:09Z</published>
+    <arxiv:comment>Version 2 introduces the Longformer-Encoder-Decoder (LED) model</arxiv:comment>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Iz Beltagy</name>
+    </author>
+    <author>
+      <name>Matthew E. Peters</name>
+    </author>
+    <author>
+      <name>Arman Cohan</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/1611.02344v3</id>
+    <title>A Convolutional Encoder Model for Neural Machine Translation</title>
+    <updated>2017-07-25T01:36:14Z</updated>
+    <link href="https://arxiv.org/abs/1611.02344v3" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/1611.02344v3" rel="related" type="application/pdf" title="pdf"/>
+    <summary>The prevalent approach to neural machine translation relies on bi-directional LSTMs to encode the source sentence. In this paper we present a faster and simpler architecture based on a succession of convolutional layers. This allows to encode the entire source sentence simultaneously compared to recurrent networks for which computation is constrained by temporal dependencies. On WMT'16 English-Romanian translation we achieve competitive accuracy to the state-of-the-art and we outperform several recently published results on the WMT'15 English-German task. Our models obtain almost the same accuracy as a very deep LSTM setup on WMT'14 English-French translation. Our convolutional encoder speeds up CPU decoding by more than two times at the same or higher accuracy as a strong bi-directional LSTM baseline.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2016-11-07T23:46:45Z</published>
+    <arxiv:comment>13 pages</arxiv:comment>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Jonas Gehring</name>
+    </author>
+    <author>
+      <name>Michael Auli</name>
+    </author>
+    <author>
+      <name>David Grangier</name>
+    </author>
+    <author>
+      <name>Yann N. Dauphin</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2402.19427v1</id>
+    <title>Griffin: Mixing Gated Linear Recurrences with Local Attention for Efficient Language Models</title>
+    <updated>2024-02-29T18:24:46Z</updated>
+    <link href="https://arxiv.org/abs/2402.19427v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2402.19427v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Recurrent neural networks (RNNs) have fast inference and scale efficiently on long sequences, but they are difficult to train and hard to scale. We propose Hawk, an RNN with gated linear recurrences, and Griffin, a hybrid model that mixes gated linear recurrences with local attention. Hawk exceeds the reported performance of Mamba on downstream tasks, while Griffin matches the performance of Llama-2 despite being trained on over 6 times fewer tokens. We also show that Griffin can extrapolate on sequences significantly longer than those seen during training. Our models match the hardware efficiency of Transformers during training, and during inference they have lower latency and significantly higher throughput. We scale Griffin up to 14B parameters, and explain how to shard our models for efficient distributed training.</summary>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2024-02-29T18:24:46Z</published>
+    <arxiv:comment>25 pages, 11 figures</arxiv:comment>
+    <arxiv:primary_category term="cs.LG"/>
+    <author>
+      <name>Soham De</name>
+    </author>
+    <author>
+      <name>Samuel L. Smith</name>
+    </author>
+    <author>
+      <name>Anushan Fernando</name>
+    </author>
+    <author>
+      <name>Aleksandar Botev</name>
+    </author>
+    <author>
+      <name>George Cristian-Muraru</name>
+    </author>
+    <author>
+      <name>Albert Gu</name>
+    </author>
+    <author>
+      <name>Ruba Haroun</name>
+    </author>
+    <author>
+      <name>Leonard Berrada</name>
+    </author>
+    <author>
+      <name>Yutian Chen</name>
+    </author>
+    <author>
+      <name>Srivatsan Srinivasan</name>
+    </author>
+    <author>
+      <name>Guillaume Desjardins</name>
+    </author>
+    <author>
+      <name>Arnaud Doucet</name>
+    </author>
+    <author>
+      <name>David Budden</name>
+    </author>
+    <author>
+      <name>Yee Whye Teh</name>
+    </author>
+    <author>
+      <name>Razvan Pascanu</name>
+    </author>
+    <author>
+      <name>Nando De Freitas</name>
+    </author>
+    <author>
+      <name>Caglar Gulcehre</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/1706.03762v7</id>
+    <title>Attention Is All You Need</title>
+    <updated>2023-08-02T00:41:18Z</updated>
+    <link href="https://arxiv.org/abs/1706.03762v7" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/1706.03762v7" rel="related" type="application/pdf" title="pdf"/>
+    <summary>The dominant sequence transduction models are based on complex recurrent or convolutional neural networks in an encoder-decoder configuration. The best performing models also connect the encoder and decoder through an attention mechanism. We propose a new simple network architecture, the Transformer, based solely on attention mechanisms, dispensing with recurrence and convolutions entirely. Experiments on two machine translation tasks show these models to be superior in quality while being more parallelizable and requiring significantly less time to train. Our model achieves 28.4 BLEU on the WMT 2014 English-to-German translation task, improving over the existing best results, including ensembles by over 2 BLEU. On the WMT 2014 English-to-French translation task, our model establishes a new single-model state-of-the-art BLEU score of 41.8 after training for 3.5 days on eight GPUs, a small fraction of the training costs of the best models from the literature. We show that the Transformer generalizes well to other tasks by applying it successfully to English constituency parsing both with large and limited training data.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2017-06-12T17:57:34Z</published>
+    <arxiv:comment>15 pages, 5 figures</arxiv:comment>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Ashish Vaswani</name>
+    </author>
+    <author>
+      <name>Noam Shazeer</name>
+    </author>
+    <author>
+      <name>Niki Parmar</name>
+    </author>
+    <author>
+      <name>Jakob Uszkoreit</name>
+    </author>
+    <author>
+      <name>Llion Jones</name>
+    </author>
+    <author>
+      <name>Aidan N. Gomez</name>
+    </author>
+    <author>
+      <name>Lukasz Kaiser</name>
+    </author>
+    <author>
+      <name>Illia Polosukhin</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2502.11089v2</id>
+    <title>Native Sparse Attention: Hardware-Aligned and Natively Trainable Sparse Attention</title>
+    <updated>2025-02-27T09:01:21Z</updated>
+    <link href="https://arxiv.org/abs/2502.11089v2" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2502.11089v2" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Long-context modeling is crucial for next-generation language models, yet the high computational cost of standard attention mechanisms poses significant computational challenges. Sparse attention offers a promising direction for improving efficiency while maintaining model capabilities. We present NSA, a Natively trainable Sparse Attention mechanism that integrates algorithmic innovations with hardware-aligned optimizations to achieve efficient long-context modeling. NSA employs a dynamic hierarchical sparse strategy, combining coarse-grained token compression with fine-grained token selection to preserve both global context awareness and local precision. Our approach advances sparse attention design with two key innovations: (1) We achieve substantial speedups through arithmetic intensity-balanced algorithm design, with implementation optimizations for modern hardware. (2) We enable end-to-end training, reducing pretraining computation without sacrificing model performance. As shown in Figure 1, experiments show the model pretrained with NSA maintains or exceeds Full Attention models across general benchmarks, long-context tasks, and instruction-based reasoning. Meanwhile, NSA achieves substantial speedups over Full Attention on 64k-length sequences across decoding, forward propagation, and backward propagation, validating its efficiency throughout the model lifecycle.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2025-02-16T11:53:44Z</published>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Jingyang Yuan</name>
+    </author>
+    <author>
+      <name>Huazuo Gao</name>
+    </author>
+    <author>
+      <name>Damai Dai</name>
+    </author>
+    <author>
+      <name>Junyu Luo</name>
+    </author>
+    <author>
+      <name>Liang Zhao</name>
+    </author>
+    <author>
+      <name>Zhengyan Zhang</name>
+    </author>
+    <author>
+      <name>Zhenda Xie</name>
+    </author>
+    <author>
+      <name>Y. X. Wei</name>
+    </author>
+    <author>
+      <name>Lean Wang</name>
+    </author>
+    <author>
+      <name>Zhiping Xiao</name>
+    </author>
+    <author>
+      <name>Yuqing Wang</name>
+    </author>
+    <author>
+      <name>Chong Ruan</name>
+    </author>
+    <author>
+      <name>Ming Zhang</name>
+    </author>
+    <author>
+      <name>Wenfeng Liang</name>
+    </author>
+    <author>
+      <name>Wangding Zeng</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2405.04434v5</id>
+    <title>DeepSeek-V2: A Strong, Economical, and Efficient Mixture-of-Experts Language Model</title>
+    <updated>2024-06-19T06:04:17Z</updated>
+    <link href="https://arxiv.org/abs/2405.04434v5" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2405.04434v5" rel="related" type="application/pdf" title="pdf"/>
+    <summary>We present DeepSeek-V2, a strong Mixture-of-Experts (MoE) language model characterized by economical training and efficient inference. It comprises 236B total parameters, of which 21B are activated for each token, and supports a context length of 128K tokens. DeepSeek-V2 adopts innovative architectures including Multi-head Latent Attention (MLA) and DeepSeekMoE. MLA guarantees efficient inference through significantly compressing the Key-Value (KV) cache into a latent vector, while DeepSeekMoE enables training strong models at an economical cost through sparse computation. Compared with DeepSeek 67B, DeepSeek-V2 achieves significantly stronger performance, and meanwhile saves 42.5% of training costs, reduces the KV cache by 93.3%, and boosts the maximum generation throughput to 5.76 times. We pretrain DeepSeek-V2 on a high-quality and multi-source corpus consisting of 8.1T tokens, and further perform Supervised Fine-Tuning (SFT) and Reinforcement Learning (RL) to fully unlock its potential. Evaluation results show that, even with only 21B activated parameters, DeepSeek-V2 and its chat versions still achieve top-tier performance among open-source models.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2024-05-07T15:56:43Z</published>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name> DeepSeek-AI</name>
+    </author>
+    <author>
+      <name>Aixin Liu</name>
+    </author>
+    <author>
+      <name>Bei Feng</name>
+    </author>
+    <author>
+      <name>Bin Wang</name>
+    </author>
+    <author>
+      <name>Bingxuan Wang</name>
+    </author>
+    <author>
+      <name>Bo Liu</name>
+    </author>
+    <author>
+      <name>Chenggang Zhao</name>
+    </author>
+    <author>
+      <name>Chengqi Dengr</name>
+    </author>
+    <author>
+      <name>Chong Ruan</name>
+    </author>
+    <author>
+      <name>Damai Dai</name>
+    </author>
+    <author>
+      <name>Daya Guo</name>
+    </author>
+    <author>
+      <name>Dejian Yang</name>
+    </author>
+    <author>
+      <name>Deli Chen</name>
+    </author>
+    <author>
+      <name>Dongjie Ji</name>
+    </author>
+    <author>
+      <name>Erhang Li</name>
+    </author>
+    <author>
+      <name>Fangyun Lin</name>
+    </author>
+    <author>
+      <name>Fuli Luo</name>
+    </author>
+    <author>
+      <name>Guangbo Hao</name>
+    </author>
+    <author>
+      <name>Guanting Chen</name>
+    </author>
+    <author>
+      <name>Guowei Li</name>
+    </author>
+    <author>
+      <name>H. Zhang</name>
+    </author>
+    <author>
+      <name>Hanwei Xu</name>
+    </author>
+    <author>
+      <name>Hao Yang</name>
+    </author>
+    <author>
+      <name>Haowei Zhang</name>
+    </author>
+    <author>
+      <name>Honghui Ding</name>
+    </author>
+    <author>
+      <name>Huajian Xin</name>
+    </author>
+    <author>
+      <name>Huazuo Gao</name>
+    </author>
+    <author>
+      <name>Hui Li</name>
+    </author>
+    <author>
+      <name>Hui Qu</name>
+    </author>
+    <author>
+      <name>J. L. Cai</name>
+    </author>
+    <author>
+      <name>Jian Liang</name>
+    </author>
+    <author>
+      <name>Jianzhong Guo</name>
+    </author>
+    <author>
+      <name>Jiaqi Ni</name>
+    </author>
+    <author>
+      <name>Jiashi Li</name>
+    </author>
+    <author>
+      <name>Jin Chen</name>
+    </author>
+    <author>
+      <name>Jingyang Yuan</name>
+    </author>
+    <author>
+      <name>Junjie Qiu</name>
+    </author>
+    <author>
+      <name>Junxiao Song</name>
+    </author>
+    <author>
+      <name>Kai Dong</name>
+    </author>
+    <author>
+      <name>Kaige Gao</name>
+    </author>
+    <author>
+      <name>Kang Guan</name>
+    </author>
+    <author>
+      <name>Lean Wang</name>
+    </author>
+    <author>
+      <name>Lecong Zhang</name>
+    </author>
+    <author>
+      <name>Lei Xu</name>
+    </author>
+    <author>
+      <name>Leyi Xia</name>
+    </author>
+    <author>
+      <name>Liang Zhao</name>
+    </author>
+    <author>
+      <name>Liyue Zhang</name>
+    </author>
+    <author>
+      <name>Meng Li</name>
+    </author>
+    <author>
+      <name>Miaojun Wang</name>
+    </author>
+    <author>
+      <name>Mingchuan Zhang</name>
+    </author>
+    <author>
+      <name>Minghua Zhang</name>
+    </author>
+    <author>
+      <name>Minghui Tang</name>
+    </author>
+    <author>
+      <name>Mingming Li</name>
+    </author>
+    <author>
+      <name>Ning Tian</name>
+    </author>
+    <author>
+      <name>Panpan Huang</name>
+    </author>
+    <author>
+      <name>Peiyi Wang</name>
+    </author>
+    <author>
+      <name>Peng Zhang</name>
+    </author>
+    <author>
+      <name>Qihao Zhu</name>
+    </author>
+    <author>
+      <name>Qinyu Chen</name>
+    </author>
+    <author>
+      <name>Qiushi Du</name>
+    </author>
+    <author>
+      <name>R. J. Chen</name>
+    </author>
+    <author>
+      <name>R. L. Jin</name>
+    </author>
+    <author>
+      <name>Ruiqi Ge</name>
+    </author>
+    <author>
+      <name>Ruizhe Pan</name>
+    </author>
+    <author>
+      <name>Runxin Xu</name>
+    </author>
+    <author>
+      <name>Ruyi Chen</name>
+    </author>
+    <author>
+      <name>S. S. Li</name>
+    </author>
+    <author>
+      <name>Shanghao Lu</name>
+    </author>
+    <author>
+      <name>Shangyan Zhou</name>
+    </author>
+    <author>
+      <name>Shanhuang Chen</name>
+    </author>
+    <author>
+      <name>Shaoqing Wu</name>
+    </author>
+    <author>
+      <name>Shengfeng Ye</name>
+    </author>
+    <author>
+      <name>Shirong Ma</name>
+    </author>
+    <author>
+      <name>Shiyu Wang</name>
+    </author>
+    <author>
+      <name>Shuang Zhou</name>
+    </author>
+    <author>
+      <name>Shuiping Yu</name>
+    </author>
+    <author>
+      <name>Shunfeng Zhou</name>
+    </author>
+    <author>
+      <name>Size Zheng</name>
+    </author>
+    <author>
+      <name>T. Wang</name>
+    </author>
+    <author>
+      <name>Tian Pei</name>
+    </author>
+    <author>
+      <name>Tian Yuan</name>
+    </author>
+    <author>
+      <name>Tianyu Sun</name>
+    </author>
+    <author>
+      <name>W. L. Xiao</name>
+    </author>
+    <author>
+      <name>Wangding Zeng</name>
+    </author>
+    <author>
+      <name>Wei An</name>
+    </author>
+    <author>
+      <name>Wen Liu</name>
+    </author>
+    <author>
+      <name>Wenfeng Liang</name>
+    </author>
+    <author>
+      <name>Wenjun Gao</name>
+    </author>
+    <author>
+      <name>Wentao Zhang</name>
+    </author>
+    <author>
+      <name>X. Q. Li</name>
+    </author>
+    <author>
+      <name>Xiangyue Jin</name>
+    </author>
+    <author>
+      <name>Xianzu Wang</name>
+    </author>
+    <author>
+      <name>Xiao Bi</name>
+    </author>
+    <author>
+      <name>Xiaodong Liu</name>
+    </author>
+    <author>
+      <name>Xiaohan Wang</name>
+    </author>
+    <author>
+      <name>Xiaojin Shen</name>
+    </author>
+    <author>
+      <name>Xiaokang Chen</name>
+    </author>
+    <author>
+      <name>Xiaosha Chen</name>
+    </author>
+    <author>
+      <name>Xiaotao Nie</name>
+    </author>
+    <author>
+      <name>Xiaowen Sun</name>
+    </author>
+    <author>
+      <name>Xiaoxiang Wang</name>
+    </author>
+    <author>
+      <name>Xin Liu</name>
+    </author>
+    <author>
+      <name>Xin Xie</name>
+    </author>
+    <author>
+      <name>Xingkai Yu</name>
+    </author>
+    <author>
+      <name>Xinnan Song</name>
+    </author>
+    <author>
+      <name>Xinyi Zhou</name>
+    </author>
+    <author>
+      <name>Xinyu Yang</name>
+    </author>
+    <author>
+      <name>Xuan Lu</name>
+    </author>
+    <author>
+      <name>Xuecheng Su</name>
+    </author>
+    <author>
+      <name>Y. Wu</name>
+    </author>
+    <author>
+      <name>Y. K. Li</name>
+    </author>
+    <author>
+      <name>Y. X. Wei</name>
+    </author>
+    <author>
+      <name>Y. X. Zhu</name>
+    </author>
+    <author>
+      <name>Yanhong Xu</name>
+    </author>
+    <author>
+      <name>Yanping Huang</name>
+    </author>
+    <author>
+      <name>Yao Li</name>
+    </author>
+    <author>
+      <name>Yao Zhao</name>
+    </author>
+    <author>
+      <name>Yaofeng Sun</name>
+    </author>
+    <author>
+      <name>Yaohui Li</name>
+    </author>
+    <author>
+      <name>Yaohui Wang</name>
+    </author>
+    <author>
+      <name>Yi Zheng</name>
+    </author>
+    <author>
+      <name>Yichao Zhang</name>
+    </author>
+    <author>
+      <name>Yiliang Xiong</name>
+    </author>
+    <author>
+      <name>Yilong Zhao</name>
+    </author>
+    <author>
+      <name>Ying He</name>
+    </author>
+    <author>
+      <name>Ying Tang</name>
+    </author>
+    <author>
+      <name>Yishi Piao</name>
+    </author>
+    <author>
+      <name>Yixin Dong</name>
+    </author>
+    <author>
+      <name>Yixuan Tan</name>
+    </author>
+    <author>
+      <name>Yiyuan Liu</name>
+    </author>
+    <author>
+      <name>Yongji Wang</name>
+    </author>
+    <author>
+      <name>Yongqiang Guo</name>
+    </author>
+    <author>
+      <name>Yuchen Zhu</name>
+    </author>
+    <author>
+      <name>Yuduan Wang</name>
+    </author>
+    <author>
+      <name>Yuheng Zou</name>
+    </author>
+    <author>
+      <name>Yukun Zha</name>
+    </author>
+    <author>
+      <name>Yunxian Ma</name>
+    </author>
+    <author>
+      <name>Yuting Yan</name>
+    </author>
+    <author>
+      <name>Yuxiang You</name>
+    </author>
+    <author>
+      <name>Yuxuan Liu</name>
+    </author>
+    <author>
+      <name>Z. Z. Ren</name>
+    </author>
+    <author>
+      <name>Zehui Ren</name>
+    </author>
+    <author>
+      <name>Zhangli Sha</name>
+    </author>
+    <author>
+      <name>Zhe Fu</name>
+    </author>
+    <author>
+      <name>Zhen Huang</name>
+    </author>
+    <author>
+      <name>Zhen Zhang</name>
+    </author>
+    <author>
+      <name>Zhenda Xie</name>
+    </author>
+    <author>
+      <name>Zhewen Hao</name>
+    </author>
+    <author>
+      <name>Zhihong Shao</name>
+    </author>
+    <author>
+      <name>Zhiniu Wen</name>
+    </author>
+    <author>
+      <name>Zhipeng Xu</name>
+    </author>
+    <author>
+      <name>Zhongyu Zhang</name>
+    </author>
+    <author>
+      <name>Zhuoshu Li</name>
+    </author>
+    <author>
+      <name>Zihan Wang</name>
+    </author>
+    <author>
+      <name>Zihui Gu</name>
+    </author>
+    <author>
+      <name>Zilin Li</name>
+    </author>
+    <author>
+      <name>Ziwei Xie</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2512.12167v1</id>
+    <title>Extending the Context of Pretrained LLMs by Dropping Their Positional Embeddings</title>
+    <updated>2025-12-13T04:23:47Z</updated>
+    <link href="https://arxiv.org/abs/2512.12167v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2512.12167v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>So far, expensive finetuning beyond the pretraining sequence length has been a requirement for effectively extending the context of language models (LM). In this work, we break this key bottleneck by Dropping the Positional Embeddings of LMs after training (DroPE). Our simple method is motivated by three key theoretical and empirical observations. First, positional embeddings (PEs) serve a crucial role during pretraining, providing an important inductive bias that significantly facilitates convergence. Second, over-reliance on this explicit positional information is also precisely what prevents test-time generalization to sequences of unseen length, even when using popular PE-scaling methods. Third, positional embeddings are not an inherent requirement of effective language modeling and can be safely removed after pretraining, following a short recalibration phase. Empirically, DroPE yields seamless zero-shot context extension without any long-context finetuning, quickly adapting pretrained LMs without compromising their capabilities in the original training context. Our findings hold across different models and dataset sizes, far outperforming previous specialized architectures and established rotary positional embedding scaling methods.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2025-12-13T04:23:47Z</published>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Yoav Gelberg</name>
+    </author>
+    <author>
+      <name>Koshi Eguchi</name>
+    </author>
+    <author>
+      <name>Takuya Akiba</name>
+    </author>
+    <author>
+      <name>Edoardo Cetin</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/1912.11637v1</id>
+    <title>Explicit Sparse Transformer: Concentrated Attention Through Explicit Selection</title>
+    <updated>2019-12-25T10:59:31Z</updated>
+    <link href="https://arxiv.org/abs/1912.11637v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/1912.11637v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Self-attention based Transformer has demonstrated the state-of-the-art performances in a number of natural language processing tasks. Self-attention is able to model long-term dependencies, but it may suffer from the extraction of irrelevant information in the context. To tackle the problem, we propose a novel model called \textbf{Explicit Sparse Transformer}. Explicit Sparse Transformer is able to improve the concentration of attention on the global context through an explicit selection of the most relevant segments. Extensive experimental results on a series of natural language processing and computer vision tasks, including neural machine translation, image captioning, and language modeling, all demonstrate the advantages of Explicit Sparse Transformer in model performance. We also show that our proposed sparse attention method achieves comparable or better results than the previous sparse attention method, but significantly reduces training and testing time. For example, the inference speed is twice that of sparsemax in Transformer model. Code will be available at \url{https://github.com/lancopku/Explicit-Sparse-Transformer}</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2019-12-25T10:59:31Z</published>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Guangxiang Zhao</name>
+    </author>
+    <author>
+      <name>Junyang Lin</name>
+    </author>
+    <author>
+      <name>Zhiyuan Zhang</name>
+    </author>
+    <author>
+      <name>Xuancheng Ren</name>
+    </author>
+    <author>
+      <name>Qi Su</name>
+    </author>
+    <author>
+      <name>Xu Sun</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/1911.02150v1</id>
+    <title>Fast Transformer Decoding: One Write-Head is All You Need</title>
+    <updated>2019-11-06T00:19:05Z</updated>
+    <link href="https://arxiv.org/abs/1911.02150v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/1911.02150v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Multi-head attention layers, as used in the Transformer neural sequence model, are a powerful alternative to RNNs for moving information across and between sequences. While training these layers is generally fast and simple, due to parallelizability across the length of the sequence, incremental inference (where such paralleization is impossible) is often slow, due to the memory-bandwidth cost of repeatedly loading the large "keys" and "values" tensors. We propose a variant called multi-query attention, where the keys and values are shared across all of the different attention "heads", greatly reducing the size of these tensors and hence the memory bandwidth requirements of incremental decoding. We verify experimentally that the resulting models can indeed be much faster to decode, and incur only minor quality degradation from the baseline.</summary>
+    <category term="cs.NE" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2019-11-06T00:19:05Z</published>
+    <arxiv:primary_category term="cs.NE"/>
+    <author>
+      <name>Noam Shazeer</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2102.11174v3</id>
+    <title>Linear Transformers Are Secretly Fast Weight Programmers</title>
+    <updated>2021-06-09T14:47:46Z</updated>
+    <link href="https://arxiv.org/abs/2102.11174v3" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2102.11174v3" rel="related" type="application/pdf" title="pdf"/>
+    <summary>We show the formal equivalence of linearised self-attention mechanisms and fast weight controllers from the early '90s, where a ``slow" neural net learns by gradient descent to program the ``fast weights" of another net through sequences of elementary programming instructions which are additive outer products of self-invented activation patterns (today called keys and values). Such Fast Weight Programmers (FWPs) learn to manipulate the contents of a finite memory and dynamically interact with it. We infer a memory capacity limitation of recent linearised softmax attention variants, and replace the purely additive outer products by a delta rule-like programming instruction, such that the FWP can more easily learn to correct the current mapping from keys to values. The FWP also learns to compute dynamically changing learning rates. We also propose a new kernel function to linearise attention which balances simplicity and effectiveness. We conduct experiments on synthetic retrieval problems as well as standard machine translation and language modelling tasks which demonstrate the benefits of our methods.</summary>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2021-02-22T16:51:38Z</published>
+    <arxiv:primary_category term="cs.LG"/>
+    <author>
+      <name>Imanol Schlag</name>
+    </author>
+    <author>
+      <name>Kazuki Irie</name>
+    </author>
+    <author>
+      <name>Jürgen Schmidhuber</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2212.10554v1</id>
+    <title>A Length-Extrapolatable Transformer</title>
+    <updated>2022-12-20T18:56:20Z</updated>
+    <link href="https://arxiv.org/abs/2212.10554v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2212.10554v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Position modeling plays a critical role in Transformers. In this paper, we focus on length extrapolation, i.e., training on short texts while evaluating longer sequences. We define attention resolution as an indicator of extrapolation. Then we propose two designs to improve the above metric of Transformers. Specifically, we introduce a relative position embedding to explicitly maximize attention resolution. Moreover, we use blockwise causal attention during inference for better resolution. We evaluate different Transformer variants with language modeling. Experimental results show that our model achieves strong performance in both interpolation and extrapolation settings. The code will be available at https://aka.ms/LeX-Transformer.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2022-12-20T18:56:20Z</published>
+    <arxiv:comment>9 pages</arxiv:comment>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Yutao Sun</name>
+    </author>
+    <author>
+      <name>Li Dong</name>
+    </author>
+    <author>
+      <name>Barun Patra</name>
+    </author>
+    <author>
+      <name>Shuming Ma</name>
+    </author>
+    <author>
+      <name>Shaohan Huang</name>
+    </author>
+    <author>
+      <name>Alon Benhaim</name>
+    </author>
+    <author>
+      <name>Vishrav Chaudhary</name>
+    </author>
+    <author>
+      <name>Xia Song</name>
+    </author>
+    <author>
+      <name>Furu Wei</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2306.15595v2</id>
+    <title>Extending Context Window of Large Language Models via Positional Interpolation</title>
+    <updated>2023-06-28T04:26:05Z</updated>
+    <link href="https://arxiv.org/abs/2306.15595v2" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2306.15595v2" rel="related" type="application/pdf" title="pdf"/>
+    <summary>We present Position Interpolation (PI) that extends the context window sizes of RoPE-based pretrained LLMs such as LLaMA models to up to 32768 with minimal fine-tuning (within 1000 steps), while demonstrating strong empirical results on various tasks that require long context, including passkey retrieval, language modeling, and long document summarization from LLaMA 7B to 65B. Meanwhile, the extended model by Position Interpolation preserve quality relatively well on tasks within its original context window. To achieve this goal, Position Interpolation linearly down-scales the input position indices to match the original context window size, rather than extrapolating beyond the trained context length which may lead to catastrophically high attention scores that completely ruin the self-attention mechanism. Our theoretical study shows that the upper bound of interpolation is at least $\sim 600 \times$ smaller than that of extrapolation, further demonstrating its stability. Models extended via Position Interpolation retain its original architecture and can reuse most pre-existing optimization and infrastructure.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2023-06-27T16:26:26Z</published>
+    <arxiv:comment>Fix template issues</arxiv:comment>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Shouyuan Chen</name>
+    </author>
+    <author>
+      <name>Sherman Wong</name>
+    </author>
+    <author>
+      <name>Liangjian Chen</name>
+    </author>
+    <author>
+      <name>Yuandong Tian</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2406.06484v6</id>
+    <title>Parallelizing Linear Transformers with the Delta Rule over Sequence Length</title>
+    <updated>2025-01-15T10:41:40Z</updated>
+    <link href="https://arxiv.org/abs/2406.06484v6" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2406.06484v6" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Transformers with linear attention (i.e., linear transformers) and state-space models have recently been suggested as a viable linear-time alternative to transformers with softmax attention. However, these models still underperform transformers especially on tasks that require in-context retrieval. While more expressive variants of linear transformers which replace the additive update in linear transformers with the delta rule (DeltaNet) have been found to be more effective at associative recall, existing algorithms for training such models do not parallelize over sequence length and are thus inefficient to train on modern hardware. This work describes a hardware-efficient algorithm for training linear transformers with the delta rule, which exploits a memory-efficient representation for computing products of Householder matrices. This algorithm allows us to scale up DeltaNet to standard language modeling settings. We train a 1.3B model for 100B tokens and find that it outperforms recent linear-time baselines such as Mamba and GLA in terms of perplexity and zero-shot performance on downstream tasks. We also experiment with two hybrid models which combine DeltaNet layers with (1) sliding-window attention layers every other layer or (2) two global attention layers, and find that these hybrids outperform strong transformer baselines.</summary>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2024-06-10T17:24:42Z</published>
+    <arxiv:comment>Final camera ready</arxiv:comment>
+    <arxiv:primary_category term="cs.LG"/>
+    <author>
+      <name>Songlin Yang</name>
+    </author>
+    <author>
+      <name>Bailin Wang</name>
+    </author>
+    <author>
+      <name>Yu Zhang</name>
+    </author>
+    <author>
+      <name>Yikang Shen</name>
+    </author>
+    <author>
+      <name>Yoon Kim</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/1904.10509v1</id>
+    <title>Generating Long Sequences with Sparse Transformers</title>
+    <updated>2019-04-23T19:29:47Z</updated>
+    <link href="https://arxiv.org/abs/1904.10509v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/1904.10509v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Transformers are powerful sequence models, but require time and memory that grows quadratically with the sequence length. In this paper we introduce sparse factorizations of the attention matrix which reduce this to $O(n \sqrt{n})$. We also introduce a) a variation on architecture and initialization to train deeper networks, b) the recomputation of attention matrices to save memory, and c) fast attention kernels for training. We call networks with these changes Sparse Transformers, and show they can model sequences tens of thousands of timesteps long using hundreds of layers. We use the same architecture to model images, audio, and text from raw bytes, setting a new state of the art for density modeling of Enwik8, CIFAR-10, and ImageNet-64. We generate unconditional samples that demonstrate global coherence and great diversity, and show it is possible in principle to use self-attention to model sequences of length one million or more.</summary>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="stat.ML" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2019-04-23T19:29:47Z</published>
+    <arxiv:primary_category term="cs.LG"/>
+    <author>
+      <name>Rewon Child</name>
+    </author>
+    <author>
+      <name>Scott Gray</name>
+    </author>
+    <author>
+      <name>Alec Radford</name>
+    </author>
+    <author>
+      <name>Ilya Sutskever</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2312.00752v2</id>
+    <title>Mamba: Linear-Time Sequence Modeling with Selective State Spaces</title>
+    <updated>2024-05-31T17:55:27Z</updated>
+    <link href="https://arxiv.org/abs/2312.00752v2" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2312.00752v2" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Foundation models, now powering most of the exciting applications in deep learning, are almost universally based on the Transformer architecture and its core attention module. Many subquadratic-time architectures such as linear attention, gated convolution and recurrent models, and structured state space models (SSMs) have been developed to address Transformers' computational inefficiency on long sequences, but they have not performed as well as attention on important modalities such as language. We identify that a key weakness of such models is their inability to perform content-based reasoning, and make several improvements. First, simply letting the SSM parameters be functions of the input addresses their weakness with discrete modalities, allowing the model to selectively propagate or forget information along the sequence length dimension depending on the current token. Second, even though this change prevents the use of efficient convolutions, we design a hardware-aware parallel algorithm in recurrent mode. We integrate these selective SSMs into a simplified end-to-end neural network architecture without attention or even MLP blocks (Mamba). Mamba enjoys fast inference (5$\times$ higher throughput than Transformers) and linear scaling in sequence length, and its performance improves on real data up to million-length sequences. As a general sequence model backbone, Mamba achieves state-of-the-art performance across several modalities such as language, audio, and genomics. On language modeling, our Mamba-3B model outperforms Transformers of the same size and matches Transformers twice its size, both in pretraining and downstream evaluation.</summary>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2023-12-01T18:01:34Z</published>
+    <arxiv:primary_category term="cs.LG"/>
+    <author>
+      <name>Albert Gu</name>
+    </author>
+    <author>
+      <name>Tri Dao</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2305.13245v3</id>
+    <title>GQA: Training Generalized Multi-Query Transformer Models from Multi-Head Checkpoints</title>
+    <updated>2023-12-23T17:55:11Z</updated>
+    <link href="https://arxiv.org/abs/2305.13245v3" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2305.13245v3" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Multi-query attention (MQA), which only uses a single key-value head, drastically speeds up decoder inference. However, MQA can lead to quality degradation, and moreover it may not be desirable to train a separate model just for faster inference. We (1) propose a recipe for uptraining existing multi-head language model checkpoints into models with MQA using 5% of original pre-training compute, and (2) introduce grouped-query attention (GQA), a generalization of multi-query attention which uses an intermediate (more than one, less than number of query heads) number of key-value heads. We show that uptrained GQA achieves quality close to multi-head attention with comparable speed to MQA.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2023-05-22T17:16:38Z</published>
+    <arxiv:comment>Accepted at EMNLP 2023. Added to related work</arxiv:comment>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Joshua Ainslie</name>
+    </author>
+    <author>
+      <name>James Lee-Thorp</name>
+    </author>
+    <author>
+      <name>Michiel de Jong</name>
+    </author>
+    <author>
+      <name>Yury Zemlyanskiy</name>
+    </author>
+    <author>
+      <name>Federico Lebrón</name>
+    </author>
+    <author>
+      <name>Sumit Sanghai</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2310.01889v4</id>
+    <title>Ring Attention with Blockwise Transformers for Near-Infinite Context</title>
+    <updated>2023-11-27T06:38:47Z</updated>
+    <link href="https://arxiv.org/abs/2310.01889v4" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2310.01889v4" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Transformers have emerged as the architecture of choice for many state-of-the-art AI models, showcasing exceptional performance across a wide range of AI applications. However, the memory demands imposed by Transformers limit their ability to handle long sequences, thereby posing challenges in utilizing videos, actions, and other long-form sequences and modalities in complex environments. We present a novel approach, Ring Attention with Blockwise Transformers (Ring Attention), which leverages blockwise computation of self-attention and feedforward to distribute long sequences across multiple devices while fully overlapping the communication of key-value blocks with the computation of blockwise attention. Our approach enables training and inference of sequences that are up to device count times longer than those achievable by prior memory-efficient Transformers, without resorting to approximations or incurring additional communication and computation overheads. Extensive experiments on language modeling and reinforcement learning tasks demonstrate the effectiveness of our approach in allowing millions of tokens context size and improving performance.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2023-10-03T08:44:50Z</published>
+    <arxiv:comment>Code: https://github.com/lhao499/llm_large_context</arxiv:comment>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Hao Liu</name>
+    </author>
+    <author>
+      <name>Matei Zaharia</name>
+    </author>
+    <author>
+      <name>Pieter Abbeel</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/1901.02860v3</id>
+    <title>Transformer-XL: Attentive Language Models Beyond a Fixed-Length Context</title>
+    <updated>2019-06-02T21:21:48Z</updated>
+    <link href="https://arxiv.org/abs/1901.02860v3" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/1901.02860v3" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Transformers have a potential of learning longer-term dependency, but are limited by a fixed-length context in the setting of language modeling. We propose a novel neural architecture Transformer-XL that enables learning dependency beyond a fixed length without disrupting temporal coherence. It consists of a segment-level recurrence mechanism and a novel positional encoding scheme. Our method not only enables capturing longer-term dependency, but also resolves the context fragmentation problem. As a result, Transformer-XL learns dependency that is 80% longer than RNNs and 450% longer than vanilla Transformers, achieves better performance on both short and long sequences, and is up to 1,800+ times faster than vanilla Transformers during evaluation. Notably, we improve the state-of-the-art results of bpc/perplexity to 0.99 on enwiki8, 1.08 on text8, 18.3 on WikiText-103, 21.8 on One Billion Word, and 54.5 on Penn Treebank (without finetuning). When trained only on WikiText-103, Transformer-XL manages to generate reasonably coherent, novel text articles with thousands of tokens. Our code, pretrained models, and hyperparameters are available in both Tensorflow and PyTorch.</summary>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="stat.ML" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2019-01-09T18:28:19Z</published>
+    <arxiv:comment>ACL 2019 long paper. Code and pretrained models are available at https://github.com/kimiyoung/transformer-xl</arxiv:comment>
+    <arxiv:primary_category term="cs.LG"/>
+    <author>
+      <name>Zihang Dai</name>
+    </author>
+    <author>
+      <name>Zhilin Yang</name>
+    </author>
+    <author>
+      <name>Yiming Yang</name>
+    </author>
+    <author>
+      <name>Jaime Carbonell</name>
+    </author>
+    <author>
+      <name>Quoc V. Le</name>
+    </author>
+    <author>
+      <name>Ruslan Salakhutdinov</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2410.05258v2</id>
+    <title>Differential Transformer</title>
+    <updated>2025-04-07T12:04:28Z</updated>
+    <link href="https://arxiv.org/abs/2410.05258v2" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2410.05258v2" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Transformer tends to overallocate attention to irrelevant context. In this work, we introduce Diff Transformer, which amplifies attention to the relevant context while canceling noise. Specifically, the differential attention mechanism calculates attention scores as the difference between two separate softmax attention maps. The subtraction cancels noise, promoting the emergence of sparse attention patterns. Experimental results on language modeling show that Diff Transformer outperforms Transformer in various settings of scaling up model size and training tokens. More intriguingly, it offers notable advantages in practical applications, such as long-context modeling, key information retrieval, hallucination mitigation, in-context learning, and reduction of activation outliers. By being less distracted by irrelevant context, Diff Transformer can mitigate hallucination in question answering and text summarization. For in-context learning, Diff Transformer not only enhances accuracy but is also more robust to order permutation, which was considered as a chronic robustness issue. The results position Diff Transformer as a highly effective and promising architecture to advance large language models.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2024-10-07T17:57:38Z</published>
+    <arxiv:comment>Accepted as an Oral Presentation at ICLR 2025</arxiv:comment>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Tianzhu Ye</name>
+    </author>
+    <author>
+      <name>Li Dong</name>
+    </author>
+    <author>
+      <name>Yuqing Xia</name>
+    </author>
+    <author>
+      <name>Yutao Sun</name>
+    </author>
+    <author>
+      <name>Yi Zhu</name>
+    </author>
+    <author>
+      <name>Gao Huang</name>
+    </author>
+    <author>
+      <name>Furu Wei</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2207.06881v2</id>
+    <title>Recurrent Memory Transformer</title>
+    <updated>2022-12-08T12:34:16Z</updated>
+    <link href="https://arxiv.org/abs/2207.06881v2" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2207.06881v2" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Transformer-based models show their effectiveness across multiple domains and tasks. The self-attention allows to combine information from all sequence elements into context-aware representations. However, global and local information has to be stored mostly in the same element-wise representations. Moreover, the length of an input sequence is limited by quadratic computational complexity of self-attention.
+  In this work, we propose and study a memory-augmented segment-level recurrent Transformer (RMT). Memory allows to store and process local and global information as well as to pass information between segments of the long sequence with the help of recurrence.
+  We implement a memory mechanism with no changes to Transformer model by adding special memory tokens to the input or output sequence. Then the model is trained to control both memory operations and sequence representations processing.
+  Results of experiments show that RMT performs on par with the Transformer-XL on language modeling for smaller memory sizes and outperforms it for tasks that require longer sequence processing. We show that adding memory tokens to Tr-XL is able to improve its performance. This makes Recurrent Memory Transformer a promising architecture for applications that require learning of long-term dependencies and general purpose in memory processing, such as algorithmic tasks and reasoning.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2022-07-14T13:00:22Z</published>
+    <arxiv:comment>36th Conference on Neural Information Processing Systems (NeurIPS 2022)</arxiv:comment>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Aydar Bulatov</name>
+    </author>
+    <author>
+      <name>Yuri Kuratov</name>
+    </author>
+    <author>
+      <name>Mikhail S. Burtsev</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2205.14135v2</id>
+    <title>FlashAttention: Fast and Memory-Efficient Exact Attention with IO-Awareness</title>
+    <updated>2022-06-23T17:53:32Z</updated>
+    <link href="https://arxiv.org/abs/2205.14135v2" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2205.14135v2" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Transformers are slow and memory-hungry on long sequences, since the time and memory complexity of self-attention are quadratic in sequence length. Approximate attention methods have attempted to address this problem by trading off model quality to reduce the compute complexity, but often do not achieve wall-clock speedup. We argue that a missing principle is making attention algorithms IO-aware -- accounting for reads and writes between levels of GPU memory. We propose FlashAttention, an IO-aware exact attention algorithm that uses tiling to reduce the number of memory reads/writes between GPU high bandwidth memory (HBM) and GPU on-chip SRAM. We analyze the IO complexity of FlashAttention, showing that it requires fewer HBM accesses than standard attention, and is optimal for a range of SRAM sizes. We also extend FlashAttention to block-sparse attention, yielding an approximate attention algorithm that is faster than any existing approximate attention method. FlashAttention trains Transformers faster than existing baselines: 15% end-to-end wall-clock speedup on BERT-large (seq. length 512) compared to the MLPerf 1.1 training speed record, 3$\times$ speedup on GPT-2 (seq. length 1K), and 2.4$\times$ speedup on long-range arena (seq. length 1K-4K). FlashAttention and block-sparse FlashAttention enable longer context in Transformers, yielding higher quality models (0.7 better perplexity on GPT-2 and 6.4 points of lift on long-document classification) and entirely new capabilities: the first Transformers to achieve better-than-chance performance on the Path-X challenge (seq. length 16K, 61.4% accuracy) and Path-256 (seq. length 64K, 63.1% accuracy).</summary>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2022-05-27T17:53:09Z</published>
+    <arxiv:primary_category term="cs.LG"/>
+    <author>
+      <name>Tri Dao</name>
+    </author>
+    <author>
+      <name>Daniel Y. Fu</name>
+    </author>
+    <author>
+      <name>Stefano Ermon</name>
+    </author>
+    <author>
+      <name>Atri Rudra</name>
+    </author>
+    <author>
+      <name>Christopher Ré</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/1508.04025v5</id>
+    <title>Effective Approaches to Attention-based Neural Machine Translation</title>
+    <updated>2015-09-20T08:25:52Z</updated>
+    <link href="https://arxiv.org/abs/1508.04025v5" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/1508.04025v5" rel="related" type="application/pdf" title="pdf"/>
+    <summary>An attentional mechanism has lately been used to improve neural machine translation (NMT) by selectively focusing on parts of the source sentence during translation. However, there has been little work exploring useful architectures for attention-based NMT. This paper examines two simple and effective classes of attentional mechanism: a global approach which always attends to all source words and a local one that only looks at a subset of source words at a time. We demonstrate the effectiveness of both approaches over the WMT translation tasks between English and German in both directions. With local attention, we achieve a significant gain of 5.0 BLEU points over non-attentional systems which already incorporate known techniques such as dropout. Our ensemble model using different attention architectures has established a new state-of-the-art result in the WMT'15 English to German translation task with 25.9 BLEU points, an improvement of 1.0 BLEU points over the existing best system backed by NMT and an n-gram reranker.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2015-08-17T13:43:19Z</published>
+    <arxiv:comment>11 pages, 7 figures, EMNLP 2015 camera-ready version, more training details</arxiv:comment>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Minh-Thang Luong</name>
+    </author>
+    <author>
+      <name>Hieu Pham</name>
+    </author>
+    <author>
+      <name>Christopher D. Manning</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/1409.0473v7</id>
+    <title>Neural Machine Translation by Jointly Learning to Align and Translate</title>
+    <updated>2016-05-19T21:53:22Z</updated>
+    <link href="https://arxiv.org/abs/1409.0473v7" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/1409.0473v7" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Neural machine translation is a recently proposed approach to machine translation. Unlike the traditional statistical machine translation, the neural machine translation aims at building a single neural network that can be jointly tuned to maximize the translation performance. The models proposed recently for neural machine translation often belong to a family of encoder-decoders and consists of an encoder that encodes a source sentence into a fixed-length vector from which a decoder generates a translation. In this paper, we conjecture that the use of a fixed-length vector is a bottleneck in improving the performance of this basic encoder-decoder architecture, and propose to extend this by allowing a model to automatically (soft-)search for parts of a source sentence that are relevant to predicting a target word, without having to form these parts as a hard segment explicitly. With this new approach, we achieve a translation performance comparable to the existing state-of-the-art phrase-based system on the task of English-to-French translation. Furthermore, qualitative analysis reveals that the (soft-)alignments found by the model agree well with our intuition.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.NE" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="stat.ML" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2014-09-01T16:33:02Z</published>
+    <arxiv:comment>Accepted at ICLR 2015 as oral presentation</arxiv:comment>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Dzmitry Bahdanau</name>
+    </author>
+    <author>
+      <name>Kyunghyun Cho</name>
+    </author>
+    <author>
+      <name>Yoshua Bengio</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2412.06464v3</id>
+    <title>Gated Delta Networks: Improving Mamba2 with Delta Rule</title>
+    <updated>2025-03-06T06:57:34Z</updated>
+    <link href="https://arxiv.org/abs/2412.06464v3" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2412.06464v3" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Linear Transformers have gained attention as efficient alternatives to standard Transformers, but their performance in retrieval and long-context tasks has been limited. To address these limitations, recent work has explored two distinct mechanisms: gating for adaptive memory control and the delta update rule for precise memory modifications. We observe that these mechanisms are complementary: gating enables rapid memory erasure while the delta rule facilitates targeted updates. Building on this insight, we introduce the gated delta rule and develop a parallel training algorithm optimized for modern hardware. Our proposed architecture, Gated DeltaNet, consistently surpasses existing models like Mamba2 and DeltaNet across multiple benchmarks, including language modeling, common-sense reasoning, in-context retrieval, length extrapolation, and long-context understanding. We further enhance performance by developing hybrid architectures that combine Gated DeltaNet layers with sliding window attention or Mamba2 layers, achieving both improved training efficiency and superior task performance.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2024-12-09T13:09:04Z</published>
+    <arxiv:comment>ICLR 2025 camera ready</arxiv:comment>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Songlin Yang</name>
+    </author>
+    <author>
+      <name>Jan Kautz</name>
+    </author>
+    <author>
+      <name>Ali Hatamizadeh</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2309.00071v3</id>
+    <title>YaRN: Efficient Context Window Extension of Large Language Models</title>
+    <updated>2026-02-06T19:40:50Z</updated>
+    <link href="https://arxiv.org/abs/2309.00071v3" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2309.00071v3" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Rotary Position Embeddings (RoPE) have been shown to effectively encode positional information in transformer-based language models. However, these models fail to generalize past the sequence length they were trained on. We present YaRN (Yet another RoPE extensioN method), a compute-efficient method to extend the context window of such models, requiring 10x less tokens and 2.5x less training steps than previous methods. Using YaRN, we show that LLaMA models can effectively utilize and extrapolate to context lengths much longer than their original pre-training would allow, while also surpassing previous the state-of-the-art at context window extension. In addition, we demonstrate that YaRN exhibits the capability to extrapolate beyond the limited context of a fine-tuning dataset. Code is available at https://github.com/jquesnelle/yarn</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2023-08-31T18:18:07Z</published>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Bowen Peng</name>
+    </author>
+    <author>
+      <name>Jeffrey Quesnelle</name>
+    </author>
+    <author>
+      <name>Honglu Fan</name>
+    </author>
+    <author>
+      <name>Enrico Shippole</name>
+    </author>
+  </entry>
+</feed>

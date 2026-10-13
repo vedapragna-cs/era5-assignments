@@ -1,0 +1,282 @@
+{
+ "checked_at": "2026-08-21T23:12:54Z",
+ "source": "https://export.arxiv.org/api/query (published = v1 submission)",
+ "cards": 34,
+ "arxiv_dates_matched": 31,
+ "no_paper_by_design": 3,
+ "failures": 0,
+ "rows": [
+  {
+   "id": "bahdanau",
+   "arxiv": "1409.0473",
+   "stored": "2014-09-01",
+   "api": "2014-09-01",
+   "verdict": "MATCH",
+   "status": "verified"
+  },
+  {
+   "id": "luong",
+   "arxiv": "1508.04025",
+   "stored": "2015-08-17",
+   "api": "2015-08-17",
+   "verdict": "MATCH",
+   "status": "verified"
+  },
+  {
+   "id": "learned-abs",
+   "arxiv": "1611.02344",
+   "stored": "2016-11-07",
+   "api": "2016-11-07",
+   "verdict": "MATCH",
+   "status": "verified"
+  },
+  {
+   "id": "standard",
+   "arxiv": "1706.03762",
+   "stored": "2017-06-12",
+   "api": "2017-06-12",
+   "verdict": "MATCH",
+   "status": "verified"
+  },
+  {
+   "id": "sinusoidal",
+   "arxiv": "1706.03762",
+   "stored": "2017-06-12",
+   "api": "2017-06-12",
+   "verdict": "MATCH",
+   "status": "verified"
+  },
+  {
+   "id": "transformer-xl",
+   "arxiv": "1901.02860",
+   "stored": "2019-01-09",
+   "api": "2019-01-09",
+   "verdict": "MATCH",
+   "status": "verified"
+  },
+  {
+   "id": "sparse-transformer",
+   "arxiv": "1904.10509",
+   "stored": "2019-04-23",
+   "api": "2019-04-23",
+   "verdict": "MATCH",
+   "status": "verified"
+  },
+  {
+   "id": "mqa",
+   "arxiv": "1911.02150",
+   "stored": "2019-11-06",
+   "api": "2019-11-06",
+   "verdict": "MATCH",
+   "status": "verified"
+  },
+  {
+   "id": "compressive-transformer",
+   "arxiv": "1911.05507",
+   "stored": "2019-11-13",
+   "api": "2019-11-13",
+   "verdict": "MATCH",
+   "status": "verified"
+  },
+  {
+   "id": "topk",
+   "arxiv": "1912.11637",
+   "stored": "2019-12-25",
+   "api": "2019-12-25",
+   "verdict": "MATCH",
+   "status": "verified"
+  },
+  {
+   "id": "sliding-window",
+   "arxiv": "2004.05150",
+   "stored": "2020-04-10",
+   "api": "2020-04-10",
+   "verdict": "MATCH",
+   "status": "verified"
+  },
+  {
+   "id": "linear-attention",
+   "arxiv": "2006.16236",
+   "stored": "2020-06-29",
+   "api": "2020-06-29",
+   "verdict": "MATCH",
+   "status": "verified"
+  },
+  {
+   "id": "delta-rule",
+   "arxiv": "2102.11174",
+   "stored": "2021-02-22",
+   "api": "2021-02-22",
+   "verdict": "MATCH",
+   "status": "verified"
+  },
+  {
+   "id": "rope",
+   "arxiv": "2104.09864",
+   "stored": "2021-04-20",
+   "api": "2021-04-20",
+   "verdict": "MATCH",
+   "status": "verified"
+  },
+  {
+   "id": "alibi",
+   "arxiv": "2108.12409",
+   "stored": "2021-08-27",
+   "api": "2021-08-27",
+   "verdict": "MATCH",
+   "status": "verified"
+  },
+  {
+   "id": "flashattention",
+   "arxiv": "2205.14135",
+   "stored": "2022-05-27",
+   "api": "2022-05-27",
+   "verdict": "MATCH",
+   "status": "verified"
+  },
+  {
+   "id": "rmt",
+   "arxiv": "2207.06881",
+   "stored": "2022-07-14",
+   "api": "2022-07-14",
+   "verdict": "MATCH",
+   "status": "verified"
+  },
+  {
+   "id": "xpos",
+   "arxiv": "2212.10554",
+   "stored": "2022-12-20",
+   "api": "2022-12-20",
+   "verdict": "MATCH",
+   "status": "verified"
+  },
+  {
+   "id": "gqa",
+   "arxiv": "2305.13245",
+   "stored": "2023-05-22",
+   "api": "2023-05-22",
+   "verdict": "MATCH",
+   "status": "verified"
+  },
+  {
+   "id": "ntk-aware",
+   "arxiv": null,
+   "stored": "2023-06-26",
+   "api": null,
+   "verdict": "NO-PAPER",
+   "status": "bounded"
+  },
+  {
+   "id": "position-interpolation",
+   "arxiv": "2306.15595",
+   "stored": "2023-06-27",
+   "api": "2023-06-27",
+   "verdict": "MATCH",
+   "status": "verified"
+  },
+  {
+   "id": "yarn",
+   "arxiv": "2309.00071",
+   "stored": "2023-08-31",
+   "api": "2023-08-31",
+   "verdict": "MATCH",
+   "status": "verified"
+  },
+  {
+   "id": "attention-sinks",
+   "arxiv": "2309.17453",
+   "stored": "2023-09-29",
+   "api": "2023-09-29",
+   "verdict": "MATCH",
+   "status": "verified"
+  },
+  {
+   "id": "ring-attention",
+   "arxiv": "2310.01889",
+   "stored": "2023-10-03",
+   "api": "2023-10-03",
+   "verdict": "MATCH",
+   "status": "verified"
+  },
+  {
+   "id": "mamba",
+   "arxiv": "2312.00752",
+   "stored": "2023-12-01",
+   "api": "2023-12-01",
+   "verdict": "MATCH",
+   "status": "verified"
+  },
+  {
+   "id": "hybrid-schedule",
+   "arxiv": "2402.19427",
+   "stored": "2024-02-29",
+   "api": "2024-02-29",
+   "verdict": "MATCH",
+   "status": "verified"
+  },
+  {
+   "id": "mla",
+   "arxiv": "2405.04434",
+   "stored": "2024-05-07",
+   "api": "2024-05-07",
+   "verdict": "MATCH",
+   "status": "verified"
+  },
+  {
+   "id": "deltanet-parallel",
+   "arxiv": "2406.06484",
+   "stored": "2024-06-10",
+   "api": "2024-06-10",
+   "verdict": "MATCH",
+   "status": "verified"
+  },
+  {
+   "id": "diff-transformer",
+   "arxiv": "2410.05258",
+   "stored": "2024-10-07",
+   "api": "2024-10-07",
+   "verdict": "MATCH",
+   "status": "verified"
+  },
+  {
+   "id": "gated-deltanet",
+   "arxiv": "2412.06464",
+   "stored": "2024-12-09",
+   "api": "2024-12-09",
+   "verdict": "MATCH",
+   "status": "verified"
+  },
+  {
+   "id": "nsa",
+   "arxiv": "2502.11089",
+   "stored": "2025-02-16",
+   "api": "2025-02-16",
+   "verdict": "MATCH",
+   "status": "verified"
+  },
+  {
+   "id": "dsa",
+   "arxiv": null,
+   "stored": "2025-09-29",
+   "api": null,
+   "verdict": "NO-PAPER",
+   "status": "bounded"
+  },
+  {
+   "id": "drope",
+   "arxiv": "2512.12167",
+   "stored": "2025-12-13",
+   "api": "2025-12-13",
+   "verdict": "MATCH",
+   "status": "verified"
+  },
+  {
+   "id": "memory-stream",
+   "arxiv": null,
+   "stored": "2026-08-15",
+   "api": null,
+   "verdict": "NO-PAPER",
+   "status": "bounded"
+  }
+ ]
+}

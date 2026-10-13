@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Where every date comes from - ERA V5 Session 8</title>
+<meta name="description" content="The full chronology with a primary source for every date, and the script to re-check them.">
+<style>
+:root{--bg:#fbfaf8;--fg:#1c1a17;--mut:#6b655c;--line:#e2ddd4;--card:#fff;--acc:#8a4b2a;
+--warn:#8a2a2a;--ok:#2a6b46;--code:#f2efe9;--shadow:0 1px 2px rgba(0,0,0,.05)}
+@media(prefers-color-scheme:dark){:root{--bg:#141311;--fg:#eae6df;--mut:#9b948a;--line:#2e2b27;
+--card:#1c1a18;--acc:#d99a6c;--warn:#e08585;--ok:#7fc9a0;--code:#242120;--shadow:none}}
+:root[data-theme=dark]{--bg:#141311;--fg:#eae6df;--mut:#9b948a;--line:#2e2b27;--card:#1c1a18;
+--acc:#d99a6c;--warn:#e08585;--ok:#7fc9a0;--code:#242120;--shadow:none}
+:root[data-theme=light]{--bg:#fbfaf8;--fg:#1c1a17;--mut:#6b655c;--line:#e2ddd4;--card:#fff;
+--acc:#8a4b2a;--warn:#8a2a2a;--ok:#2a6b46;--code:#f2efe9;--shadow:0 1px 2px rgba(0,0,0,.05)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);
+font:16px/1.62 ui-serif,Georgia,'Iowan Old Style',serif;-webkit-text-size-adjust:100%}
+.wrap{max-width:52rem;margin:0 auto;padding:2rem 1.15rem 6rem}
+h1{font-size:2rem;line-height:1.15;margin:.2em 0 .3em;letter-spacing:-.015em}
+h2{font-size:1.3rem;margin:2.6em 0 .5em;letter-spacing:-.01em}
+h3{font-size:1.05rem;margin:1.8em 0 .3em}
+p{margin:.7em 0}
+a{color:var(--acc)}
+code{font:.87em ui-monospace,SFMono-Regular,Menlo,monospace;background:var(--code);
+padding:.1em .32em;border-radius:3px}
+pre{background:var(--code);padding:.85rem 1rem;border-radius:6px;overflow-x:auto;
+font:.83rem/1.5 ui-monospace,SFMono-Regular,Menlo,monospace}
+.sub{color:var(--mut);font-size:1.02rem;margin-top:0}
+nav.top{display:flex;flex-wrap:wrap;gap:.5rem;margin:1.4rem 0 0;font-size:.87rem;
+font-family:system-ui,sans-serif}
+nav.top a{display:inline-block;padding:.32rem .7rem;border:1px solid var(--line);
+border-radius:99px;text-decoration:none;background:var(--card)}
+nav.top a[aria-current]{border-color:var(--acc);color:var(--acc);font-weight:600}
+.tw{overflow-x:auto;margin:1rem 0}
+table{border-collapse:collapse;width:100%;font-size:.87rem;
+font-family:system-ui,sans-serif}
+th,td{text-align:left;padding:.42rem .6rem;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-weight:600;color:var(--mut);font-size:.8rem;text-transform:uppercase;letter-spacing:.04em}
+.flow{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:1.1rem;
+margin:1.2rem 0;box-shadow:var(--shadow)}
+.flow pre{background:transparent;padding:0;font-size:.86rem;text-align:center}
+.era{font-family:system-ui,sans-serif;font-size:.78rem;letter-spacing:.14em;color:var(--mut);
+text-transform:uppercase;margin:3rem 0 .8rem;padding-bottom:.3rem;border-bottom:1px solid var(--line)}
+.card{background:var(--card);border:1px solid var(--line);border-left:3px solid var(--line);
+border-radius:7px;padding:1.1rem 1.2rem;margin:.9rem 0;box-shadow:var(--shadow)}
+.card.added{border-left-color:var(--acc)}
+.card h3{margin:0 0 .15rem;font-size:1.12rem}
+.meta{font-family:system-ui,sans-serif;font-size:.79rem;color:var(--mut);
+display:flex;flex-wrap:wrap;gap:.45rem;align-items:center;margin-bottom:.75rem}
+.date{font-weight:700;color:var(--fg);font-variant-numeric:tabular-nums}
+.tag{border:1px solid var(--line);border-radius:99px;padding:.05rem .5rem}
+.tag.add{border-color:var(--acc);color:var(--acc)}
+.tag.bounded{border-color:var(--warn);color:var(--warn)}
+.tag.ship{border-color:var(--ok);color:var(--ok)}
+.qa{margin:.55rem 0 0}
+.qa dt{font-family:system-ui,sans-serif;font-size:.72rem;text-transform:uppercase;
+letter-spacing:.07em;color:var(--mut);margin-top:.6rem}
+.qa dd{margin:.1rem 0 0}
+.qa dd.cost{color:var(--fg)}
+.src{font-family:system-ui,sans-serif;font-size:.76rem;color:var(--mut);margin-top:.8rem;
+padding-top:.6rem;border-top:1px dotted var(--line);overflow-wrap:anywhere}
+.note{font-size:.9rem;background:var(--code);border-radius:5px;padding:.6rem .8rem;margin-top:.8rem}
+.note b{color:var(--acc)}
+.f{border:1px solid var(--line);border-radius:7px;padding:1.1rem 1.2rem;margin:1.1rem 0;
+background:var(--card);box-shadow:var(--shadow)}
+.f h3{margin-top:0}
+.kind{font-family:system-ui,sans-serif;font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;
+color:var(--mut)}
+.caveat{font-size:.87rem;color:var(--mut);border-top:1px dotted var(--line);margin-top:.8rem;
+padding-top:.55rem}
+.sev{display:inline-block;font-family:system-ui,sans-serif;font-size:.7rem;letter-spacing:.06em;
+text-transform:uppercase;padding:.12rem .5rem;border-radius:99px;border:1px solid var(--line)}
+.sev.correction{border-color:var(--warn);color:var(--warn)}
+.sev.negative-control{border-color:var(--ok);color:var(--ok)}
+footer{margin-top:4rem;padding-top:1.2rem;border-top:1px solid var(--line);
+font-family:system-ui,sans-serif;font-size:.82rem;color:var(--mut)}
+#ctl{display:none}
+
+.viz{--s1:#2a78d6;--s2:#eb6834;--s3:#1baf7a;--vsurf:var(--card);--vink:var(--fg);--vmut:var(--mut);
+--vgrid:var(--line);margin:1.4rem 0}
+@media(prefers-color-scheme:dark){:root:where(:not([data-theme=light])) .viz{--s1:#3987e5;--s2:#d95926;--s3:#199e70}}
+:root[data-theme=dark] .viz{--s1:#3987e5;--s2:#d95926;--s3:#199e70}
+:root[data-theme=light] .viz{--s1:#2a78d6;--s2:#eb6834;--s3:#1baf7a}
+.viz svg{width:100%;height:auto;display:block;overflow:visible}
+.viz figcaption{font-family:system-ui,sans-serif;font-size:.82rem;color:var(--mut);
+margin-top:.6rem;line-height:1.5}
+.vzl{font-family:system-ui,sans-serif;font-size:.82rem;color:var(--mut);display:flex;
+flex-wrap:wrap;gap:1rem;align-items:center;margin:.2rem 0 .7rem}
+.vzl b{display:inline-flex;align-items:center;gap:.35rem;font-weight:400;white-space:nowrap}
+.vzl i{width:11px;height:11px;border-radius:50%;display:inline-block}
+.vzs{font:600 10.5px system-ui,sans-serif;fill:var(--vink)}
+.vzlane{font:600 10px system-ui,sans-serif;fill:var(--vmut);letter-spacing:.03em}
+.vzax{font:10px system-ui,sans-serif;fill:var(--vmut)}
+.viz .grid{stroke:var(--vgrid);stroke-width:1}
+.viz .dot{stroke:var(--vsurf);stroke-width:2}
+.viz .conn{stroke-width:2;stroke-linecap:round;opacity:.45}
+.viz g.m:hover .dot{stroke:var(--vink)}
+.vztable{margin-top:.7rem;font-family:system-ui,sans-serif;font-size:.8rem}
+.vztable summary{cursor:pointer;color:var(--acc)}
+</style></head>
+<body><div class="wrap">
+<nav class="top"><a href="index.html">Timeline</a><a href="findings.html">What the timeline shows</a><a href="corrections.html">Corrections</a><a href="sources.html" aria-current=page>Sources</a><a class="repo" href="https://github.com/vedapragna-cs/era-v5-s8-attention-timeline" rel="noopener">Code &amp; data on GitHub</a></nav>
+<h1>Where every date comes from</h1>
+<p class="sub">The assignment says the chronology is the part that is easiest to get wrong and easiest
+to check. So here is all of it, checkable.</p>
+<h2>The convention</h2>
+<p>The sort key is the <strong>arXiv v1 submission date</strong> &mdash; the day the idea became
+public, not the conference publication date and not the day it became popular. Two mechanisms that
+share a paper share a date, and that is not an error: standard attention and sinusoidal encoding are
+both <em>Attention Is All You Need</em>, 2017-06-12.</p>
+<p><strong>Shipped</strong> means one thing throughout: the first public release of weights or
+reference code implementing the mechanism, read from the GitHub or HuggingFace API where possible.
+Rows marked <strong>*</strong> are documented releases we could not read from an API. An earlier
+version of this site mixed third-party adoption with authors' own releases in this column; that was
+wrong and is <a href="findings.html#Q2-1">documented as a retraction</a>.</p>
+<h2>How to re-run the check yourself</h2>
+<pre>python3 verify_dates.py     # re-fetch every arXiv v1 date, diff, exit 1 on drift
+python3 analyse.py          # recompute every number on the findings page
+python3 build.py            # validate all cards, regenerate these pages</pre>
+<p>Last run: <strong>31 of 34 dates re-verified against the
+arXiv API, 3 with no paper by design, 0 failures</strong>
+(2026-08-21T23:12:54Z). The raw API response is committed at <code>data/arxiv-response.xml</code> so
+the check also runs offline.</p>
+<h2>Every date, with its source</h2>
+<div class="tw"><table><thead><tr><th>v1 date</th><th>mechanism</th><th>shipped</th>
+<th>primary source</th><th>status</th></tr></thead><tbody><tr><td>2014-09-01</td><td><a href="index.html#bahdanau">Additive attention (Bahdanau)</a></td><td>&mdash;</td><td><a href="https://arxiv.org/abs/1409.0473">arXiv 1409.0473</a></td><td>verified</td></tr><tr><td>2015-08-17</td><td><a href="index.html#luong">Multiplicative / dot-product attention (Luong)</a></td><td>&mdash;</td><td><a href="https://arxiv.org/abs/1508.04025">arXiv 1508.04025</a></td><td>verified</td></tr><tr><td>2016-11-07</td><td><a href="index.html#learned-abs">Absolute learned position embeddings</a></td><td>&mdash;</td><td><a href="https://arxiv.org/abs/1611.02344">arXiv 1611.02344</a></td><td>verified</td></tr><tr><td>2017-06-12</td><td><a href="index.html#sinusoidal">Sinusoidal position encoding</a></td><td>&mdash;</td><td><a href="https://arxiv.org/abs/1706.03762">arXiv 1706.03762</a></td><td>verified</td></tr><tr><td>2017-06-12</td><td><a href="index.html#standard">Scaled dot-product attention</a></td><td>&mdash;</td><td><a href="https://arxiv.org/abs/1706.03762">arXiv 1706.03762</a></td><td>verified</td></tr><tr><td>2019-01-09</td><td><a href="index.html#transformer-xl">Segment-level recurrence (Transformer-XL)</a></td><td>&mdash;</td><td><a href="https://arxiv.org/abs/1901.02860">arXiv 1901.02860</a></td><td>verified</td></tr><tr><td>2019-04-23</td><td><a href="index.html#sparse-transformer">Sparse attention (strided / fixed patterns)</a></td><td>&mdash;</td><td><a href="https://arxiv.org/abs/1904.10509">arXiv 1904.10509</a></td><td>verified</td></tr><tr><td>2019-11-06</td><td><a href="index.html#mqa">Multi-query attention (MQA)</a></td><td>2022-12-02</td><td><a href="https://arxiv.org/abs/1911.02150">arXiv 1911.02150</a></td><td>verified</td></tr><tr><td>2019-11-13</td><td><a href="index.html#compressive-transformer">Compressive memory</a></td><td>&mdash;</td><td><a href="https://arxiv.org/abs/1911.05507">arXiv 1911.05507</a></td><td>verified</td></tr><tr><td>2019-12-25</td><td><a href="index.html#topk">Top-k / explicit sparse attention</a></td><td>&mdash;</td><td><a href="https://arxiv.org/abs/1912.11637">arXiv 1912.11637</a></td><td>verified</td></tr><tr><td>2020-04-10</td><td><a href="index.html#sliding-window">Sliding-window attention</a></td><td>2020-03-31</td><td><a href="https://arxiv.org/abs/2004.05150">arXiv 2004.05150</a></td><td>verified</td></tr><tr><td>2020-06-29</td><td><a href="index.html#linear-attention">Linear attention</a></td><td>&mdash;</td><td><a href="https://arxiv.org/abs/2006.16236">arXiv 2006.16236</a></td><td>verified</td></tr><tr><td>2021-02-22</td><td><a href="index.html#delta-rule">The delta rule (fast-weight programmers)</a></td><td>&mdash;</td><td><a href="https://arxiv.org/abs/2102.11174">arXiv 2102.11174</a></td><td>verified</td></tr><tr><td>2021-04-20</td><td><a href="index.html#rope">RoPE (rotary position embedding)</a></td><td>2021-03-22</td><td><a href="https://arxiv.org/abs/2104.09864">arXiv 2104.09864</a></td><td>verified</td></tr><tr><td>2021-08-27</td><td><a href="index.html#alibi">ALiBi (attention with linear biases)</a></td><td>2021-08-24</td><td><a href="https://arxiv.org/abs/2108.12409">arXiv 2108.12409</a></td><td>verified</td></tr><tr><td>2022-05-27</td><td><a href="index.html#flashattention">FlashAttention</a></td><td>2022-05-19</td><td><a href="https://arxiv.org/abs/2205.14135">arXiv 2205.14135</a></td><td>verified</td></tr><tr><td>2022-07-14</td><td><a href="index.html#rmt">Recurrent memory tokens (RMT)</a></td><td>&mdash;</td><td><a href="https://arxiv.org/abs/2207.06881">arXiv 2207.06881</a></td><td>verified</td></tr><tr><td>2022-12-20</td><td><a href="index.html#xpos">xPos (length-extrapolatable Transformer)</a></td><td>&mdash;</td><td><a href="https://arxiv.org/abs/2212.10554">arXiv 2212.10554</a></td><td>verified</td></tr><tr><td>2023-05-22</td><td><a href="index.html#gqa">Grouped-query attention (GQA)</a></td><td>2023-07-18 *</td><td><a href="https://arxiv.org/abs/2305.13245">arXiv 2305.13245</a></td><td>verified</td></tr><tr><td>2023-06-26</td><td><a href="index.html#ntk-aware">NTK-aware scaled RoPE</a></td><td>2023-06-26</td><td><a href="https://www.reddit.com/r/LocalLLaMA/comments/14lz7j5/ntkaware_scaled_rope_allows_llama_models_to_have/">no paper &mdash; see note</a></td><td><strong>bounded</strong></td></tr><tr><td>2023-06-27</td><td><a href="index.html#position-interpolation">Position Interpolation (PI)</a></td><td>&mdash;</td><td><a href="https://arxiv.org/abs/2306.15595">arXiv 2306.15595</a></td><td>verified</td></tr><tr><td>2023-08-31</td><td><a href="index.html#yarn">YaRN</a></td><td>2023-08-31</td><td><a href="https://arxiv.org/abs/2309.00071">arXiv 2309.00071</a></td><td>verified</td></tr><tr><td>2023-09-29</td><td><a href="index.html#attention-sinks">Attention sinks / StreamingLLM</a></td><td>2023-09-29</td><td><a href="https://arxiv.org/abs/2309.17453">arXiv 2309.17453</a></td><td>verified</td></tr><tr><td>2023-10-03</td><td><a href="index.html#ring-attention">Ring Attention</a></td><td>&mdash;</td><td><a href="https://arxiv.org/abs/2310.01889">arXiv 2310.01889</a></td><td>verified</td></tr><tr><td>2023-12-01</td><td><a href="index.html#mamba">Mamba (selective state space)</a></td><td>&mdash;</td><td><a href="https://arxiv.org/abs/2312.00752">arXiv 2312.00752</a></td><td>verified</td></tr><tr><td>2024-02-29</td><td><a href="index.html#hybrid-schedule">Hybrid depth schedules (interleaved layer types)</a></td><td>2024-03-28</td><td><a href="https://arxiv.org/abs/2402.19427">arXiv 2402.19427</a></td><td>verified</td></tr><tr><td>2024-05-07</td><td><a href="index.html#mla">Multi-head latent attention (MLA)</a></td><td>2024-04-22</td><td><a href="https://arxiv.org/abs/2405.04434">arXiv 2405.04434</a></td><td>verified</td></tr><tr><td>2024-06-10</td><td><a href="index.html#deltanet-parallel">DeltaNet, parallelised</a></td><td>&mdash;</td><td><a href="https://arxiv.org/abs/2406.06484">arXiv 2406.06484</a></td><td>verified</td></tr><tr><td>2024-10-07</td><td><a href="index.html#diff-transformer">Differential Transformer</a></td><td>&mdash;</td><td><a href="https://arxiv.org/abs/2410.05258">arXiv 2410.05258</a></td><td>verified</td></tr><tr><td>2024-12-09</td><td><a href="index.html#gated-deltanet">Gated DeltaNet</a></td><td>&mdash;</td><td><a href="https://arxiv.org/abs/2412.06464">arXiv 2412.06464</a></td><td>verified</td></tr><tr><td>2025-02-16</td><td><a href="index.html#nsa">Native Sparse Attention (NSA)</a></td><td>&mdash;</td><td><a href="https://arxiv.org/abs/2502.11089">arXiv 2502.11089</a></td><td>verified</td></tr><tr><td>2025-09-29</td><td><a href="index.html#dsa">DeepSeek Sparse Attention (the lightning indexer)</a></td><td>2025-09-29</td><td><a href="https://huggingface.co/deepseek-ai/DeepSeek-V3.2-Exp">no paper &mdash; see note</a></td><td><strong>bounded</strong></td></tr><tr><td>2025-12-13</td><td><a href="index.html#drope">DroPE (dropping positional embeddings)</a></td><td>&mdash;</td><td><a href="https://arxiv.org/abs/2512.12167">arXiv 2512.12167</a></td><td>verified</td></tr><tr><td>2026-08-15</td><td><a href="index.html#memory-stream">Memory Stream (cross-chunk state, LightningLM V4)</a></td><td>&mdash;</td><td><a href="https://axiom.theschoolofai.in/courses/cmq97i5kn032208o8xu5dab4q/sessions/cms8msrhwu8ss0yxe9zg/lesson">no paper &mdash; see note</a></td><td><strong>bounded</strong></td></tr></tbody></table></div>
+<p style="color:var(--mut);font-size:.9rem">Three dates carry no paper at all: NTK-aware scaling
+(a Reddit post, bounded by GitHub API timestamps), DeepSeek's low-rank indexer (a model release), and
+the V4 Memory Stream (described only in the course material). Each says so on its card rather than
+being given a plausible-looking date.</p>
+<footer>ERA V5 &middot; Session 8, Modern Attention Variants. Every date on this site is
+re-checkable: run <code>python3 verify_dates.py</code> to re-fetch each arXiv v1 date from the
+arXiv API and diff it against the stored value, and <code>python3 analyse.py</code> to recompute
+every number on the findings page. Built 2026-08-22.</footer>
+</div><script>
+(function(){
+ var t=document.getElementById('ctl'); if(t) t.style.display='flex';
+ var cards=[].slice.call(document.querySelectorAll('.card'));
+ var eras=[].slice.call(document.querySelectorAll('.era'));
+ function apply(f){
+   cards.forEach(function(c){
+     c.style.display=(f==='all'||c.dataset.family===f||(f==='added'&&c.dataset.added==='1'))?'':'none';});
+   eras.forEach(function(h){
+     var n=0,e=h.nextElementSibling;
+     while(e&&!e.classList.contains('era')){if(e.classList.contains('card')&&e.style.display!=='none')n++;e=e.nextElementSibling;}
+     h.style.display=n?'':'none';});
+ }
+ var sel=document.getElementById('fam');
+ if(sel) sel.addEventListener('change',function(){apply(this.value);});
+})();
+</script></body></html>
