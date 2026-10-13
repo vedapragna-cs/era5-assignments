@@ -1,0 +1,41 @@
+{
+  "coverage_run_a": {
+    "batches_delivered": 12,
+    "duplicate_positions": 0,
+    "missing_positions": 0,
+    "missing_steps": [],
+    "rank_partition_note": "rank = global_index % world_size is a pure function of the index; that every position maps to exactly one rank is arithmetic, not a measurement, and is deliberately not presented as one",
+    "repeated_steps": [],
+    "step_numbers_strictly_increasing": true,
+    "world_size": 4
+  },
+  "coverage_run_b": {
+    "batches_delivered": 12,
+    "duplicate_positions": 0,
+    "missing_positions": 0,
+    "missing_steps": [],
+    "rank_partition_note": "rank = global_index % world_size is a pure function of the index; that every position maps to exactly one rank is arithmetic, not a measurement, and is deliberately not presented as one",
+    "repeated_steps": [],
+    "step_numbers_strictly_increasing": true,
+    "world_size": 8
+  },
+  "exactly_once_order_preserving": true,
+  "first_divergence": null,
+  "method": "two independently produced traces compared element-wise; NOT a re-partition of one list, which cannot fail",
+  "note": "repeated sample ids across steps are expected and legitimate - lanes wrap their pools and repetition is a budgeted quantity (S5 runs Indic at 3.31 epochs). The exactness claim is about POSITIONS, not about id uniqueness.",
+  "order_identical": true,
+  "per_step_identical": true,
+  "run_a": {
+    "label": "uninterrupted ws=4",
+    "samples": 57,
+    "steps": 12,
+    "world_size": 4
+  },
+  "run_b": {
+    "label": "crash@7 resume ws=8",
+    "samples": 57,
+    "steps": 12,
+    "world_size": 8
+  },
+  "same_length": true
+}

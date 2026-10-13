@@ -1,0 +1,682 @@
+{
+  "boundary": {
+    "at_boundary": {
+      "geometric_mean_ppl": 37.8158,
+      "hot_token_pct": 68.29,
+      "mean_loss": 3.632727,
+      "n_tokens": 41
+    },
+    "interpretation": "EOS perplexity should fall relative to non-boundary tokens as the model learns that documents end. A boundary perplexity that stays high means the model is not predicting the end of a document, so packed windows are teaching run-on context.",
+    "not_at_boundary": {
+      "geometric_mean_ppl": 191.38,
+      "hot_token_pct": 97.69,
+      "mean_loss": 5.254261,
+      "n_tokens": 5287
+    },
+    "question": "Is the model learning the document boundary convention?"
+  },
+  "by_lane": {
+    "agentic": {
+      "geometric_mean_ppl": 239.8404,
+      "hot_token_pct": 93.06,
+      "mean_loss": 5.479974,
+      "n_tokens": 72
+    },
+    "code": {
+      "geometric_mean_ppl": 163.2916,
+      "hot_token_pct": 97.76,
+      "mean_loss": 5.095538,
+      "n_tokens": 1429
+    },
+    "indic": {
+      "geometric_mean_ppl": 368.1964,
+      "hot_token_pct": 100.0,
+      "mean_loss": 5.908616,
+      "n_tokens": 693
+    },
+    "longctx": {
+      "geometric_mean_ppl": 451.9989,
+      "hot_token_pct": 99.07,
+      "mean_loss": 6.11368,
+      "n_tokens": 216
+    },
+    "reasoning": {
+      "geometric_mean_ppl": 185.1895,
+      "hot_token_pct": 96.69,
+      "mean_loss": 5.22138,
+      "n_tokens": 605
+    },
+    "stem": {
+      "geometric_mean_ppl": 173.5388,
+      "hot_token_pct": 95.42,
+      "mean_loss": 5.156401,
+      "n_tokens": 568
+    },
+    "web": {
+      "geometric_mean_ppl": 150.4807,
+      "hot_token_pct": 97.13,
+      "mean_loss": 5.013835,
+      "n_tokens": 1745
+    }
+  },
+  "by_language": {
+    "en": {
+      "geometric_mean_ppl": 171.0715,
+      "hot_token_pct": 97.09,
+      "mean_loss": 5.142082,
+      "n_tokens": 4635
+    },
+    "hi": {
+      "geometric_mean_ppl": 333.1267,
+      "hot_token_pct": 100.0,
+      "mean_loss": 5.808523,
+      "n_tokens": 516
+    },
+    "te": {
+      "geometric_mean_ppl": 492.9535,
+      "hot_token_pct": 100.0,
+      "mean_loss": 6.200415,
+      "n_tokens": 177
+    }
+  },
+  "by_role": {
+    "assistant_plan": {
+      "geometric_mean_ppl": 336.319,
+      "hot_token_pct": 93.75,
+      "mean_loss": 5.81806,
+      "n_tokens": 48
+    },
+    "boundary": {
+      "geometric_mean_ppl": 37.8158,
+      "hot_token_pct": 68.29,
+      "mean_loss": 3.632727,
+      "n_tokens": 41
+    },
+    "text": {
+      "geometric_mean_ppl": 190.7845,
+      "hot_token_pct": 97.76,
+      "mean_loss": 5.251145,
+      "n_tokens": 5215
+    },
+    "tool_call": {
+      "geometric_mean_ppl": 121.9731,
+      "hot_token_pct": 91.67,
+      "mean_loss": 4.803801,
+      "n_tokens": 24
+    }
+  },
+  "by_role_scope": "Loss attributed to the segment role of the token being PREDICTED, over run-a's surviving observations only. Only supervised roles can appear: context roles (user, tool_observation, repo_file, shell_output) are read by the model and never scored, so they carry no loss to attribute. Their VOLUME is the supervision-yield question and is reported in packing, not here.",
+  "excess_loss": {
+    "by_lane": {
+      "agentic": {
+        "headroom": "behind_reference",
+        "mean_excess_loss": 0.144634,
+        "tokens_scored": 72
+      },
+      "code": {
+        "headroom": "ahead_of_reference",
+        "mean_excess_loss": -0.806989,
+        "tokens_scored": 1429
+      },
+      "indic": {
+        "headroom": "ahead_of_reference",
+        "mean_excess_loss": -0.427836,
+        "tokens_scored": 693
+      },
+      "longctx": {
+        "headroom": "ahead_of_reference",
+        "mean_excess_loss": -0.568815,
+        "tokens_scored": 216
+      },
+      "reasoning": {
+        "headroom": "ahead_of_reference",
+        "mean_excess_loss": -1.562701,
+        "tokens_scored": 605
+      },
+      "stem": {
+        "headroom": "ahead_of_reference",
+        "mean_excess_loss": -0.946784,
+        "tokens_scored": 568
+      },
+      "web": {
+        "headroom": "ahead_of_reference",
+        "mean_excess_loss": -1.165132,
+        "tokens_scored": 1745
+      }
+    },
+    "doremi_note": "lanes_by_headroom_desc is the order DoReMi-style reweighting would raise. It is reported, not applied: changing lane weights from a 32-dim model on a 50-document corpus would be a claim this run cannot support.",
+    "interpretation": {
+      "already_learned": "low loss, matched - candidate for down-weighting",
+      "irreducible_hard": "high loss for BOTH models - aleatoric; collecting more buys nothing",
+      "learnable_hard": "high loss, reference finds it easier - worth gradient (RHO-1's selection signal)",
+      "saturating": "we are ahead of the reference - the lane is done"
+    },
+    "lanes_by_headroom_desc": [
+      "agentic",
+      "indic",
+      "longctx",
+      "code",
+      "stem",
+      "web",
+      "reasoning"
+    ],
+    "measured": true,
+    "quadrants": {
+      "already_learned": {
+        "fraction": 0.0062,
+        "tokens": 33
+      },
+      "irreducible_hard": {
+        "fraction": 0.6164,
+        "tokens": 3284
+      },
+      "learnable_hard": {
+        "fraction": 0.3288,
+        "tokens": 1752
+      },
+      "saturating": {
+        "fraction": 0.0486,
+        "tokens": 259
+      }
+    },
+    "quadrants_by_lane": {
+      "agentic": {
+        "irreducible_hard": 24,
+        "learnable_hard": 43,
+        "saturating": 5
+      },
+      "code": {
+        "already_learned": 18,
+        "irreducible_hard": 816,
+        "learnable_hard": 531,
+        "saturating": 64
+      },
+      "indic": {
+        "irreducible_hard": 383,
+        "learnable_hard": 310
+      },
+      "longctx": {
+        "irreducible_hard": 127,
+        "learnable_hard": 84,
+        "saturating": 5
+      },
+      "reasoning": {
+        "already_learned": 1,
+        "irreducible_hard": 429,
+        "learnable_hard": 139,
+        "saturating": 36
+      },
+      "stem": {
+        "already_learned": 4,
+        "irreducible_hard": 365,
+        "learnable_hard": 162,
+        "saturating": 37
+      },
+      "web": {
+        "already_learned": 10,
+        "irreducible_hard": 1140,
+        "learnable_hard": 483,
+        "saturating": 112
+      }
+    },
+    "tokens_scored": 5328
+  },
+  "generated_from": "learning ledger of this run",
+  "plan_change_recommendations": [
+    {
+      "current": "concat_chop",
+      "external_evidence": {
+        "reported": "+4.7% reading comprehension, +16.8% context following, +9.2% program synthesis, up to -58.3% closed-domain hallucination; packing overhead <=0.01% extra padding at billion-document scale",
+        "source": "Ding et al., Fewer Truncations Improve Language Modeling, ICML 2024 (arXiv:2404.10830)",
+        "why_our_overhead_is_larger": "bin packing gets more efficient as the instance grows, so the extra-sequence cost measured on this tiny corpus is an upper bound, not the production figure"
+      },
+      "measured_here": {
+        "best_fit_documents_truncated": 0,
+        "best_fit_utilization": 0.9566,
+        "concat_chop_documents_truncated": 74,
+        "concat_chop_utilization": 0.9783,
+        "extra_sequences": 1
+      },
+      "not_applied_because": "packing_policy is part of the mixture plan this system executes. Changing it here would mean the run no longer measures the plan as written.",
+      "recommended": "best_fit",
+      "target": "packing_policy[web]"
+    }
+  ],
+  "position_buckets": {
+    "buckets": {
+      "0": {
+        "geometric_mean_ppl": 174.8767,
+        "hot_token_pct": 97.46,
+        "mean_loss": 5.164081,
+        "n_tokens": 512
+      },
+      "1": {
+        "geometric_mean_ppl": 202.3448,
+        "hot_token_pct": 98.11,
+        "mean_loss": 5.309973,
+        "n_tokens": 530
+      },
+      "2": {
+        "geometric_mean_ppl": 212.399,
+        "hot_token_pct": 97.62,
+        "mean_loss": 5.358467,
+        "n_tokens": 547
+      },
+      "3": {
+        "geometric_mean_ppl": 192.5197,
+        "hot_token_pct": 97.97,
+        "mean_loss": 5.260199,
+        "n_tokens": 541
+      },
+      "4": {
+        "geometric_mean_ppl": 188.0846,
+        "hot_token_pct": 98.46,
+        "mean_loss": 5.236892,
+        "n_tokens": 519
+      },
+      "5": {
+        "geometric_mean_ppl": 210.2876,
+        "hot_token_pct": 97.25,
+        "mean_loss": 5.348476,
+        "n_tokens": 545
+      },
+      "6": {
+        "geometric_mean_ppl": 195.3348,
+        "hot_token_pct": 98.06,
+        "mean_loss": 5.274715,
+        "n_tokens": 566
+      },
+      "7": {
+        "geometric_mean_ppl": 187.2181,
+        "hot_token_pct": 97.69,
+        "mean_loss": 5.232274,
+        "n_tokens": 519
+      },
+      "8": {
+        "geometric_mean_ppl": 181.2707,
+        "hot_token_pct": 97.58,
+        "mean_loss": 5.199991,
+        "n_tokens": 538
+      },
+      "9": {
+        "geometric_mean_ppl": 150.335,
+        "hot_token_pct": 94.32,
+        "mean_loss": 5.012866,
+        "n_tokens": 511
+      }
+    },
+    "definition": "decile of the token's position within its own document",
+    "monotone_decreasing": false,
+    "n_buckets": 10,
+    "spread": 62.064
+  },
+  "reference_model": {
+    "architecture": "identical to the trained model - excess loss must isolate DATA, so model class is held constant",
+    "caveat": "a single reference narrows the signal toward its own domain (RHO-1 s5); a lane the reference never saw scores high-excess for being unfamiliar rather than for being learnable. A per-lane reference is the scale answer and is not affordable on this corpus.",
+    "final_mean_loss_on_reference_domain": 3.196756,
+    "reference_domain": "golden_proxy",
+    "train_sequences": 5,
+    "train_steps": 40,
+    "weight_hash": "51fa0eef1a27c4f4"
+  },
+  "reuse_advisory": {
+    "cutoff": 1.2,
+    "measured": true,
+    "median_shard_ppl": 131.1008,
+    "read_with": "excess_loss - a high ratio means hard, and only excess loss says whether hard means learnable or irreducible",
+    "rule": "ratio = shard_ppl / median_shard_ppl; symmetric, so 1/cutoff on the easy side",
+    "shards": [
+      {
+        "action": "easier_than_corpus_do_not_repeat",
+        "capability_lane": "agentic",
+        "epoch_ceiling_headroom": 0.0,
+        "exposures_this_run": 4,
+        "geometric_mean_ppl": 98.1873,
+        "ratio_to_median": 0.7489,
+        "shard_id": "v5_agentic_train_000"
+      },
+      {
+        "action": "withheld_pending_spike_attribution",
+        "capability_lane": "code",
+        "epoch_ceiling_headroom": -23.0,
+        "exposures_this_run": 27,
+        "geometric_mean_ppl": 106.0835,
+        "ratio_to_median": 0.8092,
+        "shard_id": "v5_code_train_001"
+      },
+      {
+        "action": "withheld_pending_spike_attribution",
+        "capability_lane": "indic",
+        "epoch_ceiling_headroom": -17.0,
+        "exposures_this_run": 21,
+        "geometric_mean_ppl": 233.7519,
+        "ratio_to_median": 1.783,
+        "shard_id": "v5_indic_train_002"
+      },
+      {
+        "action": "withheld_pending_spike_attribution",
+        "capability_lane": "longctx",
+        "epoch_ceiling_headroom": -3.0,
+        "exposures_this_run": 7,
+        "geometric_mean_ppl": 286.5358,
+        "ratio_to_median": 2.1856,
+        "shard_id": "v5_longctx_train_003"
+      },
+      {
+        "action": "withheld_pending_spike_attribution",
+        "capability_lane": "reasoning",
+        "epoch_ceiling_headroom": -16.0,
+        "exposures_this_run": 20,
+        "geometric_mean_ppl": 242.467,
+        "ratio_to_median": 1.8495,
+        "shard_id": "v5_reasoning_train_004"
+      },
+      {
+        "action": "withheld_pending_spike_attribution",
+        "capability_lane": "stem",
+        "epoch_ceiling_headroom": -16.0,
+        "exposures_this_run": 20,
+        "geometric_mean_ppl": 131.1008,
+        "ratio_to_median": 1.0,
+        "shard_id": "v5_stem_train_005"
+      },
+      {
+        "action": "easier_than_corpus_do_not_repeat",
+        "capability_lane": "web",
+        "epoch_ceiling_headroom": -18.0,
+        "exposures_this_run": 22,
+        "geometric_mean_ppl": 69.651,
+        "ratio_to_median": 0.5313,
+        "shard_id": "v5_web_train_006"
+      }
+    ]
+  },
+  "shard_cards": [
+    {
+      "best_phase": "early",
+      "capability_lane": "agentic",
+      "max_pass_number": 1,
+      "phases": {
+        "early": {
+          "grad_norm": 0.274496,
+          "hot_pct": 100.0,
+          "loss_delta": 0.475965,
+          "mean_loss": 5.760242,
+          "n_exposures": 2
+        },
+        "mid": {
+          "grad_norm": 0.398357,
+          "hot_pct": 90.28,
+          "loss_delta": 0.348699,
+          "mean_loss": 4.774033,
+          "n_exposures": 2
+        }
+      },
+      "recommendation": {
+        "action": "keep_with_phase_guard",
+        "because": "productive but hard: 95.1% of tokens above ppl 20.0",
+        "best_phase": "early",
+        "max_pass_number": 1,
+        "mean_hot_token_pct": 95.14
+      },
+      "shard_id": "v5_agentic_train_000",
+      "total_exposures": 4,
+      "usefulness_inverts_with_phase": false,
+      "worst_phase": "mid"
+    },
+    {
+      "best_phase": "early",
+      "capability_lane": "code",
+      "max_pass_number": 17,
+      "phases": {
+        "early": {
+          "grad_norm": 0.542873,
+          "hot_pct": 99.61,
+          "loss_delta": 0.159143,
+          "mean_loss": 5.634286,
+          "n_exposures": 8
+        },
+        "mid": {
+          "grad_norm": 0.376033,
+          "hot_pct": 97.01,
+          "loss_delta": 0.011454,
+          "mean_loss": 4.908211,
+          "n_exposures": 19
+        }
+      },
+      "recommendation": {
+        "action": "keep_with_phase_guard",
+        "because": "productive but hard: 98.3% of tokens above ppl 20.0",
+        "best_phase": "early",
+        "max_pass_number": 17,
+        "mean_hot_token_pct": 98.31
+      },
+      "shard_id": "v5_code_train_001",
+      "total_exposures": 27,
+      "usefulness_inverts_with_phase": false,
+      "worst_phase": "mid"
+    },
+    {
+      "best_phase": "mid",
+      "capability_lane": "indic",
+      "max_pass_number": 8,
+      "phases": {
+        "early": {
+          "grad_norm": 0.530305,
+          "hot_pct": 100.0,
+          "loss_delta": 0.007028,
+          "mean_loss": 6.126458,
+          "n_exposures": 9
+        },
+        "mid": {
+          "grad_norm": 0.37084,
+          "hot_pct": 99.57,
+          "loss_delta": 0.039027,
+          "mean_loss": 5.701039,
+          "n_exposures": 12
+        }
+      },
+      "recommendation": {
+        "action": "keep_with_phase_guard",
+        "because": "productive but hard: 99.8% of tokens above ppl 20.0",
+        "best_phase": "mid",
+        "max_pass_number": 8,
+        "mean_hot_token_pct": 99.78
+      },
+      "shard_id": "v5_indic_train_002",
+      "total_exposures": 21,
+      "usefulness_inverts_with_phase": false,
+      "worst_phase": "early"
+    },
+    {
+      "best_phase": "mid",
+      "capability_lane": "longctx",
+      "max_pass_number": 0,
+      "phases": {
+        "mid": {
+          "grad_norm": 0.366327,
+          "hot_pct": 98.72,
+          "loss_delta": 0.020784,
+          "mean_loss": 5.894266,
+          "n_exposures": 7
+        }
+      },
+      "recommendation": {
+        "action": "keep_with_phase_guard",
+        "because": "productive but hard: 98.7% of tokens above ppl 20.0",
+        "best_phase": "mid",
+        "max_pass_number": 0,
+        "mean_hot_token_pct": 98.72
+      },
+      "shard_id": "v5_longctx_train_003",
+      "total_exposures": 7,
+      "usefulness_inverts_with_phase": false,
+      "worst_phase": "mid"
+    },
+    {
+      "best_phase": "early",
+      "capability_lane": "reasoning",
+      "max_pass_number": 7,
+      "phases": {
+        "early": {
+          "grad_norm": 0.599125,
+          "hot_pct": 99.35,
+          "loss_delta": 0.118609,
+          "mean_loss": 5.977277,
+          "n_exposures": 4
+        },
+        "mid": {
+          "grad_norm": 0.382322,
+          "hot_pct": 95.27,
+          "loss_delta": -0.008428,
+          "mean_loss": 4.959995,
+          "n_exposures": 16
+        }
+      },
+      "recommendation": {
+        "action": "phase_guard",
+        "because": "usefulness inverts with phase: best at early, negative elsewhere",
+        "best_phase": "early",
+        "max_pass_number": 7,
+        "mean_hot_token_pct": 97.31
+      },
+      "shard_id": "v5_reasoning_train_004",
+      "total_exposures": 20,
+      "usefulness_inverts_with_phase": true,
+      "worst_phase": "mid"
+    },
+    {
+      "best_phase": "early",
+      "capability_lane": "stem",
+      "max_pass_number": 10,
+      "phases": {
+        "early": {
+          "grad_norm": 0.462361,
+          "hot_pct": 100.0,
+          "loss_delta": 0.378528,
+          "mean_loss": 5.658359,
+          "n_exposures": 2
+        },
+        "mid": {
+          "grad_norm": 0.375572,
+          "hot_pct": 96.97,
+          "loss_delta": 0.036572,
+          "mean_loss": 5.199749,
+          "n_exposures": 18
+        }
+      },
+      "recommendation": {
+        "action": "keep_with_phase_guard",
+        "because": "productive but hard: 98.5% of tokens above ppl 20.0",
+        "best_phase": "early",
+        "max_pass_number": 10,
+        "mean_hot_token_pct": 98.48
+      },
+      "shard_id": "v5_stem_train_005",
+      "total_exposures": 20,
+      "usefulness_inverts_with_phase": false,
+      "worst_phase": "mid"
+    },
+    {
+      "best_phase": "early",
+      "capability_lane": "web",
+      "max_pass_number": 17,
+      "phases": {
+        "early": {
+          "grad_norm": 0.517187,
+          "hot_pct": 99.24,
+          "loss_delta": 0.124919,
+          "mean_loss": 5.590807,
+          "n_exposures": 10
+        },
+        "mid": {
+          "grad_norm": 0.381695,
+          "hot_pct": 93.69,
+          "loss_delta": 0.061633,
+          "mean_loss": 4.531587,
+          "n_exposures": 12
+        }
+      },
+      "recommendation": {
+        "action": "keep_with_phase_guard",
+        "because": "productive but hard: 96.5% of tokens above ppl 20.0",
+        "best_phase": "early",
+        "max_pass_number": 17,
+        "mean_hot_token_pct": 96.47
+      },
+      "shard_id": "v5_web_train_006",
+      "total_exposures": 22,
+      "usefulness_inverts_with_phase": false,
+      "worst_phase": "mid"
+    }
+  ],
+  "signal_quality": {
+    "depth": "default",
+    "lane_ppl_spread_ratio": 3.004,
+    "near_uniform": false,
+    "vocab_size": 512
+  },
+  "spike_attribution": {
+    "n_spikes": 2,
+    "policy": "a spike is a run event, never a shard property",
+    "unsafe_steps": [
+      5,
+      6,
+      7,
+      28,
+      29,
+      30
+    ],
+    "verdicts_upheld_after_ablation": [],
+    "verdicts_withheld": [
+      "v5_code_train_001",
+      "v5_indic_train_002",
+      "v5_longctx_train_003",
+      "v5_reasoning_train_004",
+      "v5_stem_train_005",
+      "v5_web_train_006"
+    ]
+  },
+  "storage_tiers": {
+    "aggregate": "the full run",
+    "full": "proxy/debug runs and suspicious shards",
+    "quantized": "selected intervals of a large run"
+  },
+  "token_trajectories": {
+    "actionable": {
+      "H_to_H": "irreducible: high loss that does not move - aleatoric, stop paying for it",
+      "H_to_L": "learnable-hard: the model is closing the gap - collect more like this",
+      "L_to_H": "regression: was learned and got worse - a seam or interference signal"
+    },
+    "caveat": "a trajectory needs repeated exposure. Lanes with large pools relative to their budget are drawn once and contribute no trajectory at all, so this report is biased toward small and protected lanes. Reported, not corrected: correcting it would mean over-sampling small lanes, which is not the plan.",
+    "classes": {
+      "H_to_H": {
+        "fraction": 0.8921,
+        "tokens": 1166
+      },
+      "H_to_L": {
+        "fraction": 0.0842,
+        "tokens": 110
+      },
+      "L_to_H": {
+        "fraction": 0.0069,
+        "tokens": 9
+      },
+      "L_to_L": {
+        "fraction": 0.0168,
+        "tokens": 22
+      }
+    },
+    "high_loss_cut": 3.356594,
+    "mean_loss_delta": -0.849844,
+    "measured": true,
+    "rho1_reference_distribution": {
+      "H_to_H": 0.11,
+      "H_to_L": 0.26,
+      "L_to_H": 0.12,
+      "L_to_L": 0.51
+    },
+    "token_instances_seen_once": 1058,
+    "token_instances_with_a_trajectory": 1307
+  }
+}

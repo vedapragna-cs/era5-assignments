@@ -1,0 +1,51 @@
+{
+  "by_lane": {
+    "agentic": {
+      "abs_error": 0.0017,
+      "delivered": 0.0217,
+      "relative_error": 0.087,
+      "target": 0.02
+    },
+    "code": {
+      "abs_error": 0.0494,
+      "delivered": 0.288,
+      "relative_error": 0.207,
+      "target": 0.2386
+    },
+    "indic": {
+      "abs_error": 0.0454,
+      "delivered": 0.125,
+      "relative_error": -0.266,
+      "target": 0.1704
+    },
+    "longctx": {
+      "abs_error": 0.02,
+      "delivered": 0.038,
+      "relative_error": 1.107,
+      "target": 0.0181
+    },
+    "reasoning": {
+      "abs_error": 0.0186,
+      "delivered": 0.1087,
+      "relative_error": 0.206,
+      "target": 0.0901
+    },
+    "stem": {
+      "abs_error": 0.012,
+      "delivered": 0.1087,
+      "relative_error": -0.099,
+      "target": 0.1207
+    },
+    "web": {
+      "abs_error": 0.0319,
+      "delivered": 0.3098,
+      "relative_error": -0.093,
+      "target": 0.3417
+    }
+  },
+  "measured": true,
+  "note": "protected floors are a lower bound on three lanes; this is the only check that constrains the other four, and the only one that can detect OVER-delivery",
+  "samples": 184,
+  "target_basis": "each stage's planned mixture, weighted by the samples actually served in that stage",
+  "total_variation_distance": 0.0895
+}

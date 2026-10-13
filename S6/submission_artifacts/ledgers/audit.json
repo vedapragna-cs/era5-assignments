@@ -1,0 +1,102 @@
+{
+  "interval": {
+    "lane_sample_counts": {
+      "agentic": 1,
+      "code": 7,
+      "indic": 5,
+      "reasoning": 2,
+      "stem": 2,
+      "web": 15
+    },
+    "mean_loss_over_interval": 5.981938,
+    "n_batches": 6,
+    "opus_decisions": 103,
+    "shard_exposure_counts": {
+      "v5_agentic_train_000": 1,
+      "v5_code_train_001": 4,
+      "v5_indic_train_002": 5,
+      "v5_reasoning_train_004": 2,
+      "v5_stem_train_005": 2,
+      "v5_web_train_006": 6
+    },
+    "step_from": 0,
+    "step_to": 6
+  },
+  "step": {
+    "batch_hash": "0ef9cb2b70639bb0d62044ef0591dbbe3d06584e3993cafd2749e929bcd36e2a",
+    "branch_id": "run-a",
+    "checkpoint_id": "ckpt_00000",
+    "curriculum_stage": "S2_general",
+    "found": true,
+    "global_step": 3,
+    "ledger_offset": 4,
+    "loss_mask_hash": "8d0d11a40034b2e89b57ddf2bf51f3c62141e7ee4c4dc3add4536a812c68321d",
+    "mixture_lanes": {
+      "code": 2,
+      "reasoning": 1,
+      "stem": 1,
+      "web": 4
+    },
+    "opus_decision_ids": [
+      "opus_000054",
+      "opus_000055",
+      "opus_000056",
+      "opus_000057",
+      "opus_000058",
+      "opus_000059",
+      "opus_000060",
+      "opus_000061",
+      "opus_000062",
+      "opus_000063",
+      "opus_000064",
+      "opus_000065",
+      "opus_000066",
+      "opus_000067",
+      "opus_000068",
+      "opus_000069",
+      "opus_000070"
+    ],
+    "packed_sample_ids": [
+      "2b3f4ae9f897a5ee",
+      "c71e897b8a23f6cb",
+      "150166e2db08e6dc",
+      "44eb1eb4e8ff0f42",
+      "0ef08945b394efc0",
+      "09c398aa8de75dd0",
+      "25bb924c89a0785c",
+      "4d4d3e30577355cd"
+    ],
+    "reconstructed_documents": [
+      "code-0001",
+      "code-0010",
+      "code-0011",
+      "reason-0002",
+      "stem-0010",
+      "web-0001",
+      "web-0002",
+      "web-0003",
+      "web-0004",
+      "web-0005"
+    ],
+    "shard_ids": [
+      "v5_code_train_001",
+      "v5_reasoning_train_004",
+      "v5_stem_train_005",
+      "v5_web_train_006"
+    ],
+    "token_span_ids": [
+      "reason-0002:85-280",
+      "web-0002:175-339",
+      "web-0003:339-502",
+      "web-0001:0-175",
+      "web-0001:0-175",
+      "web-0002:175-339",
+      "web-0004:502-636",
+      "web-0005:636-716",
+      "stem-0010:357-440",
+      "code-0001:0-101",
+      "code-0010:533-578",
+      "code-0011:578-658"
+    ]
+  }
+}

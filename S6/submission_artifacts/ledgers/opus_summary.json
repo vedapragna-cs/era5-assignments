@@ -1,0 +1,85 @@
+{
+  "by_decision": {
+    "accepted": 177,
+    "deferred": 183,
+    "protected": 17,
+    "rejected": 181
+  },
+  "by_lane": {
+    "agentic": {
+      "deferred": 2,
+      "protected": 4,
+      "rejected": 1
+    },
+    "code": {
+      "accepted": 57,
+      "deferred": 40,
+      "rejected": 23
+    },
+    "indic": {
+      "accepted": 16,
+      "deferred": 31,
+      "protected": 8,
+      "rejected": 60
+    },
+    "longctx": {
+      "accepted": 9,
+      "rejected": 1
+    },
+    "reasoning": {
+      "accepted": 16,
+      "deferred": 37,
+      "protected": 5,
+      "rejected": 22
+    },
+    "stem": {
+      "accepted": 22,
+      "deferred": 19,
+      "rejected": 20
+    },
+    "web": {
+      "accepted": 57,
+      "deferred": 54,
+      "rejected": 54
+    }
+  },
+  "kept": 194,
+  "mechanism": "top-k over the step candidate pool, k = round(n * (1 - rejection_rate))",
+  "n_candidates": 512,
+  "n_reserve_deferrals": 46,
+  "note": "kept = accepted + protected. Protected batches are floor overrides OPUS would otherwise have discarded; folding them into 'accepted' would hide exactly how much work the floor is doing, which is the number S5 needs.",
+  "observed_rejection_rate": 0.6211,
+  "observed_supply_rejection_rate": 0.186,
+  "protected_floor_rescues_by_lane": {
+    "agentic": 4,
+    "indic": 8,
+    "reasoning": 5
+  },
+  "proxy_refresh_every_steps": 4,
+  "proxy_version": "opus_proxy_v5.3",
+  "rate_definitions": {
+    "observed_rejection_rate": "per-STEP selection pressure over the oversampled candidate pool; floor of 1 - 1/oversample",
+    "observed_supply_rejection_rate": "fraction of DISTINCT judged samples never admitted on any step; comparable to the plan's rejection_rate_target and the one that drives need = share / (1 - r)"
+  },
+  "rejection_rate_formula": "1 - (accepted + protected) / n_candidates, where n_candidates counts only decisions carrying a non-null opus_score. Deferrals (lane_quota_full, duplicate_in_step, batch_full) are scored and therefore count as not-kept; reserve deferrals are never scored and are excluded from both terms.",
+  "rejection_reasons": {
+    "below_proxy_threshold": 8,
+    "duplicate_in_step": 65,
+    "lane_quota_full": 72,
+    "protected_floor_override": 17,
+    "reserved_for_anneal": 46,
+    "stage_mismatch": 173
+  },
+  "reserve_deferred_sample_ids": [
+    "1636719927e2461d",
+    "4d289a2bc9824596",
+    "742f893ff0b4bc80",
+    "83b31f3bbb7b784c",
+    "c16202459dbebf45"
+  ],
+  "scope": "branch run-a",
+  "score_max": 0.70281739,
+  "score_mean": 0.05615987,
+  "score_min": -1.0,
+  "target_rejection_rate": 0.18
+}

@@ -1,0 +1,278 @@
+{
+  "capability_lane": "indic",
+  "cleaning_pipeline_hash": "375f1762c583425243238238e41b7e340bc7b3d191df66d1c4781d1430633af3",
+  "content_hash": "ac358b1e8040c5263686b2a3699c853cd6407d181fdf3d86fbe5be9348d0407e",
+  "dedup_clusters": [],
+  "dedup_status": "unique",
+  "difficulty_bands": [
+    "B0",
+    "B1",
+    "B2",
+    "B3",
+    "B5"
+  ],
+  "document_ids": [
+    "indic-0001",
+    "indic-0002",
+    "indic-0003",
+    "indic-0004",
+    "indic-0005",
+    "indic-0006",
+    "indic-0010",
+    "indic-0011",
+    "indic-0012"
+  ],
+  "eligible_stages": [
+    "S1_seed",
+    "S2_general",
+    "S3_reasoning",
+    "S4_longctx",
+    "anneal"
+  ],
+  "eval_overlap_status": "clear",
+  "fertility_by_language": {
+    "hi": 4.224,
+    "mr": 7.2143,
+    "te": 12.5385
+  },
+  "language_validated": true,
+  "languages": [
+    "hi",
+    "mr",
+    "te"
+  ],
+  "license_tier": "safe",
+  "parent_shard_ids": [],
+  "pii_kinds_found": [],
+  "pii_screen_status": "screened",
+  "provenance_tier": "audited",
+  "repeat_ngram_status": "screened",
+  "scripts": [
+    "Deva",
+    "Telu"
+  ],
+  "shard_id": "v5_indic_train_002",
+  "source_ids": [
+    "indiccorp_v2",
+    "sangraha_verified"
+  ],
+  "split": "train",
+  "stage_eligibility": {
+    "S1_seed": {
+      "band_permitted": true,
+      "documents_fitting_window": 0,
+      "documents_total": 9,
+      "eligible": true,
+      "longest_document_tokens": 164,
+      "stage_window_tokens": 16
+    },
+    "S2_general": {
+      "band_permitted": true,
+      "documents_fitting_window": 0,
+      "documents_total": 9,
+      "eligible": true,
+      "longest_document_tokens": 164,
+      "stage_window_tokens": 16
+    },
+    "S3_reasoning": {
+      "band_permitted": true,
+      "documents_fitting_window": 0,
+      "documents_total": 9,
+      "eligible": true,
+      "longest_document_tokens": 164,
+      "stage_window_tokens": 32
+    },
+    "S4_longctx": {
+      "band_permitted": true,
+      "documents_fitting_window": 4,
+      "documents_total": 9,
+      "eligible": true,
+      "longest_document_tokens": 164,
+      "stage_window_tokens": 128
+    },
+    "anneal": {
+      "band_permitted": true,
+      "documents_fitting_window": 4,
+      "documents_total": 9,
+      "eligible": true,
+      "longest_document_tokens": 164,
+      "stage_window_tokens": 128
+    }
+  },
+  "token_count": 1046,
+  "token_spans": [
+    {
+      "doc_id": "indic-0001",
+      "end": 144,
+      "lane": "indic",
+      "roles": [
+        {
+          "end": 143,
+          "role": "text",
+          "start": 0
+        },
+        {
+          "end": 144,
+          "role": "boundary",
+          "start": 143
+        }
+      ],
+      "span_id": "indic-0001:0-144",
+      "start": 0
+    },
+    {
+      "doc_id": "indic-0002",
+      "end": 288,
+      "lane": "indic",
+      "roles": [
+        {
+          "end": 287,
+          "role": "text",
+          "start": 144
+        },
+        {
+          "end": 288,
+          "role": "boundary",
+          "start": 287
+        }
+      ],
+      "span_id": "indic-0002:144-288",
+      "start": 144
+    },
+    {
+      "doc_id": "indic-0003",
+      "end": 390,
+      "lane": "indic",
+      "roles": [
+        {
+          "end": 389,
+          "role": "text",
+          "start": 288
+        },
+        {
+          "end": 390,
+          "role": "boundary",
+          "start": 389
+        }
+      ],
+      "span_id": "indic-0003:288-390",
+      "start": 288
+    },
+    {
+      "doc_id": "indic-0004",
+      "end": 522,
+      "lane": "indic",
+      "roles": [
+        {
+          "end": 521,
+          "role": "text",
+          "start": 390
+        },
+        {
+          "end": 522,
+          "role": "boundary",
+          "start": 521
+        }
+      ],
+      "span_id": "indic-0004:390-522",
+      "start": 390
+    },
+    {
+      "doc_id": "indic-0005",
+      "end": 686,
+      "lane": "indic",
+      "roles": [
+        {
+          "end": 685,
+          "role": "text",
+          "start": 522
+        },
+        {
+          "end": 686,
+          "role": "boundary",
+          "start": 685
+        }
+      ],
+      "span_id": "indic-0005:522-686",
+      "start": 522
+    },
+    {
+      "doc_id": "indic-0006",
+      "end": 790,
+      "lane": "indic",
+      "roles": [
+        {
+          "end": 789,
+          "role": "text",
+          "start": 686
+        },
+        {
+          "end": 790,
+          "role": "boundary",
+          "start": 789
+        }
+      ],
+      "span_id": "indic-0006:686-790",
+      "start": 686
+    },
+    {
+      "doc_id": "indic-0010",
+      "end": 843,
+      "lane": "indic",
+      "roles": [
+        {
+          "end": 842,
+          "role": "text",
+          "start": 790
+        },
+        {
+          "end": 843,
+          "role": "boundary",
+          "start": 842
+        }
+      ],
+      "span_id": "indic-0010:790-843",
+      "start": 790
+    },
+    {
+      "doc_id": "indic-0011",
+      "end": 917,
+      "lane": "indic",
+      "roles": [
+        {
+          "end": 916,
+          "role": "text",
+          "start": 843
+        },
+        {
+          "end": 917,
+          "role": "boundary",
+          "start": 916
+        }
+      ],
+      "span_id": "indic-0011:843-917",
+      "start": 843
+    },
+    {
+      "doc_id": "indic-0012",
+      "end": 1046,
+      "lane": "indic",
+      "roles": [
+        {
+          "end": 1045,
+          "role": "text",
+          "start": 917
+        },
+        {
+          "end": 1046,
+          "role": "boundary",
+          "start": 1045
+        }
+      ],
+      "span_id": "indic-0012:917-1046",
+      "start": 917
+    }
+  ],
+  "tokenizer_hash": "75b8661f606877ee2eb1398876fdc6f757ec30d6e989b481aa8f5ed0f53c6ec1",
+  "tokenizer_version": "v5-tok-1"
+}

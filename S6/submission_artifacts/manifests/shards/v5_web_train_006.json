@@ -1,0 +1,256 @@
+{
+  "capability_lane": "web",
+  "cleaning_pipeline_hash": "375f1762c583425243238238e41b7e340bc7b3d191df66d1c4781d1430633af3",
+  "content_hash": "a781a8f936cb98926e9fb92390395baa9c0663f5c2a950d985a1d296562b747b",
+  "dedup_clusters": [],
+  "dedup_status": "unique",
+  "difficulty_bands": [
+    "B0",
+    "B1",
+    "B2"
+  ],
+  "document_ids": [
+    "web-0001",
+    "web-0002",
+    "web-0003",
+    "web-0004",
+    "web-0005",
+    "web-0006",
+    "web-0010",
+    "web-0011"
+  ],
+  "eligible_stages": [
+    "S1_seed",
+    "S2_general",
+    "S3_reasoning"
+  ],
+  "eval_overlap_status": "clear",
+  "fertility_by_language": {
+    "en": 3.3525
+  },
+  "language_validated": true,
+  "languages": [
+    "en"
+  ],
+  "license_tier": "safe",
+  "parent_shard_ids": [],
+  "pii_kinds_found": [
+    "email",
+    "phone_in",
+    "street_address"
+  ],
+  "pii_screen_status": "screened",
+  "provenance_tier": "audited",
+  "repeat_ngram_status": "screened",
+  "scripts": [
+    "Latn"
+  ],
+  "shard_id": "v5_web_train_006",
+  "source_ids": [
+    "crawl_misc",
+    "dclm_baseline",
+    "fineweb_edu",
+    "simple_wiki",
+    "tinystories_like"
+  ],
+  "split": "train",
+  "stage_eligibility": {
+    "S1_seed": {
+      "band_permitted": true,
+      "documents_fitting_window": 0,
+      "documents_total": 8,
+      "eligible": true,
+      "longest_document_tokens": 175,
+      "stage_window_tokens": 16
+    },
+    "S2_general": {
+      "band_permitted": true,
+      "documents_fitting_window": 0,
+      "documents_total": 8,
+      "eligible": true,
+      "longest_document_tokens": 175,
+      "stage_window_tokens": 16
+    },
+    "S3_reasoning": {
+      "band_permitted": true,
+      "documents_fitting_window": 1,
+      "documents_total": 8,
+      "eligible": true,
+      "longest_document_tokens": 175,
+      "stage_window_tokens": 32
+    },
+    "S4_longctx": {
+      "band_permitted": false,
+      "documents_fitting_window": 4,
+      "documents_total": 8,
+      "eligible": false,
+      "longest_document_tokens": 175,
+      "stage_window_tokens": 128
+    },
+    "anneal": {
+      "band_permitted": false,
+      "documents_fitting_window": 4,
+      "documents_total": 8,
+      "eligible": false,
+      "longest_document_tokens": 175,
+      "stage_window_tokens": 128
+    }
+  },
+  "token_count": 946,
+  "token_spans": [
+    {
+      "doc_id": "web-0001",
+      "end": 175,
+      "lane": "web",
+      "roles": [
+        {
+          "end": 174,
+          "role": "text",
+          "start": 0
+        },
+        {
+          "end": 175,
+          "role": "boundary",
+          "start": 174
+        }
+      ],
+      "span_id": "web-0001:0-175",
+      "start": 0
+    },
+    {
+      "doc_id": "web-0002",
+      "end": 339,
+      "lane": "web",
+      "roles": [
+        {
+          "end": 338,
+          "role": "text",
+          "start": 175
+        },
+        {
+          "end": 339,
+          "role": "boundary",
+          "start": 338
+        }
+      ],
+      "span_id": "web-0002:175-339",
+      "start": 175
+    },
+    {
+      "doc_id": "web-0003",
+      "end": 502,
+      "lane": "web",
+      "roles": [
+        {
+          "end": 501,
+          "role": "text",
+          "start": 339
+        },
+        {
+          "end": 502,
+          "role": "boundary",
+          "start": 501
+        }
+      ],
+      "span_id": "web-0003:339-502",
+      "start": 339
+    },
+    {
+      "doc_id": "web-0004",
+      "end": 636,
+      "lane": "web",
+      "roles": [
+        {
+          "end": 635,
+          "role": "text",
+          "start": 502
+        },
+        {
+          "end": 636,
+          "role": "boundary",
+          "start": 635
+        }
+      ],
+      "span_id": "web-0004:502-636",
+      "start": 502
+    },
+    {
+      "doc_id": "web-0005",
+      "end": 716,
+      "lane": "web",
+      "roles": [
+        {
+          "end": 715,
+          "role": "text",
+          "start": 636
+        },
+        {
+          "end": 716,
+          "role": "boundary",
+          "start": 715
+        }
+      ],
+      "span_id": "web-0005:636-716",
+      "start": 636
+    },
+    {
+      "doc_id": "web-0006",
+      "end": 839,
+      "lane": "web",
+      "roles": [
+        {
+          "end": 838,
+          "role": "text",
+          "start": 716
+        },
+        {
+          "end": 839,
+          "role": "boundary",
+          "start": 838
+        }
+      ],
+      "span_id": "web-0006:716-839",
+      "start": 716
+    },
+    {
+      "doc_id": "web-0010",
+      "end": 871,
+      "lane": "web",
+      "roles": [
+        {
+          "end": 870,
+          "role": "text",
+          "start": 839
+        },
+        {
+          "end": 871,
+          "role": "boundary",
+          "start": 870
+        }
+      ],
+      "span_id": "web-0010:839-871",
+      "start": 839
+    },
+    {
+      "doc_id": "web-0011",
+      "end": 946,
+      "lane": "web",
+      "roles": [
+        {
+          "end": 945,
+          "role": "text",
+          "start": 871
+        },
+        {
+          "end": 946,
+          "role": "boundary",
+          "start": 945
+        }
+      ],
+      "span_id": "web-0011:871-946",
+      "start": 871
+    }
+  ],
+  "tokenizer_hash": "75b8661f606877ee2eb1398876fdc6f757ec30d6e989b481aa8f5ed0f53c6ec1",
+  "tokenizer_version": "v5-tok-1"
+}

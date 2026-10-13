@@ -1,0 +1,44 @@
+[
+  {
+    "admitted": true,
+    "blocking_reasons": [],
+    "manifest_hash": "a4d64cf8cfbb5a44478491e3f662033adebdc881331eda52199e43ccae6f00ed",
+    "shard_id": "v5_agentic_train_000"
+  },
+  {
+    "admitted": true,
+    "blocking_reasons": [],
+    "manifest_hash": "47fafa2fa85d5bd37018b3e1cd50593f8e09fe84e0b9988c9cf5bef5b85cb736",
+    "shard_id": "v5_code_train_001"
+  },
+  {
+    "admitted": true,
+    "blocking_reasons": [],
+    "manifest_hash": "7befe4113ad5fba6f86a73a20a418876021d2b5d87127c8ed0ecac65f197fdd1",
+    "shard_id": "v5_indic_train_002"
+  },
+  {
+    "admitted": true,
+    "blocking_reasons": [],
+    "manifest_hash": "027a5fe094466018b915f3dcb422569398a1b42b9977495e44915904ffe60825",
+    "shard_id": "v5_longctx_train_003"
+  },
+  {
+    "admitted": true,
+    "blocking_reasons": [],
+    "manifest_hash": "8d7c2e16801d80ca28882c9ea6cc1f386f43ae865e71508ea0c74ed3d29c2330",
+    "shard_id": "v5_reasoning_train_004"
+  },
+  {
+    "admitted": true,
+    "blocking_reasons": [],
+    "manifest_hash": "c085e14303afb17465b4c276c87cd9fbe8de709def50e730c62f62b19fafe3c2",
+    "shard_id": "v5_stem_train_005"
+  },
+  {
+    "admitted": true,
+    "blocking_reasons": [],
+    "manifest_hash": "94cdc46e5eec08c6e844e6badd03c58e2414e661d3c36c170d82d843c3de3508",
+    "shard_id": "v5_web_train_006"
+  }
+]

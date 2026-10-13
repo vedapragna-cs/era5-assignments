@@ -1,0 +1,105 @@
+{
+  "capability_lane": "longctx",
+  "cleaning_pipeline_hash": "375f1762c583425243238238e41b7e340bc7b3d191df66d1c4781d1430633af3",
+  "content_hash": "b99cf11e2f5609a39e7a4c3dfb3b35379461f51ca566be4c30127eb0abf58c94",
+  "dedup_clusters": [],
+  "dedup_status": "unique",
+  "difficulty_bands": [
+    "B4"
+  ],
+  "document_ids": [
+    "longctx-0001"
+  ],
+  "eligible_stages": [
+    "S3_reasoning",
+    "S4_longctx"
+  ],
+  "eval_overlap_status": "clear",
+  "fertility_by_language": {
+    "en": 2.4641
+  },
+  "language_validated": true,
+  "languages": [
+    "en"
+  ],
+  "license_tier": "safe",
+  "parent_shard_ids": [],
+  "pii_kinds_found": [],
+  "pii_screen_status": "screened",
+  "provenance_tier": "audited",
+  "repeat_ngram_status": "screened",
+  "scripts": [
+    "Latn"
+  ],
+  "shard_id": "v5_longctx_train_003",
+  "source_ids": [
+    "repo_packed"
+  ],
+  "split": "train",
+  "stage_eligibility": {
+    "S1_seed": {
+      "band_permitted": false,
+      "documents_fitting_window": 0,
+      "documents_total": 1,
+      "eligible": false,
+      "longest_document_tokens": 1132,
+      "stage_window_tokens": 16
+    },
+    "S2_general": {
+      "band_permitted": false,
+      "documents_fitting_window": 0,
+      "documents_total": 1,
+      "eligible": false,
+      "longest_document_tokens": 1132,
+      "stage_window_tokens": 16
+    },
+    "S3_reasoning": {
+      "band_permitted": true,
+      "documents_fitting_window": 0,
+      "documents_total": 1,
+      "eligible": true,
+      "longest_document_tokens": 1132,
+      "stage_window_tokens": 32
+    },
+    "S4_longctx": {
+      "band_permitted": true,
+      "documents_fitting_window": 0,
+      "documents_total": 1,
+      "eligible": true,
+      "longest_document_tokens": 1132,
+      "stage_window_tokens": 128
+    },
+    "anneal": {
+      "band_permitted": false,
+      "documents_fitting_window": 0,
+      "documents_total": 1,
+      "eligible": false,
+      "longest_document_tokens": 1132,
+      "stage_window_tokens": 128
+    }
+  },
+  "token_count": 1132,
+  "token_spans": [
+    {
+      "doc_id": "longctx-0001",
+      "end": 1132,
+      "lane": "longctx",
+      "roles": [
+        {
+          "end": 1131,
+          "role": "text",
+          "start": 0
+        },
+        {
+          "end": 1132,
+          "role": "boundary",
+          "start": 1131
+        }
+      ],
+      "span_id": "longctx-0001:0-1132",
+      "start": 0
+    }
+  ],
+  "tokenizer_hash": "75b8661f606877ee2eb1398876fdc6f757ec30d6e989b481aa8f5ed0f53c6ec1",
+  "tokenizer_version": "v5-tok-1"
+}

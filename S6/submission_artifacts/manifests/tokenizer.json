@@ -1,0 +1,11 @@
+{
+  "hash": "75b8661f606877ee2eb1398876fdc6f757ec30d6e989b481aa8f5ed0f53c6ec1",
+  "n_merges": 253,
+  "size": 512,
+  "specials": {
+    "<bos>": 1,
+    "<eos>": 2,
+    "<pad>": 0
+  },
+  "version": "v5-tok-1"
+}

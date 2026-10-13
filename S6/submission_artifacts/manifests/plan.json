@@ -1,0 +1,127 @@
+{
+  "anneal_reserve": {
+    "agentic_long_trajectories": 360000000,
+    "indic_tier_a": 25200000000,
+    "reasoning_long_traces": 16200000000
+  },
+  "packing_policy": {
+    "agentic": "structure_preserving",
+    "code": "greedy",
+    "indic": "best_fit",
+    "longctx": "long_context",
+    "reasoning": "best_fit",
+    "stem": "best_fit",
+    "web": "concat_chop"
+  },
+  "plan_hash": "eb9092a959d085916bdae6a06431cd4ad2902f013ed60d2563a67b0c2e4c35f1",
+  "plan_id": "era-v5-mixture-v1",
+  "protected_floors": {
+    "agentic": 0.02,
+    "indic": 0.12,
+    "reasoning": 0.06
+  },
+  "run_tokens_scaled": 30000,
+  "scale_divisor": 100000000,
+  "stages": [
+    {
+      "difficulty_bands": [
+        "B0",
+        "B1"
+      ],
+      "id": "S1_seed",
+      "mixture": {
+        "agentic": 0.01,
+        "code": 0.146,
+        "indic": 0.172,
+        "longctx": 0.002,
+        "reasoning": 0.02,
+        "stem": 0.09,
+        "web": 0.561
+      },
+      "name": "Seed",
+      "sequence_length": 4096,
+      "token_end": 2330,
+      "token_start": 0
+    },
+    {
+      "difficulty_bands": [
+        "B1",
+        "B2"
+      ],
+      "id": "S2_general",
+      "mixture": {
+        "agentic": 0.015,
+        "code": 0.192,
+        "indic": 0.169,
+        "longctx": 0.004,
+        "reasoning": 0.048,
+        "stem": 0.118,
+        "web": 0.453
+      },
+      "name": "General",
+      "sequence_length": 4096,
+      "token_end": 11640,
+      "token_start": 2330
+    },
+    {
+      "difficulty_bands": [
+        "B2",
+        "B3",
+        "B4"
+      ],
+      "id": "S3_reasoning",
+      "mixture": {
+        "agentic": 0.02,
+        "code": 0.268,
+        "indic": 0.169,
+        "longctx": 0.009,
+        "reasoning": 0.125,
+        "stem": 0.128,
+        "web": 0.281
+      },
+      "name": "Reasoning",
+      "sequence_length": 8192,
+      "token_end": 22120,
+      "token_start": 11640
+    },
+    {
+      "difficulty_bands": [
+        "B3",
+        "B4"
+      ],
+      "id": "S4_longctx",
+      "mixture": {
+        "agentic": 0.03,
+        "code": 0.293,
+        "indic": 0.172,
+        "longctx": 0.063,
+        "reasoning": 0.117,
+        "stem": 0.12,
+        "web": 0.204
+      },
+      "name": "Long-context",
+      "sequence_length": 32768,
+      "token_end": 29100,
+      "token_start": 22120
+    },
+    {
+      "difficulty_bands": [
+        "B5"
+      ],
+      "id": "anneal",
+      "mixture": {
+        "agentic": 0.08,
+        "code": 0.2,
+        "indic": 0.28,
+        "longctx": 0.08,
+        "reasoning": 0.18,
+        "stem": 0.1,
+        "web": 0.08
+      },
+      "name": "Anneal",
+      "sequence_length": 32768,
+      "token_end": 30000,
+      "token_start": 29100
+    }
+  ]
+}

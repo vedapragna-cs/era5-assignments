@@ -1,0 +1,35 @@
+{
+  "encoding": "little-endian uint32 per token, contiguous - struct.pack(f'<{n}I', *tokens)",
+  "shards": {
+    "v5_agentic_train_000": {
+      "content_hash": "c20a5760d4fbf503cd9a441e3b83adf9732cb2a12aa7f1f7e54fd50dfde6b9d9",
+      "n_tokens": 489
+    },
+    "v5_code_train_001": {
+      "content_hash": "6bd48a517e99cfcd8de66df1e45bcb577c9037ee9515577556e6e3197267b92b",
+      "n_tokens": 658
+    },
+    "v5_indic_train_002": {
+      "content_hash": "ac358b1e8040c5263686b2a3699c853cd6407d181fdf3d86fbe5be9348d0407e",
+      "n_tokens": 1046
+    },
+    "v5_longctx_train_003": {
+      "content_hash": "b99cf11e2f5609a39e7a4c3dfb3b35379461f51ca566be4c30127eb0abf58c94",
+      "n_tokens": 1132
+    },
+    "v5_reasoning_train_004": {
+      "content_hash": "b630cae56b9b877ab72307225d92ae4004f2bcbf88ea1b9b18362609ce6bc936",
+      "n_tokens": 690
+    },
+    "v5_stem_train_005": {
+      "content_hash": "5ddd4a791c40065fbea66e6c81a3f0f72704c7bf5eef84f36206f5b3c72403cd",
+      "n_tokens": 549
+    },
+    "v5_web_train_006": {
+      "content_hash": "a781a8f936cb98926e9fb92390395baa9c0663f5c2a950d985a1d296562b747b",
+      "n_tokens": 946
+    }
+  },
+  "verify": "sha256(open(f'{shard_id}.bin','rb').read()).hexdigest() == manifests/shards/{shard_id}.json['content_hash']",
+  "why": "content_hash is the shard's identity and the basis of the immutability claim. Shipping the hash without the bytes makes it unverifiable from the bundle."
+}

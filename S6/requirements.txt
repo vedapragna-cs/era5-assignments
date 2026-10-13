@@ -1,0 +1,7 @@
+# The demonstration imports exactly one third-party package.
+#
+# `python3 run_demo.py` needs only this; there is no network access, no dataset download and no
+# model download. Everything else is the standard library.
+numpy>=1.24
+
+# Python 3.10+ (the code uses `X | Y` type unions and structural pattern-free dataclass syntax).
