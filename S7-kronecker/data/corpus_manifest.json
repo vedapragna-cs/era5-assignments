@@ -1,0 +1,176 @@
+{
+  "path": "data/corpus.txt",
+  "bytes": 27088226,
+  "chars": 26666169,
+  "sha256": "22963206bdfe46e34efb6a687a28385f26ca9e88f706e708f48eeb72aa677a78",
+  "multibyte_fraction": 0.025596,
+  "prose_bytes_by_bucket": {
+    "en": 14268801,
+    "other": 4858142
+  },
+  "sources": [
+    {
+      "kind": "prose",
+      "id": 1342,
+      "title": "Pride and Prejudice",
+      "lang": "en",
+      "status": "ok",
+      "bytes": 737913
+    },
+    {
+      "kind": "prose",
+      "id": 84,
+      "title": "Frankenstein",
+      "lang": "en",
+      "status": "ok",
+      "bytes": 421535
+    },
+    {
+      "kind": "prose",
+      "id": 11,
+      "title": "Alice's Adventures in Wonderland",
+      "lang": "en",
+      "status": "ok",
+      "bytes": 151094
+    },
+    {
+      "kind": "prose",
+      "id": 1661,
+      "title": "The Adventures of Sherlock Holmes",
+      "lang": "en",
+      "status": "ok",
+      "bytes": 575793
+    },
+    {
+      "kind": "prose",
+      "id": 2701,
+      "title": "Moby Dick",
+      "lang": "en",
+      "status": "ok",
+      "bytes": 1234504
+    },
+    {
+      "kind": "prose",
+      "id": 1400,
+      "title": "Great Expectations",
+      "lang": "en",
+      "status": "ok",
+      "bytes": 1018008
+    },
+    {
+      "kind": "prose",
+      "id": 768,
+      "title": "Wuthering Heights",
+      "lang": "en",
+      "status": "ok",
+      "bytes": 661710
+    },
+    {
+      "kind": "prose",
+      "id": 98,
+      "title": "A Tale of Two Cities",
+      "lang": "en",
+      "status": "ok",
+      "bytes": 771502
+    },
+    {
+      "kind": "prose",
+      "id": 2600,
+      "title": "War and Peace",
+      "lang": "en",
+      "status": "ok",
+      "bytes": 3274123
+    },
+    {
+      "kind": "prose",
+      "id": 100,
+      "title": "The Complete Works of Shakespeare",
+      "lang": "en",
+      "status": "ok",
+      "bytes": 5422619
+    },
+    {
+      "kind": "prose",
+      "id": 74,
+      "title": "The Adventures of Tom Sawyer",
+      "lang": "en",
+      "status": "skipped: budget spent"
+    },
+    {
+      "kind": "prose",
+      "id": 345,
+      "title": "Dracula",
+      "lang": "en",
+      "status": "skipped: budget spent"
+    },
+    {
+      "kind": "prose",
+      "id": 1232,
+      "title": "The Prince",
+      "lang": "en",
+      "status": "skipped: budget spent"
+    },
+    {
+      "kind": "prose",
+      "id": 5200,
+      "title": "Metamorphosis",
+      "lang": "en",
+      "status": "skipped: budget spent"
+    },
+    {
+      "kind": "prose",
+      "id": 2000,
+      "title": "Don Quijote",
+      "lang": "es",
+      "status": "ok",
+      "bytes": 2168309
+    },
+    {
+      "kind": "prose",
+      "id": 2650,
+      "title": "Du cote de chez Swann",
+      "lang": "fr",
+      "status": "ok",
+      "bytes": 1048515
+    },
+    {
+      "kind": "prose",
+      "id": 17489,
+      "title": "Les Miserables (fr)",
+      "lang": "fr",
+      "status": "unavailable"
+    },
+    {
+      "kind": "prose",
+      "id": 13951,
+      "title": "Divina Commedia",
+      "lang": "it",
+      "status": "ok",
+      "bytes": 1430767
+    },
+    {
+      "kind": "prose",
+      "id": 21000,
+      "title": "Effi Briest",
+      "lang": "de",
+      "status": "ok",
+      "bytes": 210551
+    },
+    {
+      "kind": "prose",
+      "id": 28054,
+      "title": "The Brothers Karamazov",
+      "lang": "en",
+      "status": "skipped: budget spent"
+    },
+    {
+      "kind": "code",
+      "source": "python stdlib",
+      "python": "3.10.6",
+      "files": 470,
+      "bytes": 8001889
+    }
+  ],
+  "seed": 0,
+  "newlines": "normalised to LF at build time"
+}

@@ -1,0 +1,2544 @@
+{
+  "generated_by": "run.py",
+  "argv": [],
+  "smoke": false,
+  "environment": {
+    "python": "3.10.6",
+    "torch": "2.13.0",
+    "numpy": "2.2.6",
+    "platform": "macOS-26.5.1-arm64-arm-64bit",
+    "device": "mps"
+  },
+  "corpus": {
+    "path": "data/corpus.txt",
+    "bytes": 27088226,
+    "chars": 26666169,
+    "sha256": "22963206bdfe46e34efb6a687a28385f26ca9e88f706e708f48eeb72aa677a78",
+    "multibyte_fraction": 0.025596,
+    "prose_bytes_by_bucket": {
+      "en": 14268801,
+      "other": 4858142
+    },
+    "seed": 0,
+    "newlines": "normalised to LF at build time"
+  },
+  "corpus_integrity": {
+    "bytes_expected": 27088226,
+    "bytes_got": 27088226,
+    "sha256_expected": "22963206bdfe46e34efb6a687a28385f26ca9e88f706e708f48eeb72aa677a78",
+    "sha256_got": "22963206bdfe46e34efb6a687a28385f26ca9e88f706e708f48eeb72aa677a78",
+    "match": true
+  },
+  "corpus_sources": [
+    {
+      "kind": "prose",
+      "id": 1342,
+      "title": "Pride and Prejudice",
+      "lang": "en",
+      "status": "ok",
+      "bytes": 737913
+    },
+    {
+      "kind": "prose",
+      "id": 84,
+      "title": "Frankenstein",
+      "lang": "en",
+      "status": "ok",
+      "bytes": 421535
+    },
+    {
+      "kind": "prose",
+      "id": 11,
+      "title": "Alice's Adventures in Wonderland",
+      "lang": "en",
+      "status": "ok",
+      "bytes": 151094
+    },
+    {
+      "kind": "prose",
+      "id": 1661,
+      "title": "The Adventures of Sherlock Holmes",
+      "lang": "en",
+      "status": "ok",
+      "bytes": 575793
+    },
+    {
+      "kind": "prose",
+      "id": 2701,
+      "title": "Moby Dick",
+      "lang": "en",
+      "status": "ok",
+      "bytes": 1234504
+    },
+    {
+      "kind": "prose",
+      "id": 1400,
+      "title": "Great Expectations",
+      "lang": "en",
+      "status": "ok",
+      "bytes": 1018008
+    },
+    {
+      "kind": "prose",
+      "id": 768,
+      "title": "Wuthering Heights",
+      "lang": "en",
+      "status": "ok",
+      "bytes": 661710
+    },
+    {
+      "kind": "prose",
+      "id": 98,
+      "title": "A Tale of Two Cities",
+      "lang": "en",
+      "status": "ok",
+      "bytes": 771502
+    },
+    {
+      "kind": "prose",
+      "id": 2600,
+      "title": "War and Peace",
+      "lang": "en",
+      "status": "ok",
+      "bytes": 3274123
+    },
+    {
+      "kind": "prose",
+      "id": 100,
+      "title": "The Complete Works of Shakespeare",
+      "lang": "en",
+      "status": "ok",
+      "bytes": 5422619
+    },
+    {
+      "kind": "prose",
+      "id": 74,
+      "title": "The Adventures of Tom Sawyer",
+      "lang": "en",
+      "status": "skipped: budget spent"
+    },
+    {
+      "kind": "prose",
+      "id": 345,
+      "title": "Dracula",
+      "lang": "en",
+      "status": "skipped: budget spent"
+    },
+    {
+      "kind": "prose",
+      "id": 1232,
+      "title": "The Prince",
+      "lang": "en",
+      "status": "skipped: budget spent"
+    },
+    {
+      "kind": "prose",
+      "id": 5200,
+      "title": "Metamorphosis",
+      "lang": "en",
+      "status": "skipped: budget spent"
+    },
+    {
+      "kind": "prose",
+      "id": 2000,
+      "title": "Don Quijote",
+      "lang": "es",
+      "status": "ok",
+      "bytes": 2168309
+    },
+    {
+      "kind": "prose",
+      "id": 2650,
+      "title": "Du cote de chez Swann",
+      "lang": "fr",
+      "status": "ok",
+      "bytes": 1048515
+    },
+    {
+      "kind": "prose",
+      "id": 17489,
+      "title": "Les Miserables (fr)",
+      "lang": "fr",
+      "status": "unavailable"
+    },
+    {
+      "kind": "prose",
+      "id": 13951,
+      "title": "Divina Commedia",
+      "lang": "it",
+      "status": "ok",
+      "bytes": 1430767
+    },
+    {
+      "kind": "prose",
+      "id": 21000,
+      "title": "Effi Briest",
+      "lang": "de",
+      "status": "ok",
+      "bytes": 210551
+    },
+    {
+      "kind": "prose",
+      "id": 28054,
+      "title": "The Brothers Karamazov",
+      "lang": "en",
+      "status": "skipped: budget spent"
+    },
+    {
+      "kind": "code",
+      "source": "python stdlib",
+      "python": "3.10.6",
+      "files": 470,
+      "bytes": 8001889
+    }
+  ],
+  "tokenizer_and_tables": {
+    "train_tokens": 7101125,
+    "val_tokens": 373743,
+    "seq_len": 256,
+    "vocab_size": 16384,
+    "tokens_truncated": 12,
+    "tokens_with_empty_surface": 0,
+    "tokens_containing_null_byte": 1,
+    "mean_bytes_per_token": 5.4827880859375,
+    "max_bytes_per_token": 32,
+    "table_bytes": 4325376,
+    "dense_table_bytes_would_be": 536870912,
+    "null_byte_token_occurrences": 0
+  },
+  "heldout": {
+    "n_tokens_withheld": 373,
+    "train_positions_masked": 71068,
+    "train_coverage": 0.010008,
+    "val_positions_scored": 3719,
+    "val_coverage": 0.009951,
+    "mean_train_count": 190.53,
+    "mean_bytes": 5.68,
+    "examples": [
+      "q",
+      "AR",
+      " te",
+      " gra",
+      "ents",
+      " pos",
+      " pres",
+      "val",
+      "IO",
+      "that",
+      "att",
+      "sel",
+      "ian",
+      " read",
+      " X",
+      " through",
+      " sus",
+      " dear",
+      " St",
+      " True",
+      " ven",
+      "attr",
+      " start",
+      "LA",
+      "\u00f4",
+      "you",
+      "\u00f3v",
+      " brother",
+      "mer",
+      "igo",
+      "ize",
+      "ern",
+      ".\u00bb",
+      " whale",
+      " inv",
+      " sister",
+      "Or",
+      " why",
+      "sub",
+      "bar"
+    ]
+  },
+  "config": {
+    "steps": 2000,
+    "batch_size": 16,
+    "seq_len": 256,
+    "lr": 0.0003,
+    "seeds": [
+      0,
+      1,
+      2
+    ],
+    "model": {
+      "d_model": 256,
+      "n_layers": 4,
+      "n_heads": 4,
+      "d_ff": 1024
+    }
+  },
+  "summary": {
+    "vocab": {
+      "seeds": 3,
+      "params": {
+        "input": 2097152,
+        "output": 4194304,
+        "trunk": 3225088,
+        "io_total": 6291456,
+        "total": 9516544
+      },
+      "bits_per_byte": {
+        "mean": 1.994575,
+        "std": 0.00477
+      },
+      "bits_per_byte_seen": {
+        "mean": 1.956658
+      },
+      "bits_per_byte_heldout": {
+        "mean": 4.777187,
+        "std": 0.070456
+      },
+      "exact_token_accuracy": {
+        "mean": 0.237533,
+        "std": 0.003249
+      },
+      "exact_token_accuracy_heldout": {
+        "mean": 0.0,
+        "std": 0.0
+      },
+      "wall_clock_s": 859.8
+    },
+    "kron": {
+      "seeds": 3,
+      "params": {
+        "input": 2097152,
+        "output": 2097152,
+        "trunk": 3225088,
+        "io_total": 4194304,
+        "total": 7419392
+      },
+      "bits_per_byte": {
+        "mean": 3.698147,
+        "std": 0.003946
+      },
+      "bits_per_byte_seen": {
+        "mean": 3.679976
+      },
+      "bits_per_byte_heldout": {
+        "mean": 5.031659,
+        "std": 0.017267
+      },
+      "exact_token_accuracy": {
+        "mean": 0.161718,
+        "std": 0.004523
+      },
+      "exact_token_accuracy_heldout": {
+        "mean": 0.000808,
+        "std": 0.000269
+      },
+      "wall_clock_s": 825.2
+    },
+    "kron_tied": {
+      "seeds": 3,
+      "params": {
+        "input": 2097152,
+        "output": 8192,
+        "trunk": 3225088,
+        "io_total": 2105344,
+        "total": 5330432
+      },
+      "bits_per_byte": {
+        "mean": 3.750102,
+        "std": 0.020395
+      },
+      "bits_per_byte_seen": {
+        "mean": 3.732701
+      },
+      "bits_per_byte_heldout": {
+        "mean": 5.027099,
+        "std": 0.034887
+      },
+      "exact_token_accuracy": {
+        "mean": 0.153995,
+        "std": 0.004638
+      },
+      "exact_token_accuracy_heldout": {
+        "mean": 0.000808,
+        "std": 0.000269
+      },
+      "wall_clock_s": 887.6
+    },
+    "regress": {
+      "seeds": 3,
+      "params": {
+        "input": 2097152,
+        "output": 2097152,
+        "trunk": 3225088,
+        "io_total": 4194304,
+        "total": 7419392
+      },
+      "bits_per_byte": {
+        "mean": null,
+        "std": null
+      },
+      "bits_per_byte_seen": {
+        "mean": null
+      },
+      "bits_per_byte_heldout": {
+        "mean": null,
+        "std": null
+      },
+      "exact_token_accuracy": {
+        "mean": 0.062367,
+        "std": 0.001477
+      },
+      "exact_token_accuracy_heldout": {
+        "mean": 0.000269,
+        "std": 0.000466
+      },
+      "wall_clock_s": 1277.9
+    }
+  },
+  "runs": [
+    {
+      "head": "vocab",
+      "config": {
+        "d_model": 256,
+        "n_layers": 4,
+        "n_heads": 4,
+        "d_ff": 1024,
+        "seq_len": 256,
+        "vocab_size": 16384,
+        "head": "vocab",
+        "codec": {
+          "n_bytes": 256,
+          "positions": 32,
+          "dim": 8192,
+          "normalize_input": true,
+          "pad_byte": 0
+        }
+      },
+      "checkpoint": "results/ckpt_vocab.pt",
+      "params": {
+        "input": 2097152,
+        "output": 4194304,
+        "trunk": 3225088,
+        "io_total": 6291456,
+        "total": 9516544
+      },
+      "device": "mps",
+      "steps": 2000,
+      "batch_size": 16,
+      "lr": 0.0003,
+      "seed": 0,
+      "wall_clock_s": 850.2,
+      "history": [
+        {
+          "step": 500,
+          "train_loss": 5.775158,
+          "grad_norm": 0.7818,
+          "elapsed_s": 213.4,
+          "tokens": 163840,
+          "bytes": 627388,
+          "exact_token_accuracy": 0.154486,
+          "bits_per_byte": 2.18633,
+          "nats_per_token": 5.803064,
+          "full_val_sweep": false,
+          "seen": {
+            "tokens": 162047,
+            "bytes": 617874,
+            "exact_token_accuracy": 0.156195,
+            "bits_per_byte": 2.155664,
+            "nats_per_token": 5.697251
+          },
+          "heldout": {
+            "tokens": 1793,
+            "bytes": 9514,
+            "exact_token_accuracy": 0.0,
+            "bits_per_byte": 4.177889,
+            "nats_per_token": 15.366157
+          }
+        },
+        {
+          "step": 1000,
+          "train_loss": 5.517063,
+          "grad_norm": 1.4976,
+          "elapsed_s": 425.0,
+          "tokens": 163840,
+          "bytes": 627388,
+          "exact_token_accuracy": 0.188354,
+          "bits_per_byte": 2.051208,
+          "nats_per_token": 5.444419,
+          "full_val_sweep": false,
+          "seen": {
+            "tokens": 162047,
+            "bytes": 617874,
+            "exact_token_accuracy": 0.190439,
+            "bits_per_byte": 2.015464,
+            "nats_per_token": 5.326715
+          },
+          "heldout": {
+            "tokens": 1793,
+            "bytes": 9514,
+            "exact_token_accuracy": 0.0,
+            "bits_per_byte": 4.372571,
+            "nats_per_token": 16.08219
+          }
+        },
+        {
+          "step": 1500,
+          "train_loss": 5.107966,
+          "grad_norm": 1.5902,
+          "elapsed_s": 633.2,
+          "tokens": 163840,
+          "bytes": 627388,
+          "exact_token_accuracy": 0.210876,
+          "bits_per_byte": 1.975238,
+          "nats_per_token": 5.242775,
+          "full_val_sweep": false,
+          "seen": {
+            "tokens": 162047,
+            "bytes": 617874,
+            "exact_token_accuracy": 0.21321,
+            "bits_per_byte": 1.937409,
+            "nats_per_token": 5.120421
+          },
+          "heldout": {
+            "tokens": 1793,
+            "bytes": 9514,
+            "exact_token_accuracy": 0.0,
+            "bits_per_byte": 4.432001,
+            "nats_per_token": 16.300773
+          }
+        },
+        {
+          "step": 2000,
+          "train_loss": 4.746823,
+          "grad_norm": 1.3081,
+          "elapsed_s": 850.0,
+          "tokens": 373504,
+          "bytes": 1378756,
+          "exact_token_accuracy": 0.236169,
+          "bits_per_byte": 1.999844,
+          "nats_per_token": 5.11698,
+          "full_val_sweep": true,
+          "seen": {
+            "tokens": 369790,
+            "bytes": 1360221,
+            "exact_token_accuracy": 0.238541,
+            "bits_per_byte": 1.962896,
+            "nats_per_token": 5.00469
+          },
+          "heldout": {
+            "tokens": 3714,
+            "bytes": 18535,
+            "exact_token_accuracy": 0.0,
+            "bits_per_byte": 4.711306,
+            "nats_per_token": 16.297366
+          }
+        }
+      ],
+      "final": {
+        "step": 2000,
+        "train_loss": 4.746823,
+        "grad_norm": 1.3081,
+        "elapsed_s": 850.0,
+        "tokens": 373504,
+        "bytes": 1378756,
+        "exact_token_accuracy": 0.236169,
+        "bits_per_byte": 1.999844,
+        "nats_per_token": 5.11698,
+        "full_val_sweep": true,
+        "seen": {
+          "tokens": 369790,
+          "bytes": 1360221,
+          "exact_token_accuracy": 0.238541,
+          "bits_per_byte": 1.962896,
+          "nats_per_token": 5.00469
+        },
+        "heldout": {
+          "tokens": 3714,
+          "bytes": 18535,
+          "exact_token_accuracy": 0.0,
+          "bits_per_byte": 4.711306,
+          "nats_per_token": 16.297366
+        }
+      }
+    },
+    {
+      "head": "vocab",
+      "config": {
+        "d_model": 256,
+        "n_layers": 4,
+        "n_heads": 4,
+        "d_ff": 1024,
+        "seq_len": 256,
+        "vocab_size": 16384,
+        "head": "vocab",
+        "codec": {
+          "n_bytes": 256,
+          "positions": 32,
+          "dim": 8192,
+          "normalize_input": true,
+          "pad_byte": 0
+        }
+      },
+      "checkpoint": null,
+      "params": {
+        "input": 2097152,
+        "output": 4194304,
+        "trunk": 3225088,
+        "io_total": 6291456,
+        "total": 9516544
+      },
+      "device": "mps",
+      "steps": 2000,
+      "batch_size": 16,
+      "lr": 0.0003,
+      "seed": 1,
+      "wall_clock_s": 852.1,
+      "history": [
+        {
+          "step": 500,
+          "train_loss": 5.856272,
+          "grad_norm": 1.1044,
+          "elapsed_s": 209.5,
+          "tokens": 163840,
+          "bytes": 627388,
+          "exact_token_accuracy": 0.155273,
+          "bits_per_byte": 2.191148,
+          "nats_per_token": 5.815854,
+          "full_val_sweep": false,
+          "seen": {
+            "tokens": 162047,
+            "bytes": 617874,
+            "exact_token_accuracy": 0.156991,
+            "bits_per_byte": 2.158516,
+            "nats_per_token": 5.704789
+          },
+          "heldout": {
+            "tokens": 1793,
+            "bytes": 9514,
+            "exact_token_accuracy": 0.0,
+            "bits_per_byte": 4.310422,
+            "nats_per_token": 15.853609
+          }
+        },
+        {
+          "step": 1000,
+          "train_loss": 5.524476,
+          "grad_norm": 1.5137,
+          "elapsed_s": 419.6,
+          "tokens": 163840,
+          "bytes": 627388,
+          "exact_token_accuracy": 0.186896,
+          "bits_per_byte": 2.055956,
+          "nats_per_token": 5.457021,
+          "full_val_sweep": false,
+          "seen": {
+            "tokens": 162047,
+            "bytes": 617874,
+            "exact_token_accuracy": 0.188964,
+            "bits_per_byte": 2.019015,
+            "nats_per_token": 5.3361
+          },
+          "heldout": {
+            "tokens": 1793,
+            "bytes": 9514,
+            "exact_token_accuracy": 0.0,
+            "bits_per_byte": 4.455049,
+            "nats_per_token": 16.385542
+          }
+        },
+        {
+          "step": 1500,
+          "train_loss": 5.065886,
+          "grad_norm": 1.3067,
+          "elapsed_s": 629.3,
+          "tokens": 163840,
+          "bytes": 627388,
+          "exact_token_accuracy": 0.211444,
+          "bits_per_byte": 1.973659,
+          "nats_per_token": 5.238583,
+          "full_val_sweep": false,
+          "seen": {
+            "tokens": 162047,
+            "bytes": 617874,
+            "exact_token_accuracy": 0.213784,
+            "bits_per_byte": 1.935228,
+            "nats_per_token": 5.114656
+          },
+          "heldout": {
+            "tokens": 1793,
+            "bytes": 9514,
+            "exact_token_accuracy": 0.0,
+            "bits_per_byte": 4.469519,
+            "nats_per_token": 16.438762
+          }
+        },
+        {
+          "step": 2000,
+          "train_loss": 5.166828,
+          "grad_norm": 1.5722,
+          "elapsed_s": 852.1,
+          "tokens": 373504,
+          "bytes": 1378756,
+          "exact_token_accuracy": 0.235189,
+          "bits_per_byte": 1.993332,
+          "nats_per_token": 5.100319,
+          "full_val_sweep": true,
+          "seen": {
+            "tokens": 369790,
+            "bytes": 1360221,
+            "exact_token_accuracy": 0.237551,
+            "bits_per_byte": 1.954386,
+            "nats_per_token": 4.982992
+          },
+          "heldout": {
+            "tokens": 3714,
+            "bytes": 18535,
+            "exact_token_accuracy": 0.0,
+            "bits_per_byte": 4.851465,
+            "nats_per_token": 16.782205
+          }
+        }
+      ],
+      "final": {
+        "step": 2000,
+        "train_loss": 5.166828,
+        "grad_norm": 1.5722,
+        "elapsed_s": 852.1,
+        "tokens": 373504,
+        "bytes": 1378756,
+        "exact_token_accuracy": 0.235189,
+        "bits_per_byte": 1.993332,
+        "nats_per_token": 5.100319,
+        "full_val_sweep": true,
+        "seen": {
+          "tokens": 369790,
+          "bytes": 1360221,
+          "exact_token_accuracy": 0.237551,
+          "bits_per_byte": 1.954386,
+          "nats_per_token": 4.982992
+        },
+        "heldout": {
+          "tokens": 3714,
+          "bytes": 18535,
+          "exact_token_accuracy": 0.0,
+          "bits_per_byte": 4.851465,
+          "nats_per_token": 16.782205
+        }
+      }
+    },
+    {
+      "head": "vocab",
+      "config": {
+        "d_model": 256,
+        "n_layers": 4,
+        "n_heads": 4,
+        "d_ff": 1024,
+        "seq_len": 256,
+        "vocab_size": 16384,
+        "head": "vocab",
+        "codec": {
+          "n_bytes": 256,
+          "positions": 32,
+          "dim": 8192,
+          "normalize_input": true,
+          "pad_byte": 0
+        }
+      },
+      "checkpoint": null,
+      "params": {
+        "input": 2097152,
+        "output": 4194304,
+        "trunk": 3225088,
+        "io_total": 6291456,
+        "total": 9516544
+      },
+      "device": "mps",
+      "steps": 2000,
+      "batch_size": 16,
+      "lr": 0.0003,
+      "seed": 2,
+      "wall_clock_s": 877.2,
+      "history": [
+        {
+          "step": 500,
+          "train_loss": 5.715392,
+          "grad_norm": 0.9254,
+          "elapsed_s": 217.0,
+          "tokens": 163840,
+          "bytes": 627388,
+          "exact_token_accuracy": 0.152087,
+          "bits_per_byte": 2.191509,
+          "nats_per_token": 5.816812,
+          "full_val_sweep": false,
+          "seen": {
+            "tokens": 162047,
+            "bytes": 617874,
+            "exact_token_accuracy": 0.15377,
+            "bits_per_byte": 2.162258,
+            "nats_per_token": 5.714679
+          },
+          "heldout": {
+            "tokens": 1793,
+            "bytes": 9514,
+            "exact_token_accuracy": 0.0,
+            "bits_per_byte": 4.091212,
+            "nats_per_token": 15.047358
+          }
+        },
+        {
+          "step": 1000,
+          "train_loss": 5.631394,
+          "grad_norm": 1.3118,
+          "elapsed_s": 435.4,
+          "tokens": 163840,
+          "bytes": 627388,
+          "exact_token_accuracy": 0.188885,
+          "bits_per_byte": 2.045494,
+          "nats_per_token": 5.429251,
+          "full_val_sweep": false,
+          "seen": {
+            "tokens": 162047,
+            "bytes": 617874,
+            "exact_token_accuracy": 0.190975,
+            "bits_per_byte": 2.007837,
+            "nats_per_token": 5.306556
+          },
+          "heldout": {
+            "tokens": 1793,
+            "bytes": 9514,
+            "exact_token_accuracy": 0.0,
+            "bits_per_byte": 4.491104,
+            "nats_per_token": 16.518152
+          }
+        },
+        {
+          "step": 1500,
+          "train_loss": 4.810096,
+          "grad_norm": 1.4831,
+          "elapsed_s": 652.1,
+          "tokens": 163840,
+          "bytes": 627388,
+          "exact_token_accuracy": 0.212634,
+          "bits_per_byte": 1.969012,
+          "nats_per_token": 5.226248,
+          "full_val_sweep": false,
+          "seen": {
+            "tokens": 162047,
+            "bytes": 617874,
+            "exact_token_accuracy": 0.214987,
+            "bits_per_byte": 1.929811,
+            "nats_per_token": 5.100341
+          },
+          "heldout": {
+            "tokens": 1793,
+            "bytes": 9514,
+            "exact_token_accuracy": 0.0,
+            "bits_per_byte": 4.514818,
+            "nats_per_token": 16.605371
+          }
+        },
+        {
+          "step": 2000,
+          "train_loss": 4.986216,
+          "grad_norm": 1.474,
+          "elapsed_s": 877.2,
+          "tokens": 373504,
+          "bytes": 1378756,
+          "exact_token_accuracy": 0.241242,
+          "bits_per_byte": 1.99055,
+          "nats_per_token": 5.093201,
+          "full_val_sweep": true,
+          "seen": {
+            "tokens": 369790,
+            "bytes": 1360221,
+            "exact_token_accuracy": 0.243665,
+            "bits_per_byte": 1.952693,
+            "nats_per_token": 4.978674
+          },
+          "heldout": {
+            "tokens": 3714,
+            "bytes": 18535,
+            "exact_token_accuracy": 0.0,
+            "bits_per_byte": 4.76879,
+            "nats_per_token": 16.496217
+          }
+        }
+      ],
+      "final": {
+        "step": 2000,
+        "train_loss": 4.986216,
+        "grad_norm": 1.474,
+        "elapsed_s": 877.2,
+        "tokens": 373504,
+        "bytes": 1378756,
+        "exact_token_accuracy": 0.241242,
+        "bits_per_byte": 1.99055,
+        "nats_per_token": 5.093201,
+        "full_val_sweep": true,
+        "seen": {
+          "tokens": 369790,
+          "bytes": 1360221,
+          "exact_token_accuracy": 0.243665,
+          "bits_per_byte": 1.952693,
+          "nats_per_token": 4.978674
+        },
+        "heldout": {
+          "tokens": 3714,
+          "bytes": 18535,
+          "exact_token_accuracy": 0.0,
+          "bits_per_byte": 4.76879,
+          "nats_per_token": 16.496217
+        }
+      }
+    },
+    {
+      "head": "kron",
+      "config": {
+        "d_model": 256,
+        "n_layers": 4,
+        "n_heads": 4,
+        "d_ff": 1024,
+        "seq_len": 256,
+        "vocab_size": 16384,
+        "head": "kron",
+        "codec": {
+          "n_bytes": 256,
+          "positions": 32,
+          "dim": 8192,
+          "normalize_input": true,
+          "pad_byte": 0
+        }
+      },
+      "checkpoint": "results/ckpt_kron.pt",
+      "params": {
+        "input": 2097152,
+        "output": 2097152,
+        "trunk": 3225088,
+        "io_total": 4194304,
+        "total": 7419392
+      },
+      "device": "mps",
+      "steps": 2000,
+      "batch_size": 16,
+      "lr": 0.0003,
+      "seed": 0,
+      "wall_clock_s": 828.7,
+      "history": [
+        {
+          "step": 500,
+          "train_loss": 2.260283,
+          "grad_norm": 0.4155,
+          "elapsed_s": 194.2,
+          "tokens": 163840,
+          "bytes": 627388,
+          "exact_token_accuracy": 0.082147,
+          "bits_per_byte": 4.068044,
+          "nats_per_token": 10.797602,
+          "length_accuracy": 0.325885,
+          "full_val_sweep": false,
+          "seen": {
+            "tokens": 162047,
+            "bytes": 617874,
+            "exact_token_accuracy": 0.08305,
+            "bits_per_byte": 4.05301,
+            "nats_per_token": 10.711791,
+            "length_accuracy": 0.328522
+          },
+          "heldout": {
+            "tokens": 1793,
+            "bytes": 9514,
+            "exact_token_accuracy": 0.000558,
+            "bits_per_byte": 5.04436,
+            "nats_per_token": 18.55301,
+            "length_accuracy": 0.087563
+          },
+          "decode_margin_mean": 1.359374
+        },
+        {
+          "step": 1000,
+          "train_loss": 2.263342,
+          "grad_norm": 0.5547,
+          "elapsed_s": 385.4,
+          "tokens": 163840,
+          "bytes": 627388,
+          "exact_token_accuracy": 0.125,
+          "bits_per_byte": 3.858477,
+          "nats_per_token": 10.241359,
+          "length_accuracy": 0.35329,
+          "full_val_sweep": false,
+          "seen": {
+            "tokens": 162047,
+            "bytes": 617874,
+            "exact_token_accuracy": 0.126334,
+            "bits_per_byte": 3.841194,
+            "nats_per_token": 10.151977,
+            "length_accuracy": 0.356082
+          },
+          "heldout": {
+            "tokens": 1793,
+            "bytes": 9514,
+            "exact_token_accuracy": 0.004462,
+            "bits_per_byte": 4.98087,
+            "nats_per_token": 18.319498,
+            "length_accuracy": 0.100948
+          },
+          "decode_margin_mean": 1.457556
+        },
+        {
+          "step": 1500,
+          "train_loss": 2.153424,
+          "grad_norm": 0.5784,
+          "elapsed_s": 570.4,
+          "tokens": 163840,
+          "bytes": 627388,
+          "exact_token_accuracy": 0.141138,
+          "bits_per_byte": 3.71282,
+          "nats_per_token": 9.854751,
+          "length_accuracy": 0.36153,
+          "full_val_sweep": false,
+          "seen": {
+            "tokens": 162047,
+            "bytes": 617874,
+            "exact_token_accuracy": 0.142693,
+            "bits_per_byte": 3.694473,
+            "nats_per_token": 9.764205,
+            "length_accuracy": 0.36461
+          },
+          "heldout": {
+            "tokens": 1793,
+            "bytes": 9514,
+            "exact_token_accuracy": 0.000558,
+            "bits_per_byte": 4.904352,
+            "nats_per_token": 18.038064,
+            "length_accuracy": 0.083101
+          },
+          "decode_margin_mean": 1.537337
+        },
+        {
+          "step": 2000,
+          "train_loss": 1.94325,
+          "grad_norm": 0.6725,
+          "elapsed_s": 828.6,
+          "tokens": 373504,
+          "bytes": 1378756,
+          "exact_token_accuracy": 0.166716,
+          "bits_per_byte": 3.695479,
+          "nats_per_token": 9.455585,
+          "length_accuracy": 0.391602,
+          "bits_per_byte_vocab_restricted": 3.284182,
+          "vocab_restricted_bytes_scored": 371152,
+          "full_val_sweep": true,
+          "seen": {
+            "tokens": 369790,
+            "bytes": 1360221,
+            "exact_token_accuracy": 0.168379,
+            "bits_per_byte": 3.677453,
+            "nats_per_token": 9.3762,
+            "length_accuracy": 0.394386,
+            "bits_per_byte_vocab_restricted": 3.264854,
+            "vocab_restricted_bytes_scored": 365548
+          },
+          "heldout": {
+            "tokens": 3714,
+            "bytes": 18535,
+            "exact_token_accuracy": 0.001077,
+            "bits_per_byte": 5.018399,
+            "nats_per_token": 17.359665,
+            "length_accuracy": 0.114432,
+            "bits_per_byte_vocab_restricted": 4.544977,
+            "vocab_restricted_bytes_scored": 5604
+          },
+          "decode_margin_mean": 1.615555
+        }
+      ],
+      "final": {
+        "step": 2000,
+        "train_loss": 1.94325,
+        "grad_norm": 0.6725,
+        "elapsed_s": 828.6,
+        "tokens": 373504,
+        "bytes": 1378756,
+        "exact_token_accuracy": 0.166716,
+        "bits_per_byte": 3.695479,
+        "nats_per_token": 9.455585,
+        "length_accuracy": 0.391602,
+        "bits_per_byte_vocab_restricted": 3.284182,
+        "vocab_restricted_bytes_scored": 371152,
+        "full_val_sweep": true,
+        "seen": {
+          "tokens": 369790,
+          "bytes": 1360221,
+          "exact_token_accuracy": 0.168379,
+          "bits_per_byte": 3.677453,
+          "nats_per_token": 9.3762,
+          "length_accuracy": 0.394386,
+          "bits_per_byte_vocab_restricted": 3.264854,
+          "vocab_restricted_bytes_scored": 365548
+        },
+        "heldout": {
+          "tokens": 3714,
+          "bytes": 18535,
+          "exact_token_accuracy": 0.001077,
+          "bits_per_byte": 5.018399,
+          "nats_per_token": 17.359665,
+          "length_accuracy": 0.114432,
+          "bits_per_byte_vocab_restricted": 4.544977,
+          "vocab_restricted_bytes_scored": 5604
+        },
+        "decode_margin_mean": 1.615555
+      }
+    },
+    {
+      "head": "kron",
+      "config": {
+        "d_model": 256,
+        "n_layers": 4,
+        "n_heads": 4,
+        "d_ff": 1024,
+        "seq_len": 256,
+        "vocab_size": 16384,
+        "head": "kron",
+        "codec": {
+          "n_bytes": 256,
+          "positions": 32,
+          "dim": 8192,
+          "normalize_input": true,
+          "pad_byte": 0
+        }
+      },
+      "checkpoint": null,
+      "params": {
+        "input": 2097152,
+        "output": 2097152,
+        "trunk": 3225088,
+        "io_total": 4194304,
+        "total": 7419392
+      },
+      "device": "mps",
+      "steps": 2000,
+      "batch_size": 16,
+      "lr": 0.0003,
+      "seed": 1,
+      "wall_clock_s": 832.6,
+      "history": [
+        {
+          "step": 500,
+          "train_loss": 2.297252,
+          "grad_norm": 0.4732,
+          "elapsed_s": 185.3,
+          "tokens": 163840,
+          "bytes": 627388,
+          "exact_token_accuracy": 0.084698,
+          "bits_per_byte": 4.077675,
+          "nats_per_token": 10.823166,
+          "length_accuracy": 0.328986,
+          "full_val_sweep": false,
+          "seen": {
+            "tokens": 162047,
+            "bytes": 617874,
+            "exact_token_accuracy": 0.085629,
+            "bits_per_byte": 4.063352,
+            "nats_per_token": 10.739123,
+            "length_accuracy": 0.332039
+          },
+          "heldout": {
+            "tokens": 1793,
+            "bytes": 9514,
+            "exact_token_accuracy": 0.000558,
+            "bits_per_byte": 5.007853,
+            "nats_per_token": 18.418739,
+            "length_accuracy": 0.052984
+          },
+          "decode_margin_mean": 1.284009
+        },
+        {
+          "step": 1000,
+          "train_loss": 2.164204,
+          "grad_norm": 0.5786,
+          "elapsed_s": 383.6,
+          "tokens": 163840,
+          "bytes": 627388,
+          "exact_token_accuracy": 0.120648,
+          "bits_per_byte": 3.861236,
+          "nats_per_token": 10.248685,
+          "length_accuracy": 0.35625,
+          "full_val_sweep": false,
+          "seen": {
+            "tokens": 162047,
+            "bytes": 617874,
+            "exact_token_accuracy": 0.121958,
+            "bits_per_byte": 3.844386,
+            "nats_per_token": 10.160412,
+            "length_accuracy": 0.359143
+          },
+          "heldout": {
+            "tokens": 1793,
+            "bytes": 9514,
+            "exact_token_accuracy": 0.002231,
+            "bits_per_byte": 4.955599,
+            "nats_per_token": 18.226548,
+            "length_accuracy": 0.094813
+          },
+          "decode_margin_mean": 1.483152
+        },
+        {
+          "step": 1500,
+          "train_loss": 2.038467,
+          "grad_norm": 0.5314,
+          "elapsed_s": 573.7,
+          "tokens": 163840,
+          "bytes": 627388,
+          "exact_token_accuracy": 0.140918,
+          "bits_per_byte": 3.719251,
+          "nats_per_token": 9.87182,
+          "length_accuracy": 0.365265,
+          "full_val_sweep": false,
+          "seen": {
+            "tokens": 162047,
+            "bytes": 617874,
+            "exact_token_accuracy": 0.142471,
+            "bits_per_byte": 3.700552,
+            "nats_per_token": 9.780272,
+            "length_accuracy": 0.368504
+          },
+          "heldout": {
+            "tokens": 1793,
+            "bytes": 9514,
+            "exact_token_accuracy": 0.000558,
+            "bits_per_byte": 4.933623,
+            "nats_per_token": 18.145724,
+            "length_accuracy": 0.072504
+          },
+          "decode_margin_mean": 1.546029
+        },
+        {
+          "step": 2000,
+          "train_loss": 2.058584,
+          "grad_norm": 0.7644,
+          "elapsed_s": 832.6,
+          "tokens": 373504,
+          "bytes": 1378756,
+          "exact_token_accuracy": 0.157905,
+          "bits_per_byte": 3.696282,
+          "nats_per_token": 9.457639,
+          "length_accuracy": 0.38183,
+          "bits_per_byte_vocab_restricted": 3.296511,
+          "vocab_restricted_bytes_scored": 371152,
+          "full_val_sweep": true,
+          "seen": {
+            "tokens": 369790,
+            "bytes": 1360221,
+            "exact_token_accuracy": 0.159485,
+            "bits_per_byte": 3.67782,
+            "nats_per_token": 9.377136,
+            "length_accuracy": 0.384613,
+            "bits_per_byte_vocab_restricted": 3.276883,
+            "vocab_restricted_bytes_scored": 365548
+          },
+          "heldout": {
+            "tokens": 3714,
+            "bytes": 18535,
+            "exact_token_accuracy": 0.000539,
+            "bits_per_byte": 5.051184,
+            "nats_per_token": 17.473074,
+            "length_accuracy": 0.104739,
+            "bits_per_byte_vocab_restricted": 4.576904,
+            "vocab_restricted_bytes_scored": 5604
+          },
+          "decode_margin_mean": 1.63145
+        }
+      ],
+      "final": {
+        "step": 2000,
+        "train_loss": 2.058584,
+        "grad_norm": 0.7644,
+        "elapsed_s": 832.6,
+        "tokens": 373504,
+        "bytes": 1378756,
+        "exact_token_accuracy": 0.157905,
+        "bits_per_byte": 3.696282,
+        "nats_per_token": 9.457639,
+        "length_accuracy": 0.38183,
+        "bits_per_byte_vocab_restricted": 3.296511,
+        "vocab_restricted_bytes_scored": 371152,
+        "full_val_sweep": true,
+        "seen": {
+          "tokens": 369790,
+          "bytes": 1360221,
+          "exact_token_accuracy": 0.159485,
+          "bits_per_byte": 3.67782,
+          "nats_per_token": 9.377136,
+          "length_accuracy": 0.384613,
+          "bits_per_byte_vocab_restricted": 3.276883,
+          "vocab_restricted_bytes_scored": 365548
+        },
+        "heldout": {
+          "tokens": 3714,
+          "bytes": 18535,
+          "exact_token_accuracy": 0.000539,
+          "bits_per_byte": 5.051184,
+          "nats_per_token": 17.473074,
+          "length_accuracy": 0.104739,
+          "bits_per_byte_vocab_restricted": 4.576904,
+          "vocab_restricted_bytes_scored": 5604
+        },
+        "decode_margin_mean": 1.63145
+      }
+    },
+    {
+      "head": "kron",
+      "config": {
+        "d_model": 256,
+        "n_layers": 4,
+        "n_heads": 4,
+        "d_ff": 1024,
+        "seq_len": 256,
+        "vocab_size": 16384,
+        "head": "kron",
+        "codec": {
+          "n_bytes": 256,
+          "positions": 32,
+          "dim": 8192,
+          "normalize_input": true,
+          "pad_byte": 0
+        }
+      },
+      "checkpoint": null,
+      "params": {
+        "input": 2097152,
+        "output": 2097152,
+        "trunk": 3225088,
+        "io_total": 4194304,
+        "total": 7419392
+      },
+      "device": "mps",
+      "steps": 2000,
+      "batch_size": 16,
+      "lr": 0.0003,
+      "seed": 2,
+      "wall_clock_s": 814.2,
+      "history": [
+        {
+          "step": 500,
+          "train_loss": 2.259451,
+          "grad_norm": 0.4485,
+          "elapsed_s": 185.2,
+          "tokens": 163840,
+          "bytes": 627388,
+          "exact_token_accuracy": 0.088898,
+          "bits_per_byte": 4.06681,
+          "nats_per_token": 10.794328,
+          "length_accuracy": 0.321307,
+          "full_val_sweep": false,
+          "seen": {
+            "tokens": 162047,
+            "bytes": 617874,
+            "exact_token_accuracy": 0.089881,
+            "bits_per_byte": 4.052091,
+            "nats_per_token": 10.709361,
+            "length_accuracy": 0.324233
+          },
+          "heldout": {
+            "tokens": 1793,
+            "bytes": 9514,
+            "exact_token_accuracy": 0.0,
+            "bits_per_byte": 5.022709,
+            "nats_per_token": 18.473377,
+            "length_accuracy": 0.056888
+          },
+          "decode_margin_mean": 1.351808
+        },
+        {
+          "step": 1000,
+          "train_loss": 2.245261,
+          "grad_norm": 0.4466,
+          "elapsed_s": 371.2,
+          "tokens": 163840,
+          "bytes": 627388,
+          "exact_token_accuracy": 0.118677,
+          "bits_per_byte": 3.866356,
+          "nats_per_token": 10.262272,
+          "length_accuracy": 0.346667,
+          "full_val_sweep": false,
+          "seen": {
+            "tokens": 162047,
+            "bytes": 617874,
+            "exact_token_accuracy": 0.119971,
+            "bits_per_byte": 3.849361,
+            "nats_per_token": 10.173563,
+            "length_accuracy": 0.349676
+          },
+          "heldout": {
+            "tokens": 1793,
+            "bytes": 9514,
+            "exact_token_accuracy": 0.001673,
+            "bits_per_byte": 4.970032,
+            "nats_per_token": 18.279636,
+            "length_accuracy": 0.074735
+          },
+          "decode_margin_mean": 1.463325
+        },
+        {
+          "step": 1500,
+          "train_loss": 1.96647,
+          "grad_norm": 0.6456,
+          "elapsed_s": 556.4,
+          "tokens": 163840,
+          "bytes": 627388,
+          "exact_token_accuracy": 0.142236,
+          "bits_per_byte": 3.732156,
+          "nats_per_token": 9.906074,
+          "length_accuracy": 0.364459,
+          "full_val_sweep": false,
+          "seen": {
+            "tokens": 162047,
+            "bytes": 617874,
+            "exact_token_accuracy": 0.14381,
+            "bits_per_byte": 3.714054,
+            "nats_per_token": 9.815957,
+            "length_accuracy": 0.367504
+          },
+          "heldout": {
+            "tokens": 1793,
+            "bytes": 9514,
+            "exact_token_accuracy": 0.0,
+            "bits_per_byte": 4.907758,
+            "nats_per_token": 18.050592,
+            "length_accuracy": 0.089236
+          },
+          "decode_margin_mean": 1.542013
+        },
+        {
+          "step": 2000,
+          "train_loss": 2.055242,
+          "grad_norm": 0.5436,
+          "elapsed_s": 814.2,
+          "tokens": 373504,
+          "bytes": 1378756,
+          "exact_token_accuracy": 0.160534,
+          "bits_per_byte": 3.70268,
+          "nats_per_token": 9.474009,
+          "length_accuracy": 0.382681,
+          "bits_per_byte_vocab_restricted": 3.294476,
+          "vocab_restricted_bytes_scored": 371152,
+          "full_val_sweep": true,
+          "seen": {
+            "tokens": 369790,
+            "bytes": 1360221,
+            "exact_token_accuracy": 0.162138,
+            "bits_per_byte": 3.684656,
+            "nats_per_token": 9.394566,
+            "length_accuracy": 0.385308,
+            "bits_per_byte_vocab_restricted": 3.275509,
+            "vocab_restricted_bytes_scored": 365548
+          },
+          "heldout": {
+            "tokens": 3714,
+            "bytes": 18535,
+            "exact_token_accuracy": 0.000808,
+            "bits_per_byte": 5.025394,
+            "nats_per_token": 17.383862,
+            "length_accuracy": 0.121163,
+            "bits_per_byte_vocab_restricted": 4.531664,
+            "vocab_restricted_bytes_scored": 5604
+          },
+          "decode_margin_mean": 1.59339
+        }
+      ],
+      "final": {
+        "step": 2000,
+        "train_loss": 2.055242,
+        "grad_norm": 0.5436,
+        "elapsed_s": 814.2,
+        "tokens": 373504,
+        "bytes": 1378756,
+        "exact_token_accuracy": 0.160534,
+        "bits_per_byte": 3.70268,
+        "nats_per_token": 9.474009,
+        "length_accuracy": 0.382681,
+        "bits_per_byte_vocab_restricted": 3.294476,
+        "vocab_restricted_bytes_scored": 371152,
+        "full_val_sweep": true,
+        "seen": {
+          "tokens": 369790,
+          "bytes": 1360221,
+          "exact_token_accuracy": 0.162138,
+          "bits_per_byte": 3.684656,
+          "nats_per_token": 9.394566,
+          "length_accuracy": 0.385308,
+          "bits_per_byte_vocab_restricted": 3.275509,
+          "vocab_restricted_bytes_scored": 365548
+        },
+        "heldout": {
+          "tokens": 3714,
+          "bytes": 18535,
+          "exact_token_accuracy": 0.000808,
+          "bits_per_byte": 5.025394,
+          "nats_per_token": 17.383862,
+          "length_accuracy": 0.121163,
+          "bits_per_byte_vocab_restricted": 4.531664,
+          "vocab_restricted_bytes_scored": 5604
+        },
+        "decode_margin_mean": 1.59339
+      }
+    },
+    {
+      "head": "kron_tied",
+      "config": {
+        "d_model": 256,
+        "n_layers": 4,
+        "n_heads": 4,
+        "d_ff": 1024,
+        "seq_len": 256,
+        "vocab_size": 16384,
+        "head": "kron_tied",
+        "codec": {
+          "n_bytes": 256,
+          "positions": 32,
+          "dim": 8192,
+          "normalize_input": true,
+          "pad_byte": 0
+        }
+      },
+      "checkpoint": "results/ckpt_kron_tied.pt",
+      "params": {
+        "input": 2097152,
+        "output": 8192,
+        "trunk": 3225088,
+        "io_total": 2105344,
+        "total": 5330432
+      },
+      "device": "mps",
+      "steps": 2000,
+      "batch_size": 16,
+      "lr": 0.0003,
+      "seed": 0,
+      "wall_clock_s": 888.0,
+      "history": [
+        {
+          "step": 500,
+          "train_loss": 2.285003,
+          "grad_norm": 0.5059,
+          "elapsed_s": 204.1,
+          "tokens": 163840,
+          "bytes": 627388,
+          "exact_token_accuracy": 0.078058,
+          "bits_per_byte": 4.095452,
+          "nats_per_token": 10.87035,
+          "length_accuracy": 0.324683,
+          "full_val_sweep": false,
+          "seen": {
+            "tokens": 162047,
+            "bytes": 617874,
+            "exact_token_accuracy": 0.078909,
+            "bits_per_byte": 4.080597,
+            "nats_per_token": 10.784702,
+            "length_accuracy": 0.327491
+          },
+          "heldout": {
+            "tokens": 1793,
+            "bytes": 9514,
+            "exact_token_accuracy": 0.001115,
+            "bits_per_byte": 5.060134,
+            "nats_per_token": 18.611029,
+            "length_accuracy": 0.070831
+          },
+          "decode_margin_mean": 1.308787
+        },
+        {
+          "step": 1000,
+          "train_loss": 2.282973,
+          "grad_norm": 0.596,
+          "elapsed_s": 407.5,
+          "tokens": 163840,
+          "bytes": 627388,
+          "exact_token_accuracy": 0.108667,
+          "bits_per_byte": 3.905171,
+          "nats_per_token": 10.365297,
+          "length_accuracy": 0.348096,
+          "full_val_sweep": false,
+          "seen": {
+            "tokens": 162047,
+            "bytes": 617874,
+            "exact_token_accuracy": 0.109869,
+            "bits_per_byte": 3.888589,
+            "nats_per_token": 10.277238,
+            "length_accuracy": 0.350892
+          },
+          "heldout": {
+            "tokens": 1793,
+            "bytes": 9514,
+            "exact_token_accuracy": 0.0,
+            "bits_per_byte": 4.98205,
+            "nats_per_token": 18.323835,
+            "length_accuracy": 0.095371
+          },
+          "decode_margin_mean": 1.41225
+        },
+        {
+          "step": 1500,
+          "train_loss": 2.170556,
+          "grad_norm": 0.6875,
+          "elapsed_s": 610.5,
+          "tokens": 163840,
+          "bytes": 627388,
+          "exact_token_accuracy": 0.129108,
+          "bits_per_byte": 3.761007,
+          "nats_per_token": 9.982651,
+          "length_accuracy": 0.356165,
+          "full_val_sweep": false,
+          "seen": {
+            "tokens": 162047,
+            "bytes": 617874,
+            "exact_token_accuracy": 0.13053,
+            "bits_per_byte": 3.743416,
+            "nats_per_token": 9.893557,
+            "length_accuracy": 0.359204
+          },
+          "heldout": {
+            "tokens": 1793,
+            "bytes": 9514,
+            "exact_token_accuracy": 0.000558,
+            "bits_per_byte": 4.903454,
+            "nats_per_token": 18.034763,
+            "length_accuracy": 0.081428
+          },
+          "decode_margin_mean": 1.494924
+        },
+        {
+          "step": 2000,
+          "train_loss": 1.960273,
+          "grad_norm": 0.6103,
+          "elapsed_s": 887.9,
+          "tokens": 373504,
+          "bytes": 1378756,
+          "exact_token_accuracy": 0.149514,
+          "bits_per_byte": 3.744681,
+          "nats_per_token": 9.581478,
+          "length_accuracy": 0.378936,
+          "bits_per_byte_vocab_restricted": 3.327024,
+          "vocab_restricted_bytes_scored": 371152,
+          "full_val_sweep": true,
+          "seen": {
+            "tokens": 369790,
+            "bytes": 1360221,
+            "exact_token_accuracy": 0.15101,
+            "bits_per_byte": 3.727437,
+            "nats_per_token": 9.503642,
+            "length_accuracy": 0.381546,
+            "bits_per_byte_vocab_restricted": 3.30837,
+            "vocab_restricted_bytes_scored": 365548
+          },
+          "heldout": {
+            "tokens": 3714,
+            "bytes": 18535,
+            "exact_token_accuracy": 0.000539,
+            "bits_per_byte": 5.010194,
+            "nats_per_token": 17.331283,
+            "length_accuracy": 0.119009,
+            "bits_per_byte_vocab_restricted": 4.543768,
+            "vocab_restricted_bytes_scored": 5604
+          },
+          "decode_margin_mean": 1.566197
+        }
+      ],
+      "final": {
+        "step": 2000,
+        "train_loss": 1.960273,
+        "grad_norm": 0.6103,
+        "elapsed_s": 887.9,
+        "tokens": 373504,
+        "bytes": 1378756,
+        "exact_token_accuracy": 0.149514,
+        "bits_per_byte": 3.744681,
+        "nats_per_token": 9.581478,
+        "length_accuracy": 0.378936,
+        "bits_per_byte_vocab_restricted": 3.327024,
+        "vocab_restricted_bytes_scored": 371152,
+        "full_val_sweep": true,
+        "seen": {
+          "tokens": 369790,
+          "bytes": 1360221,
+          "exact_token_accuracy": 0.15101,
+          "bits_per_byte": 3.727437,
+          "nats_per_token": 9.503642,
+          "length_accuracy": 0.381546,
+          "bits_per_byte_vocab_restricted": 3.30837,
+          "vocab_restricted_bytes_scored": 365548
+        },
+        "heldout": {
+          "tokens": 3714,
+          "bytes": 18535,
+          "exact_token_accuracy": 0.000539,
+          "bits_per_byte": 5.010194,
+          "nats_per_token": 17.331283,
+          "length_accuracy": 0.119009,
+          "bits_per_byte_vocab_restricted": 4.543768,
+          "vocab_restricted_bytes_scored": 5604
+        },
+        "decode_margin_mean": 1.566197
+      }
+    },
+    {
+      "head": "kron_tied",
+      "config": {
+        "d_model": 256,
+        "n_layers": 4,
+        "n_heads": 4,
+        "d_ff": 1024,
+        "seq_len": 256,
+        "vocab_size": 16384,
+        "head": "kron_tied",
+        "codec": {
+          "n_bytes": 256,
+          "positions": 32,
+          "dim": 8192,
+          "normalize_input": true,
+          "pad_byte": 0
+        }
+      },
+      "checkpoint": null,
+      "params": {
+        "input": 2097152,
+        "output": 8192,
+        "trunk": 3225088,
+        "io_total": 2105344,
+        "total": 5330432
+      },
+      "device": "mps",
+      "steps": 2000,
+      "batch_size": 16,
+      "lr": 0.0003,
+      "seed": 1,
+      "wall_clock_s": 887.3,
+      "history": [
+        {
+          "step": 500,
+          "train_loss": 2.312584,
+          "grad_norm": 0.4012,
+          "elapsed_s": 203.2,
+          "tokens": 163840,
+          "bytes": 627388,
+          "exact_token_accuracy": 0.077881,
+          "bits_per_byte": 4.102546,
+          "nats_per_token": 10.889179,
+          "length_accuracy": 0.319012,
+          "full_val_sweep": false,
+          "seen": {
+            "tokens": 162047,
+            "bytes": 617874,
+            "exact_token_accuracy": 0.078736,
+            "bits_per_byte": 4.088054,
+            "nats_per_token": 10.804409,
+            "length_accuracy": 0.321623
+          },
+          "heldout": {
+            "tokens": 1793,
+            "bytes": 9514,
+            "exact_token_accuracy": 0.000558,
+            "bits_per_byte": 5.043664,
+            "nats_per_token": 18.550451,
+            "length_accuracy": 0.083101
+          },
+          "decode_margin_mean": 1.273862
+        },
+        {
+          "step": 1000,
+          "train_loss": 2.195093,
+          "grad_norm": 0.5265,
+          "elapsed_s": 406.9,
+          "tokens": 163840,
+          "bytes": 627388,
+          "exact_token_accuracy": 0.110168,
+          "bits_per_byte": 3.914621,
+          "nats_per_token": 10.39038,
+          "length_accuracy": 0.342981,
+          "full_val_sweep": false,
+          "seen": {
+            "tokens": 162047,
+            "bytes": 617874,
+            "exact_token_accuracy": 0.111387,
+            "bits_per_byte": 3.898303,
+            "nats_per_token": 10.302912,
+            "length_accuracy": 0.345998
+          },
+          "heldout": {
+            "tokens": 1793,
+            "bytes": 9514,
+            "exact_token_accuracy": 0.0,
+            "bits_per_byte": 4.97435,
+            "nats_per_token": 18.295516,
+            "length_accuracy": 0.070273
+          },
+          "decode_margin_mean": 1.459825
+        },
+        {
+          "step": 1500,
+          "train_loss": 2.068235,
+          "grad_norm": 0.4602,
+          "elapsed_s": 610.2,
+          "tokens": 163840,
+          "bytes": 627388,
+          "exact_token_accuracy": 0.12887,
+          "bits_per_byte": 3.787843,
+          "nats_per_token": 10.053879,
+          "length_accuracy": 0.359955,
+          "full_val_sweep": false,
+          "seen": {
+            "tokens": 162047,
+            "bytes": 617874,
+            "exact_token_accuracy": 0.130289,
+            "bits_per_byte": 3.769994,
+            "nats_per_token": 9.963802,
+            "length_accuracy": 0.363222
+          },
+          "heldout": {
+            "tokens": 1793,
+            "bytes": 9514,
+            "exact_token_accuracy": 0.000558,
+            "bits_per_byte": 4.946978,
+            "nats_per_token": 18.194842,
+            "length_accuracy": 0.064696
+          },
+          "decode_margin_mean": 1.487024
+        },
+        {
+          "step": 2000,
+          "train_loss": 2.089224,
+          "grad_norm": 0.7553,
+          "elapsed_s": 887.3,
+          "tokens": 373504,
+          "bytes": 1378756,
+          "exact_token_accuracy": 0.153696,
+          "bits_per_byte": 3.77266,
+          "nats_per_token": 9.653067,
+          "length_accuracy": 0.381265,
+          "bits_per_byte_vocab_restricted": 3.362932,
+          "vocab_restricted_bytes_scored": 371152,
+          "full_val_sweep": true,
+          "seen": {
+            "tokens": 369790,
+            "bytes": 1360221,
+            "exact_token_accuracy": 0.155231,
+            "bits_per_byte": 3.75502,
+            "nats_per_token": 9.573969,
+            "length_accuracy": 0.384007,
+            "bits_per_byte_vocab_restricted": 3.344004,
+            "vocab_restricted_bytes_scored": 365548
+          },
+          "heldout": {
+            "tokens": 3714,
+            "bytes": 18535,
+            "exact_token_accuracy": 0.000808,
+            "bits_per_byte": 5.067218,
+            "nats_per_token": 17.528541,
+            "length_accuracy": 0.108239,
+            "bits_per_byte_vocab_restricted": 4.597582,
+            "vocab_restricted_bytes_scored": 5604
+          },
+          "decode_margin_mean": 1.577259
+        }
+      ],
+      "final": {
+        "step": 2000,
+        "train_loss": 2.089224,
+        "grad_norm": 0.7553,
+        "elapsed_s": 887.3,
+        "tokens": 373504,
+        "bytes": 1378756,
+        "exact_token_accuracy": 0.153696,
+        "bits_per_byte": 3.77266,
+        "nats_per_token": 9.653067,
+        "length_accuracy": 0.381265,
+        "bits_per_byte_vocab_restricted": 3.362932,
+        "vocab_restricted_bytes_scored": 371152,
+        "full_val_sweep": true,
+        "seen": {
+          "tokens": 369790,
+          "bytes": 1360221,
+          "exact_token_accuracy": 0.155231,
+          "bits_per_byte": 3.75502,
+          "nats_per_token": 9.573969,
+          "length_accuracy": 0.384007,
+          "bits_per_byte_vocab_restricted": 3.344004,
+          "vocab_restricted_bytes_scored": 365548
+        },
+        "heldout": {
+          "tokens": 3714,
+          "bytes": 18535,
+          "exact_token_accuracy": 0.000808,
+          "bits_per_byte": 5.067218,
+          "nats_per_token": 17.528541,
+          "length_accuracy": 0.108239,
+          "bits_per_byte_vocab_restricted": 4.597582,
+          "vocab_restricted_bytes_scored": 5604
+        },
+        "decode_margin_mean": 1.577259
+      }
+    },
+    {
+      "head": "kron_tied",
+      "config": {
+        "d_model": 256,
+        "n_layers": 4,
+        "n_heads": 4,
+        "d_ff": 1024,
+        "seq_len": 256,
+        "vocab_size": 16384,
+        "head": "kron_tied",
+        "codec": {
+          "n_bytes": 256,
+          "positions": 32,
+          "dim": 8192,
+          "normalize_input": true,
+          "pad_byte": 0
+        }
+      },
+      "checkpoint": null,
+      "params": {
+        "input": 2097152,
+        "output": 8192,
+        "trunk": 3225088,
+        "io_total": 2105344,
+        "total": 5330432
+      },
+      "device": "mps",
+      "steps": 2000,
+      "batch_size": 16,
+      "lr": 0.0003,
+      "seed": 2,
+      "wall_clock_s": 887.5,
+      "history": [
+        {
+          "step": 500,
+          "train_loss": 2.275524,
+          "grad_norm": 0.4925,
+          "elapsed_s": 203.2,
+          "tokens": 163840,
+          "bytes": 627388,
+          "exact_token_accuracy": 0.074707,
+          "bits_per_byte": 4.098757,
+          "nats_per_token": 10.879122,
+          "length_accuracy": 0.322668,
+          "full_val_sweep": false,
+          "seen": {
+            "tokens": 162047,
+            "bytes": 617874,
+            "exact_token_accuracy": 0.075534,
+            "bits_per_byte": 4.083976,
+            "nats_per_token": 10.793632,
+            "length_accuracy": 0.32548
+          },
+          "heldout": {
+            "tokens": 1793,
+            "bytes": 9514,
+            "exact_token_accuracy": 0.0,
+            "bits_per_byte": 5.058648,
+            "nats_per_token": 18.605561,
+            "length_accuracy": 0.0686
+          },
+          "decode_margin_mean": 1.25499
+        },
+        {
+          "step": 1000,
+          "train_loss": 2.263137,
+          "grad_norm": 0.5098,
+          "elapsed_s": 407.0,
+          "tokens": 163840,
+          "bytes": 627388,
+          "exact_token_accuracy": 0.109961,
+          "bits_per_byte": 3.883039,
+          "nats_per_token": 10.306554,
+          "length_accuracy": 0.341534,
+          "full_val_sweep": false,
+          "seen": {
+            "tokens": 162047,
+            "bytes": 617874,
+            "exact_token_accuracy": 0.111178,
+            "bits_per_byte": 3.866217,
+            "nats_per_token": 10.218112,
+            "length_accuracy": 0.344524
+          },
+          "heldout": {
+            "tokens": 1793,
+            "bytes": 9514,
+            "exact_token_accuracy": 0.0,
+            "bits_per_byte": 4.975499,
+            "nats_per_token": 18.299741,
+            "length_accuracy": 0.071389
+          },
+          "decode_margin_mean": 1.435306
+        },
+        {
+          "step": 1500,
+          "train_loss": 1.991746,
+          "grad_norm": 0.7567,
+          "elapsed_s": 610.2,
+          "tokens": 163840,
+          "bytes": 627388,
+          "exact_token_accuracy": 0.135559,
+          "bits_per_byte": 3.755923,
+          "nats_per_token": 9.969156,
+          "length_accuracy": 0.359033,
+          "full_val_sweep": false,
+          "seen": {
+            "tokens": 162047,
+            "bytes": 617874,
+            "exact_token_accuracy": 0.13704,
+            "bits_per_byte": 3.73785,
+            "nats_per_token": 9.878846,
+            "length_accuracy": 0.362167
+          },
+          "heldout": {
+            "tokens": 1793,
+            "bytes": 9514,
+            "exact_token_accuracy": 0.001673,
+            "bits_per_byte": 4.929667,
+            "nats_per_token": 18.131171,
+            "length_accuracy": 0.075851
+          },
+          "decode_margin_mean": 1.50053
+        },
+        {
+          "step": 2000,
+          "train_loss": 2.068805,
+          "grad_norm": 0.5182,
+          "elapsed_s": 887.5,
+          "tokens": 373504,
+          "bytes": 1378756,
+          "exact_token_accuracy": 0.158775,
+          "bits_per_byte": 3.732965,
+          "nats_per_token": 9.551498,
+          "length_accuracy": 0.386539,
+          "bits_per_byte_vocab_restricted": 3.316729,
+          "vocab_restricted_bytes_scored": 371152,
+          "full_val_sweep": true,
+          "seen": {
+            "tokens": 369790,
+            "bytes": 1360221,
+            "exact_token_accuracy": 0.160359,
+            "bits_per_byte": 3.715646,
+            "nats_per_token": 9.473581,
+            "length_accuracy": 0.389286,
+            "bits_per_byte_vocab_restricted": 3.298317,
+            "vocab_restricted_bytes_scored": 365548
+          },
+          "heldout": {
+            "tokens": 3714,
+            "bytes": 18535,
+            "exact_token_accuracy": 0.001077,
+            "bits_per_byte": 5.003886,
+            "nats_per_token": 17.309462,
+            "length_accuracy": 0.113086,
+            "bits_per_byte_vocab_restricted": 4.517728,
+            "vocab_restricted_bytes_scored": 5604
+          },
+          "decode_margin_mean": 1.56949
+        }
+      ],
+      "final": {
+        "step": 2000,
+        "train_loss": 2.068805,
+        "grad_norm": 0.5182,
+        "elapsed_s": 887.5,
+        "tokens": 373504,
+        "bytes": 1378756,
+        "exact_token_accuracy": 0.158775,
+        "bits_per_byte": 3.732965,
+        "nats_per_token": 9.551498,
+        "length_accuracy": 0.386539,
+        "bits_per_byte_vocab_restricted": 3.316729,
+        "vocab_restricted_bytes_scored": 371152,
+        "full_val_sweep": true,
+        "seen": {
+          "tokens": 369790,
+          "bytes": 1360221,
+          "exact_token_accuracy": 0.160359,
+          "bits_per_byte": 3.715646,
+          "nats_per_token": 9.473581,
+          "length_accuracy": 0.389286,
+          "bits_per_byte_vocab_restricted": 3.298317,
+          "vocab_restricted_bytes_scored": 365548
+        },
+        "heldout": {
+          "tokens": 3714,
+          "bytes": 18535,
+          "exact_token_accuracy": 0.001077,
+          "bits_per_byte": 5.003886,
+          "nats_per_token": 17.309462,
+          "length_accuracy": 0.113086,
+          "bits_per_byte_vocab_restricted": 4.517728,
+          "vocab_restricted_bytes_scored": 5604
+        },
+        "decode_margin_mean": 1.56949
+      }
+    },
+    {
+      "head": "regress",
+      "config": {
+        "d_model": 256,
+        "n_layers": 4,
+        "n_heads": 4,
+        "d_ff": 1024,
+        "seq_len": 256,
+        "vocab_size": 16384,
+        "head": "regress",
+        "codec": {
+          "n_bytes": 256,
+          "positions": 32,
+          "dim": 8192,
+          "normalize_input": true,
+          "pad_byte": 0
+        }
+      },
+      "checkpoint": "results/ckpt_regress.pt",
+      "params": {
+        "input": 2097152,
+        "output": 2097152,
+        "trunk": 3225088,
+        "io_total": 4194304,
+        "total": 7419392
+      },
+      "device": "mps",
+      "steps": 2000,
+      "batch_size": 16,
+      "lr": 0.0003,
+      "seed": 0,
+      "wall_clock_s": 1277.9,
+      "history": [
+        {
+          "step": 500,
+          "train_loss": 0.996378,
+          "grad_norm": 11.5671,
+          "elapsed_s": 285.2,
+          "tokens": 163840,
+          "bytes": 627388,
+          "exact_token_accuracy": 0.010583,
+          "bits_per_byte": null,
+          "full_val_sweep": false,
+          "seen": {
+            "tokens": 162047,
+            "bytes": 617874,
+            "exact_token_accuracy": 0.010701,
+            "bits_per_byte": null
+          },
+          "heldout": {
+            "tokens": 1793,
+            "bytes": 9514,
+            "exact_token_accuracy": 0.0,
+            "bits_per_byte": null
+          },
+          "note": "no normalised distribution over tokens exists for an MSE regression head, so a likelihood is undefined"
+        },
+        {
+          "step": 1000,
+          "train_loss": 0.887192,
+          "grad_norm": 5.4106,
+          "elapsed_s": 569.9,
+          "tokens": 163840,
+          "bytes": 627388,
+          "exact_token_accuracy": 0.043744,
+          "bits_per_byte": null,
+          "full_val_sweep": false,
+          "seen": {
+            "tokens": 162047,
+            "bytes": 617874,
+            "exact_token_accuracy": 0.044228,
+            "bits_per_byte": null
+          },
+          "heldout": {
+            "tokens": 1793,
+            "bytes": 9514,
+            "exact_token_accuracy": 0.0,
+            "bits_per_byte": null
+          },
+          "note": "no normalised distribution over tokens exists for an MSE regression head, so a likelihood is undefined"
+        },
+        {
+          "step": 1500,
+          "train_loss": 0.844644,
+          "grad_norm": 2.598,
+          "elapsed_s": 854.3,
+          "tokens": 163840,
+          "bytes": 627388,
+          "exact_token_accuracy": 0.057397,
+          "bits_per_byte": null,
+          "full_val_sweep": false,
+          "seen": {
+            "tokens": 162047,
+            "bytes": 617874,
+            "exact_token_accuracy": 0.058033,
+            "bits_per_byte": null
+          },
+          "heldout": {
+            "tokens": 1793,
+            "bytes": 9514,
+            "exact_token_accuracy": 0.0,
+            "bits_per_byte": null
+          },
+          "note": "no normalised distribution over tokens exists for an MSE regression head, so a likelihood is undefined"
+        },
+        {
+          "step": 2000,
+          "train_loss": 0.812758,
+          "grad_norm": 1.4933,
+          "elapsed_s": 1277.8,
+          "tokens": 373504,
+          "bytes": 1378756,
+          "exact_token_accuracy": 0.063965,
+          "bits_per_byte": null,
+          "full_val_sweep": true,
+          "seen": {
+            "tokens": 369790,
+            "bytes": 1360221,
+            "exact_token_accuracy": 0.064607,
+            "bits_per_byte": null
+          },
+          "heldout": {
+            "tokens": 3714,
+            "bytes": 18535,
+            "exact_token_accuracy": 0.0,
+            "bits_per_byte": null
+          },
+          "note": "no normalised distribution over tokens exists for an MSE regression head, so a likelihood is undefined"
+        }
+      ],
+      "final": {
+        "step": 2000,
+        "train_loss": 0.812758,
+        "grad_norm": 1.4933,
+        "elapsed_s": 1277.8,
+        "tokens": 373504,
+        "bytes": 1378756,
+        "exact_token_accuracy": 0.063965,
+        "bits_per_byte": null,
+        "full_val_sweep": true,
+        "seen": {
+          "tokens": 369790,
+          "bytes": 1360221,
+          "exact_token_accuracy": 0.064607,
+          "bits_per_byte": null
+        },
+        "heldout": {
+          "tokens": 3714,
+          "bytes": 18535,
+          "exact_token_accuracy": 0.0,
+          "bits_per_byte": null
+        },
+        "note": "no normalised distribution over tokens exists for an MSE regression head, so a likelihood is undefined"
+      }
+    },
+    {
+      "head": "regress",
+      "config": {
+        "d_model": 256,
+        "n_layers": 4,
+        "n_heads": 4,
+        "d_ff": 1024,
+        "seq_len": 256,
+        "vocab_size": 16384,
+        "head": "regress",
+        "codec": {
+          "n_bytes": 256,
+          "positions": 32,
+          "dim": 8192,
+          "normalize_input": true,
+          "pad_byte": 0
+        }
+      },
+      "checkpoint": null,
+      "params": {
+        "input": 2097152,
+        "output": 2097152,
+        "trunk": 3225088,
+        "io_total": 4194304,
+        "total": 7419392
+      },
+      "device": "mps",
+      "steps": 2000,
+      "batch_size": 16,
+      "lr": 0.0003,
+      "seed": 1,
+      "wall_clock_s": 1277.7,
+      "history": [
+        {
+          "step": 500,
+          "train_loss": 1.013087,
+          "grad_norm": 13.3885,
+          "elapsed_s": 284.6,
+          "tokens": 163840,
+          "bytes": 627388,
+          "exact_token_accuracy": 0.011072,
+          "bits_per_byte": null,
+          "full_val_sweep": false,
+          "seen": {
+            "tokens": 162047,
+            "bytes": 617874,
+            "exact_token_accuracy": 0.011194,
+            "bits_per_byte": null
+          },
+          "heldout": {
+            "tokens": 1793,
+            "bytes": 9514,
+            "exact_token_accuracy": 0.0,
+            "bits_per_byte": null
+          },
+          "note": "no normalised distribution over tokens exists for an MSE regression head, so a likelihood is undefined"
+        },
+        {
+          "step": 1000,
+          "train_loss": 0.886885,
+          "grad_norm": 5.8845,
+          "elapsed_s": 569.6,
+          "tokens": 163840,
+          "bytes": 627388,
+          "exact_token_accuracy": 0.042841,
+          "bits_per_byte": null,
+          "full_val_sweep": false,
+          "seen": {
+            "tokens": 162047,
+            "bytes": 617874,
+            "exact_token_accuracy": 0.043315,
+            "bits_per_byte": null
+          },
+          "heldout": {
+            "tokens": 1793,
+            "bytes": 9514,
+            "exact_token_accuracy": 0.0,
+            "bits_per_byte": null
+          },
+          "note": "no normalised distribution over tokens exists for an MSE regression head, so a likelihood is undefined"
+        },
+        {
+          "step": 1500,
+          "train_loss": 0.842541,
+          "grad_norm": 2.3903,
+          "elapsed_s": 854.3,
+          "tokens": 163840,
+          "bytes": 627388,
+          "exact_token_accuracy": 0.053552,
+          "bits_per_byte": null,
+          "full_val_sweep": false,
+          "seen": {
+            "tokens": 162047,
+            "bytes": 617874,
+            "exact_token_accuracy": 0.054145,
+            "bits_per_byte": null
+          },
+          "heldout": {
+            "tokens": 1793,
+            "bytes": 9514,
+            "exact_token_accuracy": 0.0,
+            "bits_per_byte": null
+          },
+          "note": "no normalised distribution over tokens exists for an MSE regression head, so a likelihood is undefined"
+        },
+        {
+          "step": 2000,
+          "train_loss": 0.832668,
+          "grad_norm": 1.3754,
+          "elapsed_s": 1277.7,
+          "tokens": 373504,
+          "bytes": 1378756,
+          "exact_token_accuracy": 0.061052,
+          "bits_per_byte": null,
+          "full_val_sweep": true,
+          "seen": {
+            "tokens": 369790,
+            "bytes": 1360221,
+            "exact_token_accuracy": 0.061657,
+            "bits_per_byte": null
+          },
+          "heldout": {
+            "tokens": 3714,
+            "bytes": 18535,
+            "exact_token_accuracy": 0.000808,
+            "bits_per_byte": null
+          },
+          "note": "no normalised distribution over tokens exists for an MSE regression head, so a likelihood is undefined"
+        }
+      ],
+      "final": {
+        "step": 2000,
+        "train_loss": 0.832668,
+        "grad_norm": 1.3754,
+        "elapsed_s": 1277.7,
+        "tokens": 373504,
+        "bytes": 1378756,
+        "exact_token_accuracy": 0.061052,
+        "bits_per_byte": null,
+        "full_val_sweep": true,
+        "seen": {
+          "tokens": 369790,
+          "bytes": 1360221,
+          "exact_token_accuracy": 0.061657,
+          "bits_per_byte": null
+        },
+        "heldout": {
+          "tokens": 3714,
+          "bytes": 18535,
+          "exact_token_accuracy": 0.000808,
+          "bits_per_byte": null
+        },
+        "note": "no normalised distribution over tokens exists for an MSE regression head, so a likelihood is undefined"
+      }
+    },
+    {
+      "head": "regress",
+      "config": {
+        "d_model": 256,
+        "n_layers": 4,
+        "n_heads": 4,
+        "d_ff": 1024,
+        "seq_len": 256,
+        "vocab_size": 16384,
+        "head": "regress",
+        "codec": {
+          "n_bytes": 256,
+          "positions": 32,
+          "dim": 8192,
+          "normalize_input": true,
+          "pad_byte": 0
+        }
+      },
+      "checkpoint": null,
+      "params": {
+        "input": 2097152,
+        "output": 2097152,
+        "trunk": 3225088,
+        "io_total": 4194304,
+        "total": 7419392
+      },
+      "device": "mps",
+      "steps": 2000,
+      "batch_size": 16,
+      "lr": 0.0003,
+      "seed": 2,
+      "wall_clock_s": 1278.2,
+      "history": [
+        {
+          "step": 500,
+          "train_loss": 0.946755,
+          "grad_norm": 8.9663,
+          "elapsed_s": 284.2,
+          "tokens": 163840,
+          "bytes": 627388,
+          "exact_token_accuracy": 0.009332,
+          "bits_per_byte": null,
+          "full_val_sweep": false,
+          "seen": {
+            "tokens": 162047,
+            "bytes": 617874,
+            "exact_token_accuracy": 0.009436,
+            "bits_per_byte": null
+          },
+          "heldout": {
+            "tokens": 1793,
+            "bytes": 9514,
+            "exact_token_accuracy": 0.0,
+            "bits_per_byte": null
+          },
+          "note": "no normalised distribution over tokens exists for an MSE regression head, so a likelihood is undefined"
+        },
+        {
+          "step": 1000,
+          "train_loss": 0.87712,
+          "grad_norm": 5.4411,
+          "elapsed_s": 569.8,
+          "tokens": 163840,
+          "bytes": 627388,
+          "exact_token_accuracy": 0.043359,
+          "bits_per_byte": null,
+          "full_val_sweep": false,
+          "seen": {
+            "tokens": 162047,
+            "bytes": 617874,
+            "exact_token_accuracy": 0.043839,
+            "bits_per_byte": null
+          },
+          "heldout": {
+            "tokens": 1793,
+            "bytes": 9514,
+            "exact_token_accuracy": 0.0,
+            "bits_per_byte": null
+          },
+          "note": "no normalised distribution over tokens exists for an MSE regression head, so a likelihood is undefined"
+        },
+        {
+          "step": 1500,
+          "train_loss": 0.81321,
+          "grad_norm": 2.4819,
+          "elapsed_s": 854.4,
+          "tokens": 163840,
+          "bytes": 627388,
+          "exact_token_accuracy": 0.054169,
+          "bits_per_byte": null,
+          "full_val_sweep": false,
+          "seen": {
+            "tokens": 162047,
+            "bytes": 617874,
+            "exact_token_accuracy": 0.054768,
+            "bits_per_byte": null
+          },
+          "heldout": {
+            "tokens": 1793,
+            "bytes": 9514,
+            "exact_token_accuracy": 0.0,
+            "bits_per_byte": null
+          },
+          "note": "no normalised distribution over tokens exists for an MSE regression head, so a likelihood is undefined"
+        },
+        {
+          "step": 2000,
+          "train_loss": 0.817797,
+          "grad_norm": 1.4288,
+          "elapsed_s": 1278.2,
+          "tokens": 373504,
+          "bytes": 1378756,
+          "exact_token_accuracy": 0.062085,
+          "bits_per_byte": null,
+          "full_val_sweep": true,
+          "seen": {
+            "tokens": 369790,
+            "bytes": 1360221,
+            "exact_token_accuracy": 0.062709,
+            "bits_per_byte": null
+          },
+          "heldout": {
+            "tokens": 3714,
+            "bytes": 18535,
+            "exact_token_accuracy": 0.0,
+            "bits_per_byte": null
+          },
+          "note": "no normalised distribution over tokens exists for an MSE regression head, so a likelihood is undefined"
+        }
+      ],
+      "final": {
+        "step": 2000,
+        "train_loss": 0.817797,
+        "grad_norm": 1.4288,
+        "elapsed_s": 1278.2,
+        "tokens": 373504,
+        "bytes": 1378756,
+        "exact_token_accuracy": 0.062085,
+        "bits_per_byte": null,
+        "full_val_sweep": true,
+        "seen": {
+          "tokens": 369790,
+          "bytes": 1360221,
+          "exact_token_accuracy": 0.062709,
+          "bits_per_byte": null
+        },
+        "heldout": {
+          "tokens": 3714,
+          "bytes": 18535,
+          "exact_token_accuracy": 0.0,
+          "bits_per_byte": null
+        },
+        "note": "no normalised distribution over tokens exists for an MSE regression head, so a likelihood is undefined"
+      }
+    }
+  ],
+  "wall_clock_s": 11567.7
+}

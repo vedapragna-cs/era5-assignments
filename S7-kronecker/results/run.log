@@ -1,0 +1,87 @@
+==============================================================================
+Kronecker Embeddings V2 -- P5, invertible Kronecker
+==============================================================================
+
+corpus   27,088,226 bytes  sha256 22963206bdfe46e3  multibyte 2.56%
+tokens   7,101,125 train / 373,743 val   |V| = 16,384
+byte table 4,325,376 bytes, against 536,870,912 for the dense equivalent
+withheld 373 token ids, 1.00% of training positions, 3,719 val positions scored
+  e.g. 'q' 'AR' ' te' ' gra' 'ents' ' pos' ' pres' 'val' 'IO' 'that' 'att' 'sel' 'ian' ' read'
+
+device mps   steps 2000   batch 16   seeds [0, 1, 2]   1.15 epochs
+model  {"d_model": 256, "n_layers": 4, "n_heads": 4, "d_ff": 1024}
+
+------------------------------------------------------------------------------
+vocab
+------------------------------------------------------------------------------
+  [  500] vocab      loss  5.7752 | bpb all  2.186 seen  2.156 held  4.178 | exact 0.1545 held 0.0000
+  [ 1000] vocab      loss  5.5171 | bpb all  2.051 seen  2.015 held  4.373 | exact 0.1884 held 0.0000
+  [ 1500] vocab      loss  5.1080 | bpb all  1.975 seen  1.937 held  4.432 | exact 0.2109 held 0.0000
+  [ 2000] vocab      loss  4.7468 | bpb all  2.000 seen  1.963 held  4.711 | exact 0.2362 held 0.0000
+  [  500] vocab      loss  5.8563 | bpb all  2.191 seen  2.159 held  4.310 | exact 0.1553 held 0.0000
+  [ 1000] vocab      loss  5.5245 | bpb all  2.056 seen  2.019 held  4.455 | exact 0.1869 held 0.0000
+  [ 1500] vocab      loss  5.0659 | bpb all  1.974 seen  1.935 held  4.470 | exact 0.2114 held 0.0000
+  [ 2000] vocab      loss  5.1668 | bpb all  1.993 seen  1.954 held  4.851 | exact 0.2352 held 0.0000
+  [  500] vocab      loss  5.7154 | bpb all  2.192 seen  2.162 held  4.091 | exact 0.1521 held 0.0000
+  [ 1000] vocab      loss  5.6314 | bpb all  2.045 seen  2.008 held  4.491 | exact 0.1889 held 0.0000
+  [ 1500] vocab      loss  4.8101 | bpb all  1.969 seen  1.930 held  4.515 | exact 0.2126 held 0.0000
+  [ 2000] vocab      loss  4.9862 | bpb all  1.991 seen  1.953 held  4.769 | exact 0.2412 held 0.0000
+
+------------------------------------------------------------------------------
+kron
+------------------------------------------------------------------------------
+  [  500] kron       loss  2.2603 | bpb all  4.068 seen  4.053 held  5.044 | exact 0.0821 held 0.0006
+  [ 1000] kron       loss  2.2633 | bpb all  3.858 seen  3.841 held  4.981 | exact 0.1250 held 0.0045
+  [ 1500] kron       loss  2.1534 | bpb all  3.713 seen  3.694 held  4.904 | exact 0.1411 held 0.0006
+  [ 2000] kron       loss  1.9432 | bpb all  3.695 seen  3.677 held  5.018 | exact 0.1667 held 0.0011
+  [  500] kron       loss  2.2973 | bpb all  4.078 seen  4.063 held  5.008 | exact 0.0847 held 0.0006
+  [ 1000] kron       loss  2.1642 | bpb all  3.861 seen  3.844 held  4.956 | exact 0.1206 held 0.0022
+  [ 1500] kron       loss  2.0385 | bpb all  3.719 seen  3.701 held  4.934 | exact 0.1409 held 0.0006
+  [ 2000] kron       loss  2.0586 | bpb all  3.696 seen  3.678 held  5.051 | exact 0.1579 held 0.0005
+  [  500] kron       loss  2.2595 | bpb all  4.067 seen  4.052 held  5.023 | exact 0.0889 held 0.0000
+  [ 1000] kron       loss  2.2453 | bpb all  3.866 seen  3.849 held  4.970 | exact 0.1187 held 0.0017
+  [ 1500] kron       loss  1.9665 | bpb all  3.732 seen  3.714 held  4.908 | exact 0.1422 held 0.0000
+  [ 2000] kron       loss  2.0552 | bpb all  3.703 seen  3.685 held  5.025 | exact 0.1605 held 0.0008
+
+------------------------------------------------------------------------------
+kron_tied
+------------------------------------------------------------------------------
+  [  500] kron_tied  loss  2.2850 | bpb all  4.095 seen  4.081 held  5.060 | exact 0.0781 held 0.0011
+  [ 1000] kron_tied  loss  2.2830 | bpb all  3.905 seen  3.889 held  4.982 | exact 0.1087 held 0.0000
+  [ 1500] kron_tied  loss  2.1706 | bpb all  3.761 seen  3.743 held  4.903 | exact 0.1291 held 0.0006
+  [ 2000] kron_tied  loss  1.9603 | bpb all  3.745 seen  3.727 held  5.010 | exact 0.1495 held 0.0005
+  [  500] kron_tied  loss  2.3126 | bpb all  4.103 seen  4.088 held  5.044 | exact 0.0779 held 0.0006
+  [ 1000] kron_tied  loss  2.1951 | bpb all  3.915 seen  3.898 held  4.974 | exact 0.1102 held 0.0000
+  [ 1500] kron_tied  loss  2.0682 | bpb all  3.788 seen  3.770 held  4.947 | exact 0.1289 held 0.0006
+  [ 2000] kron_tied  loss  2.0892 | bpb all  3.773 seen  3.755 held  5.067 | exact 0.1537 held 0.0008
+  [  500] kron_tied  loss  2.2755 | bpb all  4.099 seen  4.084 held  5.059 | exact 0.0747 held 0.0000
+  [ 1000] kron_tied  loss  2.2631 | bpb all  3.883 seen  3.866 held  4.975 | exact 0.1100 held 0.0000
+  [ 1500] kron_tied  loss  1.9917 | bpb all  3.756 seen  3.738 held  4.930 | exact 0.1356 held 0.0017
+  [ 2000] kron_tied  loss  2.0688 | bpb all  3.733 seen  3.716 held  5.004 | exact 0.1588 held 0.0011
+
+------------------------------------------------------------------------------
+regress
+------------------------------------------------------------------------------
+  [  500] regress    loss  0.9964 | bpb all   n/a  seen   n/a  held   n/a  | exact 0.0106 held 0.0000
+  [ 1000] regress    loss  0.8872 | bpb all   n/a  seen   n/a  held   n/a  | exact 0.0437 held 0.0000
+  [ 1500] regress    loss  0.8446 | bpb all   n/a  seen   n/a  held   n/a  | exact 0.0574 held 0.0000
+  [ 2000] regress    loss  0.8128 | bpb all   n/a  seen   n/a  held   n/a  | exact 0.0640 held 0.0000
+  [  500] regress    loss  1.0131 | bpb all   n/a  seen   n/a  held   n/a  | exact 0.0111 held 0.0000
+  [ 1000] regress    loss  0.8869 | bpb all   n/a  seen   n/a  held   n/a  | exact 0.0428 held 0.0000
+  [ 1500] regress    loss  0.8425 | bpb all   n/a  seen   n/a  held   n/a  | exact 0.0536 held 0.0000
+  [ 2000] regress    loss  0.8327 | bpb all   n/a  seen   n/a  held   n/a  | exact 0.0611 held 0.0008
+  [  500] regress    loss  0.9468 | bpb all   n/a  seen   n/a  held   n/a  | exact 0.0093 held 0.0000
+  [ 1000] regress    loss  0.8771 | bpb all   n/a  seen   n/a  held   n/a  | exact 0.0434 held 0.0000
+  [ 1500] regress    loss  0.8132 | bpb all   n/a  seen   n/a  held   n/a  | exact 0.0542 held 0.0000
+  [ 2000] regress    loss  0.8178 | bpb all   n/a  seen   n/a  held   n/a  | exact 0.0621 held 0.0000
+
+==============================================================================
+SUMMARY   (mean +/- sd over 3 seeds)
+==============================================================================
+head         out params        bpb (all)   bpb (held-out)   exact held
+vocab         4,194,304 1.9946 +/- 0.0048 4.7772 +/- 0.0705       0.0000
+kron          2,097,152 3.6981 +/- 0.0039 5.0317 +/- 0.0173       0.0008
+kron_tied         8,192 3.7501 +/- 0.0204 5.0271 +/- 0.0349       0.0008
+regress       2,097,152      n/a +/- n/a      n/a +/- n/a       0.0003
+
+total 192.8 min -> results/evidence.json, results/run.log
