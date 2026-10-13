@@ -1,0 +1,132 @@
+[
+ {
+  "tokenizer": "theschoolofai/BrahmicTokenizer-131K",
+  "en": 1.1395,
+  "hi": 1.1059,
+  "ta": 1.1856,
+  "ml": 1.2215,
+  "kn": 1.1951,
+  "bn": 1.1395,
+  "indic_penalty": 1.072
+ },
+ {
+  "tokenizer": "gpt2",
+  "en": 1.1609,
+  "hi": 3.3294,
+  "ta": 6.7006,
+  "ml": 7.2871,
+  "kn": 5.9869,
+  "bn": 4.6762,
+  "indic_penalty": 6.277
+ },
+ {
+  "tokenizer": "EleutherAI/gpt-neox-20b",
+  "en": 1.1609,
+  "hi": 3.3294,
+  "ta": 6.7006,
+  "ml": 7.2871,
+  "kn": 5.9869,
+  "bn": 4.6762,
+  "indic_penalty": 6.277
+ },
+ {
+  "tokenizer": "bigscience/bloom",
+  "en": 1.1224,
+  "hi": 1.092,
+  "ta": 1.1629,
+  "ml": 1.1667,
+  "kn": 1.1435,
+  "bn": 1.1161,
+  "indic_penalty": 1.039
+ },
+ {
+  "tokenizer": "Qwen/Qwen2.5-0.5B",
+  "en": 1.1752,
+  "hi": 2.5404,
+  "ta": 4.3034,
+  "ml": 4.5634,
+  "kn": 3.9916,
+  "bn": 3.1704,
+  "indic_penalty": 3.883
+ },
+ {
+  "tokenizer": "tiiuae/falcon-7b",
+  "en": 1.1759,
+  "hi": 4.0521,
+  "ta": 7.6326,
+  "ml": 8.5004,
+  "kn": 19.7214,
+  "bn": 5.6489,
+  "indic_penalty": 16.771
+ },
+ {
+  "tokenizer": "google/gemma-2-2b",
+  "en": 1.0,
+  "hi": 1.0,
+  "ta": 1.0,
+  "ml": 1.0,
+  "kn": 1.0,
+  "bn": 1.0,
+  "indic_penalty": 1.0
+ },
+ {
+  "tokenizer": "mistralai/Mistral-7B-v0.1",
+  "en": 1.0,
+  "hi": 1.0,
+  "ta": 1.0,
+  "ml": 1.0,
+  "kn": 1.0,
+  "bn": 1.0,
+  "indic_penalty": 1.0
+ },
+ {
+  "tokenizer": "sarvamai/sarvam-1",
+  "en": 1.0,
+  "hi": 1.0,
+  "ta": 1.0,
+  "ml": 1.0,
+  "kn": 1.0,
+  "bn": 1.0,
+  "indic_penalty": 1.0
+ },
+ {
+  "tokenizer": "facebook/nllb-200-distilled-600M",
+  "en": 1.0,
+  "hi": 1.0,
+  "ta": 1.0,
+  "ml": 1.0,
+  "kn": 1.0,
+  "bn": 1.0,
+  "indic_penalty": 1.0
+ },
+ {
+  "tokenizer": "xlm-roberta-base",
+  "en": 1.0,
+  "hi": 1.0,
+  "ta": 1.0,
+  "ml": 1.0,
+  "kn": 1.0,
+  "bn": 1.0,
+  "indic_penalty": 1.0
+ },
+ {
+  "tokenizer": "bert-base-multilingual-cased",
+  "en": 1.174,
+  "hi": 1.1156,
+  "ta": 1.2114,
+  "ml": 1.2259,
+  "kn": 1.1719,
+  "bn": 1.1732,
+  "indic_penalty": 1.044
+ },
+ {
+  "tokenizer": "ai4bharat/IndicBERTv2-MLM-only",
+  "en": 1.1678,
+  "hi": 1.1114,
+  "ta": 1.1903,
+  "ml": 1.2035,
+  "kn": 1.1679,
+  "bn": 1.1471,
+  "indic_penalty": 1.031
+ }
+]

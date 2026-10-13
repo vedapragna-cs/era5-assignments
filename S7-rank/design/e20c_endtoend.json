@@ -1,0 +1,142 @@
+[
+ {
+  "tok": "tiiuae/falcon-7b",
+  "lang": "en",
+  "floor": 1.18,
+  "fert": 1.5243,
+  "share": 0.7741
+ },
+ {
+  "tok": "tiiuae/falcon-7b",
+  "lang": "hi",
+  "floor": 4.0738,
+  "fert": 7.7013,
+  "share": 0.529
+ },
+ {
+  "tok": "tiiuae/falcon-7b",
+  "lang": "kn",
+  "floor": 19.5708,
+  "fert": 21.0688,
+  "share": 0.9289
+ },
+ {
+  "tok": "tiiuae/falcon-7b",
+  "lang": "ml",
+  "floor": 8.4333,
+  "fert": 20.089,
+  "share": 0.4198
+ },
+ {
+  "tok": "gpt2",
+  "lang": "en",
+  "floor": 1.1645,
+  "fert": 1.5375,
+  "share": 0.7574
+ },
+ {
+  "tok": "gpt2",
+  "lang": "hi",
+  "floor": 3.349,
+  "fert": 7.8268,
+  "share": 0.4279
+ },
+ {
+  "tok": "gpt2",
+  "lang": "kn",
+  "floor": 5.959,
+  "fert": 21.2885,
+  "share": 0.2799
+ },
+ {
+  "tok": "gpt2",
+  "lang": "ml",
+  "floor": 7.2468,
+  "fert": 26.0322,
+  "share": 0.2784
+ },
+ {
+  "tok": "Qwen/Qwen2.5-0.5B",
+  "lang": "en",
+  "floor": 1.1832,
+  "fert": 1.5175,
+  "share": 0.7797
+ },
+ {
+  "tok": "Qwen/Qwen2.5-0.5B",
+  "lang": "hi",
+  "floor": 2.5537,
+  "fert": 4.2738,
+  "share": 0.5975
+ },
+ {
+  "tok": "Qwen/Qwen2.5-0.5B",
+  "lang": "kn",
+  "floor": 3.9837,
+  "fert": 10.8277,
+  "share": 0.3679
+ },
+ {
+  "tok": "Qwen/Qwen2.5-0.5B",
+  "lang": "ml",
+  "floor": 4.546,
+  "fert": 11.4972,
+  "share": 0.3954
+ },
+ {
+  "tok": "google/gemma-2-2b",
+  "lang": "en",
+  "floor": 1.0,
+  "fert": 1.3543,
+  "share": 0.7384
+ },
+ {
+  "tok": "google/gemma-2-2b",
+  "lang": "hi",
+  "floor": 1.0,
+  "fert": 2.3983,
+  "share": 0.417
+ },
+ {
+  "tok": "google/gemma-2-2b",
+  "lang": "kn",
+  "floor": 1.0,
+  "fert": 5.357,
+  "share": 0.1867
+ },
+ {
+  "tok": "google/gemma-2-2b",
+  "lang": "ml",
+  "floor": 1.0,
+  "fert": 5.716,
+  "share": 0.1749
+ },
+ {
+  "tok": "sarvamai/sarvam-1",
+  "lang": "en",
+  "floor": 1.0,
+  "fert": 1.514,
+  "share": 0.6605
+ },
+ {
+  "tok": "sarvamai/sarvam-1",
+  "lang": "hi",
+  "floor": 1.0,
+  "fert": 1.4268,
+  "share": 0.7009
+ },
+ {
+  "tok": "sarvamai/sarvam-1",
+  "lang": "kn",
+  "floor": 1.0,
+  "fert": 2.3707,
+  "share": 0.4218
+ },
+ {
+  "tok": "sarvamai/sarvam-1",
+  "lang": "ml",
+  "floor": 1.0,
+  "fert": 2.8713,
+  "share": 0.3483
+ }
+]

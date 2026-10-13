@@ -1,0 +1,110 @@
+[
+ {
+  "V": 50257,
+  "codec": "byte32",
+  "groups": 215,
+  "tokens_in_groups": 551,
+  "pct_vocab": 1.0963646855164455,
+  "cost_nats": 0.0012113759136072768,
+  "cost_bpb": 0.00013665898451660266
+ },
+ {
+  "V": 50257,
+  "codec": "byte64",
+  "groups": 0,
+  "tokens_in_groups": 0,
+  "pct_vocab": 0.0,
+  "cost_nats": 0.0,
+  "cost_bpb": 0.0
+ },
+ {
+  "V": 50257,
+  "codec": "bigram32",
+  "groups": 215,
+  "tokens_in_groups": 551,
+  "pct_vocab": 1.0963646855164455,
+  "cost_nats": 0.0012113759136072762,
+  "cost_bpb": 0.00013665898451660258
+ },
+ {
+  "V": 50257,
+  "codec": "phon32",
+  "groups": 0,
+  "tokens_in_groups": 0,
+  "pct_vocab": 0.0,
+  "cost_nats": 0.0,
+  "cost_bpb": 0.0
+ },
+ {
+  "V": 131072,
+  "codec": "byte32",
+  "groups": 1320,
+  "tokens_in_groups": 3623,
+  "pct_vocab": 2.764129638671875,
+  "cost_nats": 0.003691173657812769,
+  "cost_bpb": 0.0003924556128105477
+ },
+ {
+  "V": 131072,
+  "codec": "byte64",
+  "groups": 0,
+  "tokens_in_groups": 0,
+  "pct_vocab": 0.0,
+  "cost_nats": 0.0,
+  "cost_bpb": 0.0
+ },
+ {
+  "V": 131072,
+  "codec": "bigram32",
+  "groups": 1320,
+  "tokens_in_groups": 3623,
+  "pct_vocab": 2.764129638671875,
+  "cost_nats": 0.0036911736578127646,
+  "cost_bpb": 0.00039245561281054726
+ },
+ {
+  "V": 131072,
+  "codec": "phon32",
+  "groups": 0,
+  "tokens_in_groups": 0,
+  "pct_vocab": 0.0,
+  "cost_nats": 0.0,
+  "cost_bpb": 0.0
+ },
+ {
+  "V": 1000000,
+  "codec": "byte32",
+  "groups": 25584,
+  "tokens_in_groups": 93460,
+  "pct_vocab": 9.346,
+  "cost_nats": 0.02139235268256191,
+  "cost_bpb": 0.0020877638348618045
+ },
+ {
+  "V": 1000000,
+  "codec": "byte64",
+  "groups": 154,
+  "tokens_in_groups": 355,
+  "pct_vocab": 0.0355,
+  "cost_nats": 1.7943933671118383e-05,
+  "cost_bpb": 1.7512190608309245e-06
+ },
+ {
+  "V": 1000000,
+  "codec": "bigram32",
+  "groups": 25584,
+  "tokens_in_groups": 93460,
+  "pct_vocab": 9.346,
+  "cost_nats": 0.02139235268256191,
+  "cost_bpb": 0.0020877638348618045
+ },
+ {
+  "V": 1000000,
+  "codec": "phon32",
+  "groups": 3,
+  "tokens_in_groups": 6,
+  "pct_vocab": 0.0006,
+  "cost_nats": 1.9256551031034766e-05,
+  "cost_bpb": 1.8793225515366984e-06
+ }
+]

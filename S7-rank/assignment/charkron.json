@@ -1,0 +1,9 @@
+{
+ "P_CHAR": 32,
+ "blocks_used": 40,
+ "block_axis": 64,
+ "D": 6144,
+ "params_d8096": 49741824,
+ "roundtrip_exact": 131072,
+ "roundtrip_fail": 0
+}

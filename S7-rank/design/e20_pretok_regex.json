@@ -1,0 +1,159 @@
+[
+ {
+  "name": "gpt2",
+  "ok": true,
+  "kinds": [
+   "ByteLevel"
+  ],
+  "npat": 0,
+  "has_mark": false,
+  "has_letter_class": false,
+  "sample": null
+ },
+ {
+  "name": "bert-base-multilingual-cased",
+  "ok": true,
+  "kinds": [
+   "BertPreTokenizer"
+  ],
+  "npat": 0,
+  "has_mark": false,
+  "has_letter_class": false,
+  "sample": null
+ },
+ {
+  "name": "xlm-roberta-base",
+  "ok": true,
+  "kinds": [
+   "Metaspace",
+   "Sequence",
+   "WhitespaceSplit"
+  ],
+  "npat": 0,
+  "has_mark": false,
+  "has_letter_class": false,
+  "sample": null
+ },
+ {
+  "name": "google/mt5-small",
+  "ok": false,
+  "err": "RemoteEntryNotFoundError('404 Client Error. (Request ID: Root=1-6a88a418-0d7d92a634c102dd4"
+ },
+ {
+  "name": "facebook/nllb-200-distilled-600M",
+  "ok": true,
+  "kinds": [
+   "Metaspace"
+  ],
+  "npat": 0,
+  "has_mark": false,
+  "has_letter_class": false,
+  "sample": null
+ },
+ {
+  "name": "EleutherAI/gpt-neox-20b",
+  "ok": true,
+  "kinds": [
+   "ByteLevel"
+  ],
+  "npat": 0,
+  "has_mark": false,
+  "has_letter_class": false,
+  "sample": null
+ },
+ {
+  "name": "bigscience/bloom",
+  "ok": true,
+  "kinds": [
+   "ByteLevel",
+   "Sequence",
+   "Split"
+  ],
+  "npat": 1,
+  "has_mark": false,
+  "has_letter_class": false,
+  "sample": " ?[^(\\s|[.,!?\u2026\u3002\uff0c\u3001\u0964\u06d4\u060c])]+"
+ },
+ {
+  "name": "Qwen/Qwen2.5-0.5B",
+  "ok": true,
+  "kinds": [
+   "ByteLevel",
+   "Sequence",
+   "Split"
+  ],
+  "npat": 1,
+  "has_mark": false,
+  "has_letter_class": true,
+  "sample": "(?i:'s|'t|'re|'ve|'m|'ll|'d)|[^\\r\\n\\p{L}\\p{N}]?\\p{L}+|\\p{N}| ?[^\\s\\p{L"
+ },
+ {
+  "name": "tiiuae/falcon-7b",
+  "ok": true,
+  "kinds": [
+   "ByteLevel",
+   "Digits",
+   "Punctuation",
+   "Sequence",
+   "Split"
+  ],
+  "npat": 1,
+  "has_mark": false,
+  "has_letter_class": false,
+  "sample": "[0-9][0-9][0-9]"
+ },
+ {
+  "name": "ai4bharat/IndicBERTv2-MLM-only",
+  "ok": true,
+  "kinds": [
+   "Whitespace"
+  ],
+  "npat": 0,
+  "has_mark": false,
+  "has_letter_class": false,
+  "sample": null
+ },
+ {
+  "name": "google/gemma-2-2b",
+  "ok": true,
+  "kinds": [
+   "Split"
+  ],
+  "npat": 1,
+  "has_mark": false,
+  "has_letter_class": false,
+  "sample": " "
+ },
+ {
+  "name": "mistralai/Mistral-7B-v0.1",
+  "ok": true,
+  "kinds": [
+   "Metaspace"
+  ],
+  "npat": 0,
+  "has_mark": false,
+  "has_letter_class": false,
+  "sample": null
+ },
+ {
+  "name": "meta-llama/Llama-3.1-8B",
+  "ok": false,
+  "err": "GatedRepoError('403 Client Error. (Request ID: Root=1-6a88a42f-0d62bb59793c550037f4187a;b2"
+ },
+ {
+  "name": "sarvamai/sarvam-1",
+  "ok": true,
+  "kinds": [
+   "Metaspace"
+  ],
+  "npat": 0,
+  "has_mark": false,
+  "has_letter_class": false,
+  "sample": null
+ },
+ {
+  "name": "CohereForAI/aya-23-8B",
+  "ok": false,
+  "err": "GatedRepoError('403 Client Error. (Request ID: Root=1-6a88a431-1549beb75663b5d51b03103f;4c"
+ }
+]

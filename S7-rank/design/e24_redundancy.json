@@ -1,0 +1,51 @@
+[
+  {
+    "family": "bigram gap1 pos-bound",
+    "rank_F": 4220,
+    "rank_byte_plus_F": 5653,
+    "dR": 3920,
+    "redundancy": 0.07109004739336489
+  },
+  {
+    "family": "bigram gap1 pos-free",
+    "rank_F": 2784,
+    "rank_byte_plus_F": 4434,
+    "dR": 2701,
+    "redundancy": 0.02981321839080464
+  },
+  {
+    "family": "skip gap2 pos-bound",
+    "rank_F": 3696,
+    "rank_byte_plus_F": 5020,
+    "dR": 3287,
+    "redundancy": 0.11066017316017318
+  },
+  {
+    "family": "skip gap2 pos-free",
+    "rank_F": 2389,
+    "rank_byte_plus_F": 4033,
+    "dR": 2300,
+    "redundancy": 0.03725408120552531
+  },
+  {
+    "family": "skip gap4 pos-bound",
+    "rank_F": 3028,
+    "rank_byte_plus_F": 4330,
+    "dR": 2597,
+    "redundancy": 0.142338177014531
+  },
+  {
+    "family": "skip gap8 pos-bound",
+    "rank_F": 1958,
+    "rank_byte_plus_F": 3215,
+    "dR": 1482,
+    "redundancy": 0.24310520939734426
+  },
+  {
+    "family": "whole-token hash",
+    "rank_F": 8191,
+    "rank_byte_plus_F": 9922,
+    "dR": 8189,
+    "redundancy": 0.0002441704309608106
+  }
+]

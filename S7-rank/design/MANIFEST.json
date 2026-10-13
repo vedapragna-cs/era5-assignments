@@ -1,0 +1,187 @@
+[
+ {
+  "path": "design/E10-DESIGN.md",
+  "bytes": 4962,
+  "sha256_16": "87a63c45153c8858"
+ },
+ {
+  "path": "design/cap.py",
+  "bytes": 2331,
+  "sha256_16": "2f8108c005b32334"
+ },
+ {
+  "path": "design/data/PROVENANCE.md",
+  "bytes": 1274,
+  "sha256_16": "d31cffc36a0faf1c"
+ },
+ {
+  "path": "design/data/codec.npz",
+  "bytes": 1200852,
+  "sha256_16": "c610e19f6a1a0d0e"
+ },
+ {
+  "path": "design/data/meta.json",
+  "bytes": 247,
+  "sha256_16": "1d432d62b8d50713"
+ },
+ {
+  "path": "design/data/train_freq.npy",
+  "bytes": 488688,
+  "sha256_16": "4b881a24d8e194e9"
+ },
+ {
+  "path": "design/dpsweep.py",
+  "bytes": 1401,
+  "sha256_16": "28f31b0e0a8ae5fc"
+ },
+ {
+  "path": "design/e13b_results.json",
+  "bytes": 12371,
+  "sha256_16": "c78241ba831a59c1"
+ },
+ {
+  "path": "design/e17_conv.py",
+  "bytes": 992,
+  "sha256_16": "fc4fc13b964d49ae"
+ },
+ {
+  "path": "design/e17_rank.py",
+  "bytes": 6446,
+  "sha256_16": "252a60203f888cfc"
+ },
+ {
+  "path": "design/e17_run.py",
+  "bytes": 4027,
+  "sha256_16": "70c1049fee76fe0e"
+ },
+ {
+  "path": "design/e17_vocabs.py",
+  "bytes": 1938,
+  "sha256_16": "33db1bc3584c40a6"
+ },
+ {
+  "path": "design/e17b_controls.py",
+  "bytes": 2814,
+  "sha256_16": "eaf56408a5dc8b77"
+ },
+ {
+  "path": "design/e17b_samestring.json",
+  "bytes": 95,
+  "sha256_16": "50b0c6db75654865"
+ },
+ {
+  "path": "design/e17c_final.py",
+  "bytes": 3487,
+  "sha256_16": "62ba4fb6a1af7c04"
+ },
+ {
+  "path": "design/e17c_results.json",
+  "bytes": 11592,
+  "sha256_16": "772f418fd44aaf4e"
+ },
+ {
+  "path": "design/e17d_collision_cost.json",
+  "bytes": 2098,
+  "sha256_16": "737b49f9228d7b12"
+ },
+ {
+  "path": "design/e17d_collision_cost.py",
+  "bytes": 2009,
+  "sha256_16": "788c95ad577a0ebd"
+ },
+ {
+  "path": "design/e17e_anchors.json",
+  "bytes": 3595,
+  "sha256_16": "d64df2d67265bbcf"
+ },
+ {
+  "path": "design/e17e_anchors.py",
+  "bytes": 4287,
+  "sha256_16": "610edc3e206cf8ee"
+ },
+ {
+  "path": "design/e1sharp.py",
+  "bytes": 1727,
+  "sha256_16": "4fa0043da81fc177"
+ },
+ {
+  "path": "design/e20_pretok.py",
+  "bytes": 2970,
+  "sha256_16": "3e552225edec4a76"
+ },
+ {
+  "path": "design/e20_pretok_regex.json",
+  "bytes": 2791,
+  "sha256_16": "efa8edfdc6518f01"
+ },
+ {
+  "path": "design/e20b_behavior.py",
+  "bytes": 2805,
+  "sha256_16": "b6330efee4bcb328"
+ },
+ {
+  "path": "design/e20b_pretok_behavior.json",
+  "bytes": 2089,
+  "sha256_16": "706504447b016e72"
+ },
+ {
+  "path": "design/e20c_endtoend.json",
+  "bytes": 2078,
+  "sha256_16": "90f6c64978633d52"
+ },
+ {
+  "path": "design/e21_hardening_base.py",
+  "bytes": 10457,
+  "sha256_16": "ab9daa79bedfb6eb"
+ },
+ {
+  "path": "design/e21_paired.py",
+  "bytes": 4243,
+  "sha256_16": "958c369b74087cdb"
+ },
+ {
+  "path": "design/e22_stats.py",
+  "bytes": 5288,
+  "sha256_16": "1e28feb7dd8bdd1e"
+ },
+ {
+  "path": "design/floor2.py",
+  "bytes": 1292,
+  "sha256_16": "e941ef4ef74a205f"
+ },
+ {
+  "path": "design/liverows.py",
+  "bytes": 2021,
+  "sha256_16": "8bb967df0ecc4932"
+ },
+ {
+  "path": "design/occ2.py",
+  "bytes": 1656,
+  "sha256_16": "0d2db5396d138552"
+ },
+ {
+  "path": "design/occupancy.py",
+  "bytes": 1391,
+  "sha256_16": "a8dd7381cba5d248"
+ },
+ {
+  "path": "design/rankall.json",
+  "bytes": 428,
+  "sha256_16": "688150534c94d09f"
+ },
+ {
+  "path": "design/rankall.py",
+  "bytes": 2873,
+  "sha256_16": "deaa8fa26eab746f"
+ },
+ {
+  "path": "design/shiftbite2.py",
+  "bytes": 1807,
+  "sha256_16": "f2581072d1d99483"
+ },
+ {
+  "path": "design/verify.py",
+  "bytes": 6352,
+  "sha256_16": "6b45f8b380ccf36e"
+ }
+]

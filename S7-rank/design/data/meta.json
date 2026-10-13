@@ -1,0 +1,15 @@
+{
+ "vocab": 61070,
+ "vocab_full": 131072,
+ "P": 32,
+ "n_blocks": 40,
+ "NB": 64,
+ "langs": [
+  "en",
+  "hi",
+  "ml"
+ ],
+ "D_byte": 8192,
+ "D_char": 6144,
+ "note": "vocab restricted to observed tokens; unused rows get no gradient so this is exact"
+}
